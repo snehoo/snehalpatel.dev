@@ -978,16 +978,30 @@
     if (e.target === modalOverlay) closeModal();
   });
 
-  contactForm.addEventListener('submit', (e) => {
+  contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('cfName').value;
     const email = document.getElementById('cfEmail').value;
     const message = document.getElementById('cfMessage').value;
-    const subject = encodeURIComponent('New message from ' + name);
-    const body = encodeURIComponent(message + '\n\n— ' + name + ' (' + email + ')');
-    window.location.href = 'mailto:snehalp@gmail.com?subject=' + subject + '&body=' + body;
-    closeModal();
-    contactForm.reset();
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      if (response.ok) {
+        alert('Message sent! I'll get back to you soon.');
+        closeModal();
+        contactForm.reset();
+      } else {
+        const error = await response.json();
+        alert('Error sending message: ' + (error.error || 'Unknown error'));
+      }
+    } catch (error) {
+      alert('Error sending message: ' + error.message);
+    }
   });
 </script>
 

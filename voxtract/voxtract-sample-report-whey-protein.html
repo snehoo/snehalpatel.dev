@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voxtract — Whey Protein (Sample)</title>
+<style>
+  :root{
+    --brand-accent:#0f6e63; --brand-accent2:#33415c;
+    --bg:#fbfbfa; --panel:#ffffff; --panel2:#f6f7f6;
+    --line:#e4e7e4; --line2:#d3d8d3;
+    --ink:#1c2024; --muted:#5b6470; --faint:#8b9198;
+    --accent:var(--brand-accent); --accent2:var(--brand-accent2);
+    --pain:#a8432f; --desire:#2f7a5c; --obj:#5a4a86; --synth:#8a6a1f;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --serif:"Georgia","Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); line-height:1.55; letter-spacing:.1px;
+  }
+  .wrap{max-width:1040px; margin:0 auto; padding:40px 30px 70px}
+  .mono{font-family:var(--mono)}
+
+  .topbar{display:flex; align-items:flex-start; justify-content:space-between;
+    gap:24px; padding-bottom:22px; border-bottom:2px solid var(--ink); flex-wrap:wrap}
+  .brand .label{font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--accent); font-weight:600}
+  .voxtract-mark{color:var(--ink); font-weight:800; letter-spacing:.02em}
+  .brand .agency-tag{font-size:14px; color:var(--muted); margin-top:8px}
+  h1{margin:.3em 0 0; font-size:35px; line-height:1.15; font-weight:700;
+    letter-spacing:-.3px; color:var(--ink)}
+  .runline{font-size:13.5px; color:var(--muted); text-align:right; line-height:1.6}
+  .runline .generated{color:var(--faint); margin-top:4px}
+
+  .disclosure{margin-top:16px; padding:11px 16px; background:var(--panel2);
+    border:1px solid var(--line); border-radius:6px; font-size:14px;
+    color:var(--muted)}
+  .disclosure b{color:var(--ink)}
+
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    margin:28px 0 8px; background:var(--line); border:1px solid var(--line)}
+  .stat{background:var(--panel); padding:18px 16px}
+  .stat .num{font-size:28px; font-weight:700; color:var(--ink)}
+  .stat .cap{font-size:12px; letter-spacing:.04em; color:var(--muted); margin-top:3px}
+
+  section{margin-top:42px}
+  .shead{display:flex; align-items:baseline; gap:12px; margin-bottom:4px;
+    padding-bottom:10px; border-bottom:1px solid var(--line2)}
+  .shead .idx{font-family:var(--mono); font-size:11px; color:var(--faint);
+    border:1px solid var(--line2); border-radius:3px; padding:1px 6px}
+  .shead h2{margin:0; font-size:21px; font-weight:700; color:var(--ink)}
+
+  .synthesis{margin:14px 0 20px; padding:14px 16px;
+    background:var(--panel2); border-left:3px solid var(--synth); border-radius:0 6px 6px 0}
+  .synthesis .lbl{display:block; font-family:var(--mono); font-size:10px;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--synth); margin-bottom:5px}
+  .synthesis p{margin:0; font-size:15.5px; color:var(--ink); line-height:1.6}
+
+  .grid{display:grid; gap:14px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:16px 17px}
+  .card .top{display:flex; align-items:center; gap:9px; margin-bottom:9px}
+  .rank{font-family:var(--mono); font-size:11px; font-weight:700; color:#fff;
+    background:var(--pain); width:22px; height:22px; border-radius:4px;
+    display:grid; place-items:center; flex:none}
+  .desire .rank{background:var(--desire)}
+  .obj .rank{background:var(--obj)}
+  .ctitle{font-weight:650; font-size:16px; color:var(--ink)}
+
+  .quote{display:block; text-decoration:none; color:var(--ink);
+    border-left:2px solid var(--line2); padding:4px 0 4px 13px; margin:10px 0}
+  .quote .qt{font-size:15.5px; font-style:italic; color:#2b2f33}
+  .quote .qt::before{content:"\201C"} .quote .qt::after{content:"\201D"}
+  .quote .ext{display:block; margin-top:6px; font-family:var(--mono); font-size:10px;
+    letter-spacing:.03em; color:var(--accent)}
+  .quote .ext::before{content:"\2197 "}
+  a.quote:hover .qt{color:var(--ink)}
+  a.quote:hover{border-left-color:var(--accent)}
+
+  .meta{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:6px}
+  .tag{font-family:var(--mono); font-size:11px; color:var(--muted);
+    background:var(--panel2); border:1px solid var(--line); border-radius:3px; padding:2px 7px}
+  .tag.sub{color:var(--accent); border-color:var(--accent); background:#fff}
+
+  .meter{height:4px; border-radius:2px; background:var(--line); margin-top:11px; overflow:hidden}
+  .meter > i{display:block; height:100%; width:calc(var(--v,60)*1%); background:var(--pain)}
+  .desire .meter > i{background:var(--desire)}
+  .obj .meter > i{background:var(--obj)}
+
+  .implications{margin-top:48px; padding:26px 28px; border:2px solid var(--ink); border-radius:8px}
+  .implications .badge{font-family:var(--mono); font-size:10px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent); font-weight:600}
+  .implications h2{font-size:23px; margin:10px 0 14px; color:var(--ink)}
+  .impl-list{display:flex; flex-direction:column; gap:11px}
+  .impl-item{display:flex; gap:13px; align-items:flex-start; padding:13px 0;
+    border-top:1px solid var(--line)}
+  .impl-item:first-child{border-top:none; padding-top:0}
+  .impl-item .n{font-family:var(--mono); font-size:11px; color:var(--accent); flex:none; padding-top:2px}
+  .impl-item p{margin:0; font-size:15.5px; line-height:1.6; color:var(--ink)}
+  .impl-item p b{font-weight:700}
+
+  footer{margin-top:36px; padding-top:16px; border-top:1px solid var(--line);
+    font-size:11px; color:var(--faint); display:flex; justify-content:space-between;
+    flex-wrap:wrap; gap:8px}
+
+  /* ---- Sample banner ---- */
+  .sample-banner{display:flex; align-items:center; gap:10px; margin-bottom:18px;
+    padding:10px 16px; background:#fff7e6; border:1px solid #f0d59a;
+    border-radius:6px; font-size:13.5px; color:#7a5b14}
+  .sample-banner svg{flex:none; width:16px; height:16px}
+  .sample-banner b{color:#5c4410}
+
+  /* ---- Redacted zone: blurred content + centered overlay badge ---- */
+  .redact-zone{position:relative}
+  .redact-zone .blur-text{filter:blur(7px); user-select:none; pointer-events:none; opacity:.6}
+  .redact-zone .quote-redacted{font-size:15.5px; font-style:italic; color:#2b2f33;
+    margin:10px 0; padding:4px 0 4px 13px; border-left:2px solid var(--line2)}
+  .redact-badge{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    display:inline-flex; align-items:center; gap:6px; white-space:nowrap; z-index:2;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.05em;
+    text-transform:uppercase; color:var(--ink); font-weight:600;
+    background:#fff; border:1px solid var(--line2); border-radius:999px;
+    padding:6px 13px; box-shadow:0 2px 8px rgba(0,0,0,.08)}
+  .redact-badge svg{width:12px; height:12px; flex:none; color:var(--accent2)}
+
+  /* ---- Synthesis partial reveal: first sentence visible, rest redacted ---- */
+  .synthesis.partial{padding:0}
+  .synthesis.partial .syn-visible{padding:14px 16px 0}
+  .synthesis.partial .syn-blur-wrap{padding:0 16px 14px}
+  .synthesis.partial .syn-blur{filter:blur(7px); user-select:none; pointer-events:none;
+    opacity:.6; font-size:15.5px; color:var(--ink); line-height:1.6}
+
+  .impl-item.redact-zone{padding:13px 16px}
+
+  @media(max-width:780px){
+    .stats{grid-template-columns:repeat(2,1fr)} .g2{grid-template-columns:1fr}
+    h1{font-size:26px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="label"><span class="voxtract-mark">Voxtract</span> &middot; Customer Intelligence Report</span>
+      <h1>Whey Protein</h1>
+      <div class="agency-tag">Sample report &mdash; this is how your white-labeled report will look</div>
+    </div>
+    <div class="runline">
+      r/Fitness_India, r/protein_deals
+      <div class="generated">25 June 2026</div>
+    </div>
+  </header>
+
+  <div class="disclosure">
+    <b>Source:</b> public discussion on Reddit, drawn from the communities listed above. Every quote in this report links to the original comment.
+  </div>
+
+  <div class="sample-banner">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 16.5h.01M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0Z"/></svg>
+    <span><b>Sample report.</b> One finding per section is shown in full so you can judge real quality. The rest is blurred to protect the client work this came from &mdash; the full version is unlocked once you run a report with us.</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="num">8</div><div class="cap">Threads analyzed</div></div>
+    <div class="stat"><div class="num">188</div><div class="cap">Comments reviewed</div></div>
+    <div class="stat"><div class="num">2</div><div class="cap">Communities covered</div></div>
+    <div class="stat"><div class="num">12 mo</div><div class="cap">Discussion window</div></div>
+  </div>
+
+  <section>
+    <div class="shead"><span class="idx">01</span><h2>Pain points, ranked</h2></div>
+    <div class="synthesis partial">
+      <div class="syn-visible"><span class="lbl">Reading</span><p style="margin:0; font-size:15.5px; color:var(--ink); line-height:1.6">Trust is contested on two fronts: whether the bottle matches its label, and whether the doctor blocking it understands nutrition.</p></div>
+      <div class="syn-blur-wrap redact-zone"><p class="syn-blur">27 comments across 2 threads relitigate medical advice on whey; 2 threads separately describe receiving a mislabeled product.</p><span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span></div>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <div class="top"><span class="rank">1</span><span class="ctitle">Doctors advising against whey without nutrition training</span></div>
+        <a class="quote" target="_blank" rel="noopener" href="https://www.reddit.com/r/Fitness_India/comments/1nhhyfg/comment/neblq5c/"><span class="qt">Most of the doctors are clueless about this .. specially the old ones A few years back they convinced my mom to make me stop taking whey (reports were clear ).. few years down the line .. my mom takes whey too now 🙂</span><span class="ext">view source</span></a>
+        <div class="meta"><span class="tag sub">r/Fitness_India</span><span class="tag">27 comments, 2 dedicated threads</span></div>
+        <div class="meter"><i style="--v:80"></i></div>
+      </div>
+      <div class="card redact-partial">
+                <div class="redact-zone">
+          <div class="top"><span class="rank">2</span><span class="ctitle blur-text">Decision paralysis from brand proliferation</span></div>
+        <p class="qt blur-text quote-redacted">Interesting take! how does the WBN or TWT compare with ON (which is what I use), I am happy to try new ones, but always hate trying cuz I don't finish the ones I don't like and end up wasting money, so I stick to whatever works okayish.</p>
+        <span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span>
+        </div>
+        <div class="meta"><span class="tag sub">r/Fitness_India</span><span class="tag">11 brand-comparison asks across 6 of 8 threads</span></div>
+        <div class="meter"><i style="--v:65"></i></div>
+      </div>
+      <div class="card redact-partial">
+                <div class="redact-zone">
+          <div class="top"><span class="rank">3</span><span class="ctitle blur-text">Digestive bloating and constipation</span></div>
+        <p class="qt blur-text quote-redacted">Only buy if you have good digestive system. I'm getting a massive constipation even I try like half a spoon. I spent 2k and I can say it's not worth it. I haven't finished like half of it.</p>
+        <span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span>
+        </div>
+        <div class="meta"><span class="tag sub">r/Fitness_India</span><span class="tag">13 comments across 5 of 8 threads</span></div>
+        <div class="meter"><i style="--v:55"></i></div>
+      </div>
+      <div class="card redact-partial">
+                <div class="redact-zone">
+          <div class="top"><span class="rank">4</span><span class="ctitle blur-text">Mislabeled or counterfeit shipments</span></div>
+        <p class="qt blur-text quote-redacted">Brother I got scammed by whole truth. I had ordered their coffe flavoured protein for 3200 and guess what I received. Literally atta. Dude their is no taste of coffee and it doesn't even mix in water. It is literally pure atta. Don't buy from them my guy.</p>
+        <span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span>
+        </div>
+        <div class="meta"><span class="tag sub">r/Fitness_India</span><span class="tag">isolated to 2 threads, not yet a broad pattern</span></div>
+        <div class="meter"><i style="--v:35"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="idx">02</span><h2>What they actually want</h2></div>
+    <div class="synthesis partial">
+      <div class="syn-visible"><span class="lbl">Reading</span><p style="margin:0; font-size:15.5px; color:var(--ink); line-height:1.6">Nobody asks for a stronger formula here either.</p></div>
+      <div class="syn-blur-wrap redact-zone"><p class="syn-blur">They want a brand they can verify is clean, a doctor's nuance instead of a blanket ban, and a formula that won't bloat them.</p><span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span></div>
+    </div>
+    <div class="grid g2 desire">
+      <div class="card">
+        <div class="top"><span class="rank">1</span><span class="ctitle">A verifiably clean, low-contaminant product</span></div>
+        <a class="quote" target="_blank" rel="noopener" href="https://www.reddit.com/r/Fitness_India/comments/1srvxms/comment/ohiyxs9/"><span class="qt">Whole truth is more trustable , less risk of heavy metals</span><span class="ext">view source</span></a>
+        <div class="meta"><span class="tag sub">r/Fitness_India</span></div>
+        <div class="meter"><i style="--v:55"></i></div>
+      </div>
+      <div class="card desire redact-partial">
+                <div class="redact-zone">
+          <div class="top"><span class="rank">2</span><span class="ctitle blur-text">Medical nuance instead of a blanket ban</span></div>
+        <p class="qt blur-text quote-redacted">Whey protein is basically just a concentrated form of milk protein, rich in essential amino acids.............</p>
+        <span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span>
+        </div>
+        <div class="meta"><span class="tag sub">r/Fitness_India</span><span class="tag">from a practicing MD in-thread, 67 upvotes</span></div>
+        <div class="meter"><i style="--v:60"></i></div>
+      </div>
+      <div class="card desire redact-partial">
+                <div class="redact-zone">
+          <div class="top"><span class="rank">3</span><span class="ctitle blur-text">A formula that resolves bloating quickly</span></div>
+        <p class="qt blur-text quote-redacted">Only what's needed is top notch in every aspect . I had bloating issues . With this it was there for 2 to 3 mins and it dissapered .</p>
+        <span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span>
+        </div>
+        <div class="meta"><span class="tag sub">r/Fitness_India</span></div>
+        <div class="meter"><i style="--v:50"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><span class="idx">03</span><h2>Objections and what's burned them</h2></div>
+    <div class="synthesis partial">
+      <div class="syn-visible"><span class="lbl">Reading</span><p style="margin:0; font-size:15.5px; color:var(--ink); line-height:1.6">Objections center on being misled, not on price or taste.</p></div>
+      <div class="syn-blur-wrap redact-zone"><p class="syn-blur">A counterfeit shipment, a doctor dismissed as undertrained, and a "trustified" claim nobody believes below ₹2,000 are the burns named outright in this sample.</p><span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span></div>
+    </div>
+    <div class="grid g2 obj">
+      <div class="card">
+        <div class="top"><span class="rank">1</span><span class="ctitle">Fake certification and false origin claims</span></div>
+        <a class="quote" target="_blank" rel="noopener" href="https://www.reddit.com/r/Fitness_India/comments/1qhu411/comment/of6vrvu/"><span class="qt">Don't buy BOULT . Full Gujarati company manufacturing in Gujarat itself and labelling themselves as American company even the lap test results on the websites are fake.( Mentioned a fake lab in the USA)</span><span class="ext">view source</span></a>
+        <div class="meta"><span class="tag sub">r/Fitness_India</span></div>
+        <div class="meter"><i style="--v:50"></i></div>
+      </div>
+      <div class="card obj redact-partial">
+                <div class="redact-zone">
+          <div class="top"><span class="rank">2</span><span class="ctitle blur-text">Doctors dismissed as undertrained in nutrition</span></div>
+        <p class="qt blur-text quote-redacted">Doctors are not trained in dietetics.</p>
+        <span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span>
+        </div>
+        <div class="meta"><span class="tag sub">r/Fitness_India</span><span class="tag">127 upvotes</span></div>
+        <div class="meter"><i style="--v:55"></i></div>
+      </div>
+      <div class="card obj redact-partial">
+                <div class="redact-zone">
+          <div class="top"><span class="rank">3</span><span class="ctitle blur-text">"Trustified" labeling doesn't survive scrutiny below ₹2,000</span></div>
+        <p class="qt blur-text quote-redacted">Nakpro, yogabar, fuelone, nothing gives a trustified seal under 2k</p>
+        <span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span>
+        </div>
+        <div class="meta"><span class="tag sub">r/protein_deals</span></div>
+        <div class="meter"><i style="--v:40"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="implications">
+    <span class="badge">Implications</span>
+    <h2>What this means for strategy</h2>
+    <div class="impl-list">
+      <div class="impl-item"><span class="n">01</span><p><b>Disclose verifiable lab or certification details for any clean-label claim.</b> Below ₹2,000, this audience already assumes "trustified" marketing has no real audit behind it.</p></div>
+      <div class="impl-item redact-zone"><span class="n">02</span><p class="blur-text"><b>Treat counterfeit and mislabeled shipments as a fulfillment risk to solve.</b> Two independent threads describe receiving a different or fake product entirely, not a one-off complaint.</p><span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span></div>
+      <div class="impl-item redact-zone"><span class="n">03</span><p class="blur-text"><b>Brief medical-safety messaging around the doctor gap by citing dietetics training, not by disputing the doctor.</b> A practicing MD's own nuanced comment outperformed every lay argument in this sample.</p><span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span></div>
+      <div class="impl-item redact-zone"><span class="n">04</span><p class="blur-text"><b>Name the digestion claim specifically.</b> State which enzyme and what it does, instead of "easy on the gut." Bloating and constipation both came up as named, not vague, complaints.</p><span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span></div>
+      <div class="impl-item redact-zone"><span class="n">05</span><p class="blur-text"><b>Address price-hike fatigue directly.</b> Multiple comments compare current prices to several years ago unprompted, a sign of margin scrutiny, not just affordability concern.</p><span class="redact-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Unlocked in full report</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Voxtract — Customer Intelligence Report (sample)</span>
+    <span>Whey Protein — 25 June 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>

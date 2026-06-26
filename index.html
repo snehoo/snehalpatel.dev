@@ -922,6 +922,7 @@
         <input type="email" id="cfEmail" placeholder="Your email" required>
       </div>
       <textarea id="cfMessage" placeholder="Your message" required></textarea>
+      <input type="text" id="cfHoneypot" style="display:none; position:absolute; left:-9999px;">
       <button class="modal-submit" type="submit">Send a message</button>
     </form>
   </div>
@@ -980,6 +981,16 @@
 
   contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    // Honeypot check
+    const honeypot = document.getElementById('cfHoneypot').value;
+    if (honeypot) {
+      // Bot detected, silently fail
+      closeModal();
+      contactForm.reset();
+      return;
+    }
+
     const name = document.getElementById('cfName').value;
     const email = document.getElementById('cfEmail').value;
     const message = document.getElementById('cfMessage').value;

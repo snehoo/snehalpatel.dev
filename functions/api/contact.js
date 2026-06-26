@@ -36,7 +36,9 @@ export async function onRequest(context) {
     });
 
     if (!resendResponse.ok) {
-      throw new Error('Failed to send email via Resend');
+      const resendError = await resendResponse.text();
+      console.error('Resend API Error:', resendResponse.status, resendError);
+      throw new Error(`Resend API failed: ${resendResponse.status} - ${resendError}`);
     }
 
     return new Response(

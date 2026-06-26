@@ -1,0 +1,45 @@
+<svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+
+  <!-- Subtle grid pattern -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1a1a1a" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Accent circles - representing AI nodes -->
+  <circle cx="150" cy="100" r="60" fill="none" stroke="#333" stroke-width="2" opacity="0.3"/>
+  <circle cx="150" cy="100" r="40" fill="none" stroke="#555" stroke-width="1" opacity="0.5"/>
+
+  <circle cx="1050" cy="550" r="80" fill="none" stroke="#333" stroke-width="2" opacity="0.3"/>
+  <circle cx="1050" cy="550" r="50" fill="none" stroke="#555" stroke-width="1" opacity="0.5"/>
+
+  <!-- Connecting lines -->
+  <line x1="180" y1="130" x2="1000" y2="520" stroke="#444" stroke-width="1" opacity="0.4"/>
+
+  <!-- Main text -->
+  <text x="600" y="220" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif" font-size="72" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="-1">
+    Snehal Patel
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="295" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif" font-size="48" font-weight="500" fill="#999999" text-anchor="middle" letter-spacing="0.5">
+    Solo Builder
+  </text>
+
+  <!-- Accent line -->
+  <line x1="300" y1="330" x2="900" y2="330" stroke="#333" stroke-width="2"/>
+
+  <!-- Description -->
+  <text x="600" y="420" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif" font-size="32" font-weight="400" fill="#cccccc" text-anchor="middle">
+    AI-native • Products • Content • Tools
+  </text>
+
+  <!-- Domain -->
+  <text x="600" y="550" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif" font-size="24" font-weight="500" fill="#666666" text-anchor="middle">
+    snehalpatel.dev
+  </text>
+</svg>

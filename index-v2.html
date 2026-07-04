@@ -29,7 +29,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jersey+15&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
   /* ── Palette ── */
@@ -51,8 +51,8 @@
     --purple:   #9745E1;
     --px:       28px;
     --r:        6px;
-    --display:  'Jersey 15', monospace;
-    --mono:     'JetBrains Mono', ui-monospace, monospace;
+    --display:  'Silkscreen', monospace;
+    --mono:     'Space Mono', 'Courier New', monospace;
   }
 
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -273,8 +273,10 @@
   h1.headline {
     position: relative;
     z-index: 1;
-    font-family: 'Jersey 15', monospace;
-    font-size: 48px;
+    font-family: 'Silkscreen', monospace;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+    font-size: 28px;
     line-height: 1.45;
     color: var(--ink);
     margin: 0 0 28px;
@@ -609,7 +611,7 @@
     position: relative;
   }
   .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
-  .modal-box h2 { font-family: 'Jersey 15', monospace; font-size: 20px; margin: 0 0 12px; color: var(--ink); line-height: 1.4; }
+  .modal-box h2 { font-family: 'Silkscreen', monospace; font-size: 20px; margin: 0 0 12px; color: var(--ink); line-height: 1.4; -webkit-font-smoothing: none; }
   .modal-box .modal-sub { font-family: var(--mono); font-size: 13px; color: var(--muted); line-height: 1.7; margin: 0 0 22px; }
   .modal-box input, .modal-box textarea {
     width: 100%;
@@ -661,7 +663,7 @@
 
   @media (max-width: 500px) {
     :root { --px: 16px; }
-    h1.headline { font-size: 36px; }
+    h1.headline { font-size: 15px; }
     .grid2 { grid-template-columns: 1fr; }
   }
 </style>

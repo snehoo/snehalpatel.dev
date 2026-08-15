@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rebound — Agent Sales Playbook</title>
+<style>
+:root{
+  --green:#25D366; --green-d:#128C4B; --green-w:#F0FFF6; --green-b:#B2EAC8;
+  --ink:#12161A; --mid:#4A5560; --dim:#8A949E;
+  --line:#E4E8EC; --line2:#F0F2F4; --wash:#F7F9FA;
+  --yel:#FFF8E6; --yel-b:#FFE08A; --yel-d:#8A6A00;
+  --red:#E5484D; --red-w:#FFF4F4; --red-b:#FFD0D0;
+  --blue:#0B72D9; --blue-w:#F0F7FF; --blue-b:#BCDCFB;
+  --pur:#7C4DBE; --pur-w:#F7F2FF;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;scroll-padding-top:118px;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  color:var(--ink); background:#fff; font-size:16px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:940px;margin:0 auto;padding:0 22px 90px;}
+
+/* ══ TOP BAR ══ */
+.top{
+  position:sticky;top:0;z-index:60;background:rgba(255,255,255,.94);
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line);
+}
+.top-in{max-width:940px;margin:0 auto;padding:11px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.brand{font-size:19px;font-weight:800;letter-spacing:-.5px;white-space:nowrap;}
+.brand span{color:var(--green);}
+.brand small{display:block;font-size:10.5px;font-weight:600;color:var(--dim);letter-spacing:.4px;text-transform:uppercase;margin-top:-2px;}
+.langs{display:flex;gap:5px;margin-left:auto;}
+.lg{
+  border:1.5px solid var(--line);background:#fff;border-radius:8px;
+  padding:6px 11px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--mid);
+  font-family:inherit;transition:.15s;white-space:nowrap;
+}
+.lg:hover{border-color:var(--green);color:var(--green-d);}
+.lg.on{background:var(--green);border-color:var(--green);color:#fff;}
+.nav{max-width:940px;margin:0 auto;padding:0 22px 9px;display:flex;gap:6px;overflow-x:auto;}
+.nav::-webkit-scrollbar{height:0;}
+.nav a{
+  font-size:12px;font-weight:650;color:var(--mid);text-decoration:none;white-space:nowrap;
+  padding:5px 11px;border-radius:20px;background:var(--wash);border:1px solid var(--line2);
+}
+.nav a:hover{background:var(--green-w);color:var(--green-d);border-color:var(--green-b);}
+
+/* ══ HERO ══ */
+.hero{padding:34px 0 8px;}
+.hero h1{font-size:33px;font-weight:840;letter-spacing:-1.1px;line-height:1.14;}
+.hero .sub{font-size:16.5px;color:var(--mid);margin-top:9px;max-width:660px;}
+.hero .strip{
+  margin-top:18px;background:var(--ink);color:#fff;border-radius:13px;padding:16px 20px;
+  font-size:15px;line-height:1.55;
+}
+.hero .strip b{color:var(--green);}
+
+/* ══ SECTION ══ */
+.sec{margin-top:46px;scroll-margin-top:118px;}
+.st{display:flex;align-items:baseline;gap:11px;margin-bottom:5px;flex-wrap:wrap;}
+.st .k{
+  font-size:10.5px;font-weight:800;letter-spacing:1.1px;color:#fff;background:var(--ink);
+  padding:3px 8px;border-radius:5px;text-transform:uppercase;
+}
+.st h2{font-size:24px;font-weight:800;letter-spacing:-.6px;}
+.st .n{font-size:13px;color:var(--dim);font-weight:600;}
+.lead{color:var(--mid);font-size:15.5px;margin:9px 0 18px;max-width:720px;}
+
+/* ══ CARDS ══ */
+.card{border:1px solid var(--line);border-radius:14px;padding:19px 22px;background:#fff;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+
+.does{border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.does-r{display:flex;gap:14px;padding:15px 18px;border-bottom:1px solid var(--line2);align-items:flex-start;}
+.does-r:last-child{border-bottom:none;}
+.does-r .e{font-size:22px;flex-shrink:0;line-height:1.3;}
+.does-r .t{font-weight:750;font-size:15.5px;margin-bottom:1px;}
+.does-r .d{font-size:14px;color:var(--mid);}
+
+/* ══ FLOW ══ */
+.flow{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:6px;}
+.flow-h{
+  background:var(--ink);color:#fff;padding:13px 20px;font-size:14.5px;font-weight:750;
+  display:flex;align-items:center;gap:9px;
+}
+.flow-h .tag{
+  margin-left:auto;font-size:10.5px;font-weight:700;background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.28);padding:2px 9px;border-radius:20px;letter-spacing:.4px;
+}
+.fs{display:flex;gap:15px;padding:15px 20px;border-bottom:1px solid var(--line2);position:relative;}
+.fs:last-child{border-bottom:none;}
+.fs .rail{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:34px;}
+.fs .dot{
+  width:29px;height:29px;border-radius:50%;background:var(--wash);border:2px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--mid);
+  flex-shrink:0;z-index:2;
+}
+.fs.auto .dot{background:var(--green-w);border-color:var(--green);color:var(--green-d);}
+.fs.owner .dot{background:var(--blue-w);border-color:var(--blue);color:var(--blue);}
+.fs.cust .dot{background:var(--pur-w);border-color:var(--pur);color:var(--pur);}
+.fs.alert .dot{background:var(--red-w);border-color:var(--red);color:var(--red);}
+.fs .line{flex:1;width:2px;background:var(--line);margin-top:3px;}
+.fs:last-child .line{display:none;}
+.fs .body{padding-bottom:3px;flex:1;min-width:0;}
+.fs .when{
+  font-size:10.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--dim);
+  margin-bottom:2px;
+}
+.fs .h{font-weight:750;font-size:15px;margin-bottom:3px;}
+.fs .d{font-size:14px;color:var(--mid);}
+.fs .who{
+  display:inline-block;font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  padding:1.5px 7px;border-radius:4px;margin-left:7px;vertical-align:2px;
+}
+.w-auto{background:var(--green-w);color:var(--green-d);border:1px solid var(--green-b);}
+.w-owner{background:var(--blue-w);color:var(--blue);border:1px solid var(--blue-b);}
+.w-cust{background:var(--pur-w);color:var(--pur);border:1px solid #DCC9F5;}
+.w-alert{background:var(--red-w);color:var(--red);border:1px solid var(--red-b);}
+
+.bubble{
+  background:var(--green-w);border:1px solid var(--green-b);border-radius:11px;
+  padding:9px 13px;margin-top:8px;font-size:13.5px;line-height:1.5;
+  border-bottom-left-radius:3px;max-width:520px;
+}
+.bubble .who2{font-size:10.5px;font-weight:800;color:var(--green-d);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;}
+.bubble.b-cust{background:#fff;border-color:var(--line);border-bottom-left-radius:11px;border-bottom-right-radius:3px;margin-left:auto;}
+.bubble.b-cust .who2{color:var(--dim);}
+
+/* ══ LEGEND ══ */
+.leg{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0 4px;font-size:12.5px;color:var(--mid);}
+.leg span{display:flex;align-items:center;gap:6px;font-weight:600;}
+.leg i{width:11px;height:11px;border-radius:50%;display:inline-block;}
+
+/* ══ VS TABLE ══ */
+.vs{border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.vs-head{display:grid;grid-template-columns:1fr 1fr;background:var(--ink);color:#fff;}
+.vs-head div{padding:12px 18px;font-size:13.5px;font-weight:750;}
+.vs-head div:first-child{background:#2A3038;opacity:.85;}
+.vs-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line2);}
+.vs-row:last-child{border-bottom:none;}
+.vs-row>div{padding:13px 18px;font-size:14px;}
+.vs-row .now{background:#FCFCFD;color:var(--mid);border-right:1px solid var(--line2);}
+.vs-row .reb{background:var(--green-w);}
+.vs-row .reb b{color:var(--green-d);}
+.vs-t{font-size:10.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--dim);margin-bottom:2px;}
+
+/* ══ MATH ══ */
+.math{border:2px solid var(--yel-b);background:var(--yel);border-radius:14px;padding:20px 22px;}
+.math .mh{font-size:14px;font-weight:800;color:var(--yel-d);margin-bottom:12px;letter-spacing:.2px;}
+.mrow{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px solid var(--yel-b);font-size:14.5px;}
+.mrow:last-of-type{border-bottom:none;}
+.mrow .l{color:var(--mid);}
+.mrow .v{font-weight:800;white-space:nowrap;}
+.mrow.tot{border-top:2px solid var(--ink);border-bottom:none;margin-top:7px;padding-top:11px;font-size:16px;}
+.mrow.tot .l{color:var(--ink);font-weight:750;}
+.mrow.tot .v{color:var(--green-d);font-size:19px;}
+.mnote{font-size:13.5px;color:var(--yel-d);margin-top:13px;padding-top:12px;border-top:1px solid var(--yel-b);}
+
+.pct{
+  display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;
+  background:var(--ink);color:#fff;border-radius:14px;padding:22px 24px;
+}
+.pct .big{font-size:52px;font-weight:850;line-height:1;color:var(--green);letter-spacing:-2px;}
+.pct .big small{display:block;font-size:12px;font-weight:700;color:#fff;opacity:.7;letter-spacing:.5px;text-transform:uppercase;margin-top:5px;}
+.pct .txt{font-size:15px;line-height:1.55;opacity:.93;}
+.pct .txt b{color:var(--green);}
+
+.bar{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+.bar-t{font-size:12.5px;font-weight:750;color:var(--mid);margin-bottom:9px;}
+.bar-track{height:34px;background:var(--wash);border-radius:8px;overflow:hidden;display:flex;border:1px solid var(--line2);}
+.bar-fill{background:var(--green);height:100%;display:flex;align-items:center;padding-left:11px;color:#fff;font-size:12px;font-weight:800;white-space:nowrap;}
+.bar-rest{flex:1;display:flex;align-items:center;padding-left:11px;font-size:12.5px;font-weight:700;color:var(--mid);}
+
+/* ══ PRICE ══ */
+.pr{display:grid;grid-template-columns:1.15fr 1fr;gap:14px;}
+.pc{border:1.5px solid var(--line);border-radius:14px;padding:20px 22px;}
+.pc.hot{border:2px solid var(--green);background:var(--green-w);}
+.pc .tier{font-size:12px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--mid);display:flex;align-items:center;gap:8px;}
+.pc.hot .tier{color:var(--green-d);}
+.pc .pop{background:var(--green);color:#fff;font-size:9.5px;padding:2px 8px;border-radius:20px;letter-spacing:.5px;}
+.pc .amt{font-size:36px;font-weight:850;letter-spacing:-1.5px;margin:7px 0 1px;}
+.pc .amt span{font-size:15px;font-weight:600;color:var(--mid);letter-spacing:0;}
+.pc .setup{font-size:14px;font-weight:700;color:var(--mid);}
+.pc .cap{font-size:12.5px;color:var(--dim);margin-top:6px;padding-top:9px;border-top:1px solid var(--line);}
+.pc ul{list-style:none;margin-top:9px;font-size:14px;color:var(--mid);}
+.pc li{padding:3.5px 0;}
+.pc li::before{content:"✓";color:var(--green);font-weight:800;margin-right:7px;}
+.annual{
+  margin-top:13px;background:var(--blue-w);border:1.5px solid var(--blue-b);border-radius:12px;
+  padding:15px 18px;font-size:14.5px;
+}
+.annual b{color:var(--blue);}
+
+/* ══ WHY FEE ══ */
+.why{border:1px solid var(--line);border-radius:14px;padding:20px 22px;background:var(--wash);}
+.why .wl{font-size:15px;font-weight:700;margin-bottom:11px;}
+.why ul{list-style:none;}
+.why li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;color:var(--mid);border-bottom:1px solid var(--line2);}
+.why li:last-child{border-bottom:none;}
+.why li::before{content:"→";position:absolute;left:0;color:var(--green);font-weight:800;}
+.why li b{color:var(--ink);}
+.kick{
+  margin-top:14px;background:var(--ink);color:#fff;border-radius:11px;padding:15px 18px;font-size:14.5px;line-height:1.55;
+}
+.kick b{color:var(--green);}
+
+/* ══ SCRIPTS ══ */
+.scr{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+.scr-h{
+  background:var(--wash);padding:12px 18px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:750;
+}
+.scr-h .ch{background:var(--ink);color:#fff;font-size:10px;font-weight:800;padding:2.5px 8px;border-radius:5px;letter-spacing:.5px;text-transform:uppercase;}
+.scr-b{padding:17px 20px;}
+.say{
+  background:var(--green-w);border-left:3px solid var(--green);border-radius:0 10px 10px 0;
+  padding:12px 15px;font-size:15px;line-height:1.6;margin-bottom:10px;
+}
+.say:last-child{margin-bottom:0;}
+.say .sl{font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--green-d);margin-bottom:3px;}
+.pause{
+  font-size:13px;color:var(--red);font-weight:750;font-style:italic;padding:6px 0 6px 15px;
+}
+.stage{font-size:13.5px;color:var(--dim);font-style:italic;padding:3px 0 9px;}
+.tip{
+  background:var(--yel);border:1px solid var(--yel-b);border-radius:10px;padding:11px 14px;
+  font-size:13.5px;color:var(--yel-d);margin-top:11px;
+}
+.tip b{color:#6B5200;}
+.warn{
+  background:var(--red-w);border:1px solid var(--red-b);border-radius:10px;padding:11px 14px;
+  font-size:13.5px;color:#A3272B;margin-top:11px;
+}
+
+/* ══ DO / DONT ══ */
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.ddb{border-radius:14px;padding:18px 20px;border:1.5px solid;}
+.ddb.do{border-color:var(--green-b);background:var(--green-w);}
+.ddb.dont{border-color:var(--red-b);background:var(--red-w);}
+.ddb .h{font-size:14px;font-weight:800;margin-bottom:10px;letter-spacing:.2px;}
+.ddb.do .h{color:var(--green-d);}
+.ddb.dont .h{color:#A3272B;}
+.ddb ul{list-style:none;}
+.ddb li{padding:6px 0 6px 22px;position:relative;font-size:14px;color:var(--mid);}
+.ddb.do li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800;}
+.ddb.dont li::before{content:"✕";position:absolute;left:0;color:var(--red);font-weight:800;}
+
+/* ══ POWER PHRASES ══ */
+.pp{border:2px solid var(--pur);border-radius:14px;overflow:hidden;background:var(--pur-w);}
+.pp-h{background:var(--pur);color:#fff;padding:13px 20px;font-size:14.5px;font-weight:750;}
+.pp-b{padding:6px 20px 18px;}
+.pp-r{padding:13px 0;border-bottom:1px solid #DCC9F5;}
+.pp-r:last-child{border-bottom:none;}
+.pp-r .ph{font-size:16.5px;font-weight:750;color:#4A2B78;line-height:1.45;}
+.pp-r .mean{font-size:13.5px;color:var(--mid);margin-top:3px;}
+.pp-r .use{font-size:12.5px;color:var(--pur);font-weight:700;margin-top:3px;}
+
+/* ══ OBJECTIONS ══ */
+.obj{border:1px solid var(--line);border-radius:12px;margin-bottom:9px;overflow:hidden;}
+.obj-q{
+  padding:13px 17px;cursor:pointer;display:flex;align-items:center;gap:11px;
+  font-size:15px;font-weight:700;background:#fff;user-select:none;
+}
+.obj-q:hover{background:var(--wash);}
+.obj-q .ic{
+  width:24px;height:24px;border-radius:6px;background:var(--wash);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--mid);flex-shrink:0;
+}
+.obj-q .car{margin-left:auto;color:var(--dim);font-size:17px;transition:.2s;}
+.obj.open .obj-q{background:var(--wash);border-bottom:1px solid var(--line);}
+.obj.open .obj-q .car{transform:rotate(90deg);color:var(--green);}
+.obj-a{display:none;padding:16px 18px;}
+.obj.open .obj-a{display:block;}
+
+/* ══ NEED / TIMELINE / GOLIVE ══ */
+.need{border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.need-r{display:flex;gap:14px;padding:15px 18px;border-bottom:1px solid var(--line2);}
+.need-r:last-child{border-bottom:none;}
+.need-r.must{background:var(--yel);}
+.need-r .e{font-size:20px;flex-shrink:0;}
+.need-r .t{font-weight:750;font-size:15px;}
+.need-r .d{font-size:14px;color:var(--mid);margin-top:2px;}
+.need-r .flag{
+  margin-top:8px;background:#fff;border:1px solid var(--red-b);border-left:3px solid var(--red);
+  border-radius:0 8px 8px 0;padding:9px 12px;font-size:13.5px;color:#A3272B;
+}
+.tl{border-left:2px solid var(--line);margin-left:10px;padding-left:0;}
+.tl-r{display:flex;gap:16px;padding:12px 0 12px 22px;position:relative;}
+.tl-r::before{
+  content:"";position:absolute;left:-7px;top:19px;width:12px;height:12px;border-radius:50%;
+  background:#fff;border:2px solid var(--line);
+}
+.tl-r.live::before{background:var(--green);border-color:var(--green);box-shadow:0 0 0 4px rgba(37,211,102,.18);}
+.tl-r .d{font-size:11.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--dim);width:72px;flex-shrink:0;padding-top:2px;}
+.tl-r.live .d{color:var(--green-d);}
+.tl-r .c{font-size:14.5px;color:var(--mid);}
+.tl-r .c b{color:var(--ink);}
+.golive{background:var(--wash);border:1px solid var(--line);border-radius:14px;padding:19px 22px;}
+.golive ol{margin-left:19px;font-size:14.5px;color:var(--mid);}
+.golive li{padding:5px 0;}
+.golive li b{color:var(--ink);}
+
+/* ══ QUALIFY ══ */
+.qual{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.qb{border-radius:14px;padding:18px 20px;border:1.5px solid;}
+.qb.yes{border-color:var(--green-b);background:var(--green-w);}
+.qb.no{border-color:var(--red-b);background:var(--red-w);}
+.qb .qh{font-size:14px;font-weight:800;margin-bottom:9px;}
+.qb.yes .qh{color:var(--green-d);}
+.qb.no .qh{color:#A3272B;}
+.qb ul{list-style:none;}
+.qb li{padding:6px 0 6px 20px;position:relative;font-size:14px;color:var(--mid);}
+.qb.yes li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800;}
+.qb.no li::before{content:"✕";position:absolute;left:0;color:var(--red);font-weight:800;}
+
+/* ══ CLOSE ══ */
+.close{border:2px solid var(--ink);border-radius:14px;overflow:hidden;}
+.close-h{background:var(--ink);color:#fff;padding:13px 20px;font-size:14.5px;font-weight:750;}
+.close ol{padding:16px 22px 16px 42px;font-size:14.5px;color:var(--mid);}
+.close li{padding:7px 0;}
+.close li b{color:var(--ink);}
+.close .fin{
+  background:var(--green-w);border-top:1px solid var(--green-b);padding:16px 22px;
+  font-size:15.5px;font-weight:700;color:var(--green-d);line-height:1.55;
+}
+
+/* ══ CHECKLIST ══ */
+.chk{border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.chk-r{display:flex;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line2);align-items:center;font-size:14.5px;}
+.chk-r:last-child{border-bottom:none;}
+.chk-r .b{width:19px;height:19px;border:2px solid var(--line);border-radius:5px;flex-shrink:0;}
+.chk-r .n{font-size:11.5px;font-weight:800;color:var(--dim);width:52px;flex-shrink:0;letter-spacing:.4px;text-transform:uppercase;}
+
+/* ══ FOOT ══ */
+.foot{margin-top:56px;padding-top:22px;border-top:2px solid var(--line);text-align:center;color:var(--dim);font-size:13.5px;}
+.foot b{color:var(--ink);}
+
+/* lang blocks */
+.lb{display:none;}
+.lb.on{display:block;}
+
+.pbtn{
+  position:fixed;right:20px;bottom:20px;z-index:70;background:var(--ink);color:#fff;
+  border:none;border-radius:11px;padding:12px 18px;font-size:13.5px;font-weight:750;
+  cursor:pointer;font-family:inherit;box-shadow:0 6px 22px rgba(0,0,0,.22);
+}
+.pbtn:hover{background:var(--green-d);}
+
+@media(max-width:820px){
+  .g2,.g3,.g4,.pr,.dd,.qual,.vs-head,.vs-row{grid-template-columns:1fr;}
+  .vs-row .now{border-right:none;border-bottom:1px solid var(--line2);}
+  .pct{grid-template-columns:1fr;gap:12px;}
+  .hero h1{font-size:26px;}
+  .st h2{font-size:20px;}
+  .bubble.b-cust{margin-left:0;}
+}
+@media print{
+  .top,.pbtn{display:none;}
+  body{font-size:11.5px;}
+  .sec{page-break-inside:avoid;}
+  .obj-a{display:block!important;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════ TOP ══════ -->
+<div class="top">
+  <div class="top-in">
+    <div class="brand">Re<span>bound</span><small>Agent Sales Playbook</small></div>
+    <div class="langs">
+      <button class="lg on" data-l="en">English</button>
+      <button class="lg" data-l="hi">हिंदी</button>
+      <button class="lg" data-l="mr">मराठी</button>
+      <button class="lg" data-l="gu">ગુજરાતી</button>
+    </div>
+  </div>
+  <div class="nav">
+    <a href="#what">What is it</a>
+    <a href="#flow">How it works</a>
+    <a href="#bad">Bad review</a>
+    <a href="#vs">Now vs Rebound</a>
+    <a href="#money">The money</a>
+    <a href="#price">Price</a>
+    <a href="#first">First contact</a>
+    <a href="#meet">The meeting</a>
+    <a href="#power">Power phrases</a>
+    <a href="#obj">Objections</a>
+    <a href="#give">What they give</a>
+    <a href="#live">Go live</a>
+    <a href="#who">Who to target</a>
+    <a href="#close">The close</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ══════ HERO ══════ -->
+<div class="hero">
+  <h1>You are not selling software.<br>You are selling a salon owner their own money back.</h1>
+  <p class="sub">Read this once before your first meeting. Read the scripts twice. Everything here is written the way you should actually say it — not the way a brochure says it.</p>
+  <div class="strip">
+    Every salon loses money to two things nobody has time to fix: <b>customers who don't turn up</b>, and <b>happy customers who never leave a review</b>. Both are boring, repetitive jobs. Rebound does both, automatically, on WhatsApp. That's the whole product.
+  </div>
+</div>
+
+<!-- ══════ 1 · WHAT IS IT ══════ -->
+<div class="sec" id="what">
+  <div class="st"><span class="k">01</span><h2>What is Rebound?</h2><span class="n">learn this cold — you'll say it 40 times a week</span></div>
+  <p class="lead">If someone stops you in the street and asks, this is the answer. Twenty seconds, no jargon, no technical words.</p>
+
+  <div class="say" style="font-size:16.5px;">
+    <div class="sl">Say exactly this</div>
+    "Rebound is a WhatsApp number for your salon. You text it your bookings — like you'd text a friend. It reminds your customers so they don't forget and don't skip. After they visit, it asks the happy ones to leave you a Google review. And on the 1st of every month it sends you one message telling you how much money it saved you. There's no app to download. There's nothing to learn. If you can use WhatsApp, you already know how to use it."
+  </div>
+
+  <div class="tip"><b>Why this works:</b> it never uses the words software, platform, dashboard, CRM, automation or AI. The moment you use one of those, the owner thinks "this is going to be complicated and I'll have to learn it" — and you have lost them. Salon owners don't fear the price. They fear the effort.</div>
+
+  <h3 style="font-size:16px;font-weight:800;margin:26px 0 11px;">The four things it actually does</h3>
+  <div class="does">
+    <div class="does-r"><div class="e">🔔</div><div><div class="t">Reminds customers before they come</div><div class="d">One reminder the day before, one a couple of hours before. Fewer people forget. Fewer empty chairs.</div></div></div>
+    <div class="does-r"><div class="e">⭐</div><div><div class="t">Asks happy customers for a Google review</div><div class="d">Automatically, after the visit, in the salon's own name. This is the part that quietly grows their business.</div></div></div>
+    <div class="does-r"><div class="e">🛟</div><div><div class="t">Catches the unhappy customer before Google does</div><div class="d">It asks privately first. Angry ones get routed to the owner instead of to a public 1-star review.</div></div></div>
+    <div class="does-r"><div class="e">↩️</div><div><div class="t">Brings customers back</div><div class="d">Haircut after 3 weeks, facial after 6. A gentle nudge at the right gap — the thing every salon means to do and never does.</div></div></div>
+  </div>
+</div>
+
+<!-- ══════ 2 · FLOW ══════ -->
+<div class="sec" id="flow">
+  <div class="st"><span class="k">02</span><h2>How it works, step by step</h2><span class="n">know this well enough to draw it on paper</span></div>
+  <p class="lead">This is one customer, one appointment, start to finish. Owners love this because they can see exactly where their staff's work disappears.</p>
+
+  <div class="leg">
+    <span><i style="background:var(--blue)"></i>Owner or staff does this</span>
+    <span><i style="background:var(--green)"></i>Rebound does this by itself</span>
+    <span><i style="background:var(--pur)"></i>Customer does this</span>
+  </div>
+
+  <div class="flow">
+    <div class="flow-h">📖 Journey 1 — a normal booking<span class="tag">the main one</span></div>
+
+    <div class="fs owner"><div class="rail"><div class="dot">1</div><div class="line"></div></div><div class="body">
+      <div class="when">Whenever the booking is made</div>
+      <div class="h">Staff texts the booking to Rebound<span class="who w-owner">Owner / Staff</span></div>
+      <div class="d">Plain language, any language. Voice note works too. This is the only typing anyone does.</div>
+      <div class="bubble b-cust"><div class="who2">Reception → Rebound</div>Priya 98200 12345 haircut kal 4 baje</div>
+    </div></div>
+
+    <div class="fs auto"><div class="rail"><div class="dot">2</div><div class="line"></div></div><div class="body">
+      <div class="when">5 seconds later</div>
+      <div class="h">Rebound confirms it understood<span class="who w-auto">Automatic</span></div>
+      <div class="d">If anything is unclear — two Priyas, no time given — it asks instead of guessing.</div>
+      <div class="bubble"><div class="who2">Rebound → Reception</div>✅ Priya Sharma · Haircut · Tomorrow 4:00 PM. Saved.</div>
+    </div></div>
+
+    <div class="fs auto"><div class="rail"><div class="dot">3</div><div class="line"></div></div><div class="body">
+      <div class="when">24 hours before</div>
+      <div class="h">First reminder goes to the customer<span class="who w-auto">Automatic</span></div>
+      <div class="d">In the salon's own name, so she recognises it and opens it.</div>
+      <div class="bubble"><div class="who2">Bloom Salon → Priya</div>Hi Priya! Reminder — your haircut at Bloom Salon is tomorrow at 4:00 PM. Reply YES to confirm or NO if you can't make it.</div>
+    </div></div>
+
+    <div class="fs cust"><div class="rail"><div class="dot">4</div><div class="line"></div></div><div class="body">
+      <div class="when">Usually within the hour</div>
+      <div class="h">Customer confirms — or cancels early<span class="who w-cust">Customer</span></div>
+      <div class="d"><b>This is the money moment.</b> A cancellation the day before is not a loss — it's a free slot you can still sell. A cancellation that never comes is an empty chair.</div>
+    </div></div>
+
+    <div class="fs alert"><div class="rail"><div class="dot">!</div><div class="line"></div></div><div class="body">
+      <div class="when">If she says NO — or says nothing at all</div>
+      <div class="h">The owner gets told, in time to do something<span class="who w-alert">Alert</span></div>
+      <div class="d">Silence is the real warning sign, and it's the one no human ever notices. Rebound flags it while the slot can still be refilled.</div>
+      <div class="bubble"><div class="who2">Rebound → Owner</div>⚠️ Priya hasn't confirmed tomorrow 4 PM. Want to offer the slot to someone on your waiting list?</div>
+    </div></div>
+
+    <div class="fs auto"><div class="rail"><div class="dot">5</div><div class="line"></div></div><div class="body">
+      <div class="when">2 hours before</div>
+      <div class="h">Short second reminder<span class="who w-auto">Automatic</span></div>
+      <div class="d">This one catches the people who confirmed yesterday and then got busy. It is the single highest-value message in the whole system.</div>
+      <div class="bubble"><div class="who2">Bloom Salon → Priya</div>See you at 4:00 PM today, Priya 💇‍♀️ Bloom Salon, Shop 4, Linking Road.</div>
+    </div></div>
+
+    <div class="fs owner"><div class="rail"><div class="dot">6</div><div class="line"></div></div><div class="body">
+      <div class="when">After the appointment</div>
+      <div class="h">Rebound asks: did she come?<span class="who w-owner">One tap</span></div>
+      <div class="d"><b>This is the only work the salon does all day.</b> One tap. Say this out loud in the meeting — it kills the "I don't have time" objection before it's spoken.</div>
+      <div class="bubble"><div class="who2">Rebound → Owner</div>Priya, 4 PM haircut — did she come?&nbsp; ✅ Yes &nbsp; ❌ No-show</div>
+    </div></div>
+
+    <div class="fs auto"><div class="rail"><div class="dot">7</div><div class="line"></div></div><div class="body">
+      <div class="when">A few hours after the visit</div>
+      <div class="h">Quiet check: was everything OK?<span class="who w-auto">Automatic</span></div>
+      <div class="d">Private. Just the customer and the salon. Nothing public happens yet — and this one step is what protects the salon's rating.</div>
+      <div class="bubble"><div class="who2">Bloom Salon → Priya</div>Hope you loved your haircut, Priya! How was it today? 😊 Great &nbsp; 😐 Okay &nbsp; 😞 Not good</div>
+    </div></div>
+
+    <div class="fs auto"><div class="rail"><div class="dot">8</div><div class="line"></div></div><div class="body">
+      <div class="when">Only if she was happy</div>
+      <div class="h">Then — and only then — the review ask<span class="who w-auto">Automatic</span></div>
+      <div class="d">One tap, straight to the salon's Google page. Because we already know she's happy, most people actually do it. <b>Never ask an unhappy customer for a public review.</b></div>
+      <div class="bubble"><div class="who2">Bloom Salon → Priya</div>So glad! 🙏 Would you mind leaving us a quick Google review? It genuinely helps a small business like ours. [Leave a review]</div>
+    </div></div>
+
+    <div class="fs auto"><div class="rail"><div class="dot">9</div><div class="line"></div></div><div class="body">
+      <div class="when">3 weeks later (or 6 for a facial)</div>
+      <div class="h">The "come back" nudge<span class="who w-auto">Automatic</span></div>
+      <div class="d">Every salon owner means to do this. Nobody has the time. This one line is where a one-time customer quietly turns into a regular.</div>
+      <div class="bubble"><div class="who2">Bloom Salon → Priya</div>Hi Priya! It's been about 3 weeks 💇‍♀️ Want your usual slot this Saturday?</div>
+    </div></div>
+
+    <div class="fs auto"><div class="rail"><div class="dot">10</div></div><div class="body">
+      <div class="when">1st of every month</div>
+      <div class="h">One message. The whole month.<span class="who w-auto">Automatic</span></div>
+      <div class="d">Not a report they have to open. One WhatsApp message with the number that matters.</div>
+      <div class="bubble"><div class="who2">Rebound → Owner</div>📊 October — 312 appointments · 41 no-shows prevented · 28 new Google reviews · rating 4.1 → 4.4 ⭐<br><b>Money saved: ₹28,700</b></div>
+    </div></div>
+  </div>
+
+  <div class="tip"><b>How to use this page in a meeting:</b> don't read it out. Draw four boxes on a piece of paper — <em>booking → reminder → did they come? → review</em> — and talk through it in thirty seconds. Then say the line that lands every time: <em>"Everything in the middle happens on its own. Your only job is one tap."</em></div>
+</div>
+
+<!-- ══════ 3 · BAD REVIEW ══════ -->
+<div class="sec" id="bad">
+  <div class="st"><span class="k">03</span><h2>What happens when someone is unhappy</h2><span class="n">this is your most powerful story — use it</span></div>
+  <p class="lead">Every salon owner has been burned by a bad review. Ask them about it and watch their face change. This is the part of the pitch that stops being about money and starts being personal.</p>
+
+  <div class="flow">
+    <div class="flow-h">😞 Journey 2 — the unhappy customer<span class="tag">the rescue</span></div>
+
+    <div class="fs cust"><div class="rail"><div class="dot">1</div><div class="line"></div></div><div class="body">
+      <div class="h">She taps "Not good"<span class="who w-cust">Customer</span></div>
+      <div class="d">In a private WhatsApp chat. Not on Google. Nobody else can see it. That distinction is the entire product here.</div>
+    </div></div>
+
+    <div class="fs auto"><div class="rail"><div class="dot">2</div><div class="line"></div></div><div class="body">
+      <div class="when">Instantly</div>
+      <div class="h">The review request is cancelled<span class="who w-auto">Automatic</span></div>
+      <div class="d">She will never be asked to post publicly. Most cheap tools blast the review link at everyone — which is exactly how salons end up with 1-star reviews they created themselves.</div>
+    </div></div>
+
+    <div class="fs alert"><div class="rail"><div class="dot">3</div><div class="line"></div></div><div class="body">
+      <div class="when">Within a minute</div>
+      <div class="h">The owner's phone buzzes<span class="who w-alert">Alert</span></div>
+      <div class="d">While she is probably still in the car. This is the window where a problem is still fixable.</div>
+      <div class="bubble"><div class="who2">Rebound → Owner</div>🔴 Priya wasn't happy with her 4 PM haircut. Call her now — she hasn't posted anything. Her number: 98200 12345</div>
+    </div></div>
+
+    <div class="fs owner"><div class="rail"><div class="dot">4</div><div class="line"></div></div><div class="body">
+      <div class="h">The owner calls her<span class="who w-owner">Owner</span></div>
+      <div class="d">"I'm so sorry — come back tomorrow, we'll fix it, no charge." Costs one appointment slot. Saves a public 1-star that would sit on their page for years.</div>
+    </div></div>
+
+    <div class="fs auto"><div class="rail"><div class="dot">5</div></div><div class="body">
+      <div class="h">And if a bad review still gets posted<span class="who w-auto">Automatic</span></div>
+      <div class="d">Rebound spots it, alerts the owner, and <b>writes the reply for them</b> — calm, professional, no arguing. The owner reads it, taps send. Because a bad review with a good reply underneath reads very differently to the next person scrolling past.</div>
+    </div></div>
+  </div>
+
+  <div class="say" style="margin-top:16px;font-size:16px;">
+    <div class="sl">Say this in the meeting</div>
+    "Can I ask — have you ever had a bad review that you found out about a week later?"
+    <div class="pause" style="padding-left:0;">↳ Stop. Let them tell the story. They always have one.</div>
+    "That's the one thing we can't undo — but we can make sure it almost never happens. We ask every customer privately first. If they're unhappy, we don't ask them for a review, we ring your phone instead — usually while they're still in the parking lot. You get to fix it before the whole internet reads about it."
+  </div>
+</div>
+
+<!-- ══════ 4 · VS ══════ -->
+<div class="sec" id="vs">
+  <div class="st"><span class="k">04</span><h2>How it's done now vs how Rebound does it</h2><span class="n">the owner should recognise their own salon in the left column</span></div>
+  <p class="lead">Don't say "you're doing it wrong". Say "you're doing it by hand, and the person doing it has ten other jobs." Blame the workload, never the owner.</p>
+
+  <div class="vs">
+    <div class="vs-head"><div>😓 How almost every salon does it today</div><div>✨ With Rebound</div></div>
+
+    <div class="vs-row">
+      <div class="now"><div class="vs-t">Reminders</div>Reception calls or texts — when she remembers, and when she isn't cutting hair, handling the counter or on lunch. Saturdays never happen.</div>
+      <div class="reb"><div class="vs-t">Reminders</div><b>Every single appointment, every single time.</b> Doesn't matter if it's a Saturday rush or Diwali week.</div>
+    </div>
+
+    <div class="vs-row">
+      <div class="now"><div class="vs-t">No-shows</div>You find out when the chair is empty and the slot is already gone. Nothing to do but absorb it.</div>
+      <div class="reb"><div class="vs-t">No-shows</div><b>You know the day before</b> — while there's still time to call someone off the waiting list.</div>
+    </div>
+
+    <div class="vs-row">
+      <div class="now"><div class="vs-t">Google reviews</div>"Please review us" — said out loud, at the counter, while she's paying and putting her phone away. Almost nobody does it.</div>
+      <div class="reb"><div class="vs-t">Google reviews</div><b>Asked a few hours later, by message, when she's free</b> — and only if she said she was happy. One tap.</div>
+    </div>
+
+    <div class="vs-row">
+      <div class="now"><div class="vs-t">Unhappy customers</div>You find out from Google, publicly, a week later, with a star rating attached.</div>
+      <div class="reb"><div class="vs-t">Unhappy customers</div><b>You find out in one minute, privately</b>, while you can still fix it.</div>
+    </div>
+
+    <div class="vs-row">
+      <div class="now"><div class="vs-t">Getting them back</div>You mean to call the regulars who've gone quiet. You never get to it. Six months later they're at the salon down the road.</div>
+      <div class="reb"><div class="vs-t">Getting them back</div><b>A nudge at the right gap</b> — 3 weeks for a cut, 6 for a facial. Automatic.</div>
+    </div>
+
+    <div class="vs-row">
+      <div class="now"><div class="vs-t">Knowing how you did</div>A feeling. "Last month felt slow."</div>
+      <div class="reb"><div class="vs-t">Knowing how you did</div><b>One message on the 1st</b> with the real numbers and the rupees saved.</div>
+    </div>
+
+    <div class="vs-row">
+      <div class="now"><div class="vs-t">Who does the work</div>A person who is already doing four jobs — and who eventually stops doing this one.</div>
+      <div class="reb"><div class="vs-t">Who does the work</div><b>Nobody.</b> One tap after each appointment. That's the entire workload.</div>
+    </div>
+  </div>
+
+  <div class="say" style="margin-top:16px;">
+    <div class="sl">The line that lands</div>
+    "Everything on the left, someone in your salon is supposed to do. And they do it — for the first two weeks. Then it's a busy Saturday and it stops. It's not their fault, they've got a queue at the counter. That's the difference: this doesn't get busy, and it doesn't have a day off."
+  </div>
+</div>
+
+<!-- ══════ 5 · MONEY ══════ -->
+<div class="sec" id="money">
+  <div class="st"><span class="k">05</span><h2>The money argument</h2><span class="n">never say the price without doing this first</span></div>
+  <p class="lead">This section wins the deal. If you only memorise one part of this playbook, memorise this one.</p>
+
+  <div class="pct">
+    <div class="big">4%<small>of their monthly takings</small></div>
+    <div class="txt">A salon doing <b>300 customers a month</b> at an average bill of <b>₹700</b> is turning over about <b>₹2,10,000</b>. Rebound is ₹7,999 — that's <b>under 4% of what comes through the door.</b> They spend more than that on electricity. Say this number out loud; it reframes the price instantly.</div>
+  </div>
+
+  <div class="bar">
+    <div class="bar-t">₹7,999 against ₹2,10,000 a month — this is the whole conversation in one picture</div>
+    <div class="bar-track">
+      <div class="bar-fill" style="width:4%;min-width:12px;"></div>
+      <div class="bar-rest">₹2,02,001 stays with them &nbsp;·&nbsp; ₹7,999 is Rebound</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:16px;font-weight:800;margin:28px 0 11px;">Now do the maths on their table — with their numbers</h3>
+  <p class="lead" style="margin-top:0;">Ask two questions. Write the answers on paper, in front of them, with their pen if you can. Don't use your numbers — the moment they see their own handwriting in the sum, it stops being a sales pitch and becomes their problem.</p>
+
+  <div class="math">
+    <div class="mh">Ask these two questions, then fill in the blanks</div>
+    <div class="mrow"><span class="l">"In a normal week, how many people book and just don't turn up?"</span><span class="v">8</span></div>
+    <div class="mrow"><span class="l">"And what's an average bill here?"</span><span class="v">₹700</span></div>
+    <div class="mrow"><span class="l">So that's walking out of your door every week</span><span class="v">₹5,600</span></div>
+    <div class="mrow"><span class="l">Every month</span><span class="v">₹22,400</span></div>
+    <div class="mrow"><span class="l">Reminders typically cut that by about half</span><span class="v">₹11,200 back</span></div>
+    <div class="mrow tot"><span class="l">Costs ₹7,999 · brings back ~₹11,200</span><span class="v">+₹3,201</span></div>
+    <div class="mnote"><b>And that's before a single review.</b> Say exactly that, then stop talking. The reviews, the comeback reminders and the rescued bad reviews are all on top — they're free as far as this sum is concerned. Let the silence do the work.</div>
+  </div>
+
+  <div class="warn"><b>If their numbers are small,</b> say 2 no-shows a week at ₹300 — the maths doesn't hold and you should walk away politely. A client who can't see the sum will cancel in month three, you'll lose the bonus, and you'll have spent two months on them. <b>Walking away fast is the highest-paid skill you have.</b></div>
+
+  <h3 style="font-size:16px;font-weight:800;margin:28px 0 11px;">The bit nobody thinks about: it compounds</h3>
+  <p class="lead" style="margin-top:0;">Most owners think one no-show costs them one haircut. It doesn't. Show them this and you change how they see the whole thing.</p>
+
+  <div class="g2">
+    <div class="card" style="border-color:var(--green-b);background:var(--green-w);">
+      <div style="font-size:13px;font-weight:800;color:var(--green-d);letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px;">One no-show you prevented</div>
+      <div style="font-size:14.5px;color:var(--mid);line-height:1.65;">
+        That's ₹700 today — that's what everyone counts.<br><br>
+        But she comes about <b style="color:var(--ink)">once a month</b>. Over a year that's <b style="color:var(--ink)">₹8,400</b>.<br><br>
+        And a customer who keeps her appointments stays a customer. One who forgets twice quietly drifts to the salon down the road and never says why.
+      </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--green-b);font-size:19px;font-weight:850;color:var(--green-d);">₹700 today → ₹8,400 a year</div>
+    </div>
+
+    <div class="card" style="border-color:var(--blue-b);background:var(--blue-w);">
+      <div style="font-size:13px;font-weight:800;color:var(--blue);letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px;">One extra 5-star review</div>
+      <div style="font-size:14.5px;color:var(--mid);line-height:1.65;">
+        Reviews are how Google decides who to show first when someone searches <em>"salon near me"</em>.<br><br>
+        Going from <b style="color:var(--ink)">4.1★ to 4.5★</b> moves a salon up that list — and moving up means people who have never heard of them start walking in.<br><br>
+        Those walk-ins cost nothing and never stop.
+      </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--blue-b);font-size:19px;font-weight:850;color:var(--blue);">Better rating → free new customers</div>
+    </div>
+  </div>
+
+  <div class="say" style="margin-top:16px;font-size:16px;">
+    <div class="sl">Say this — slowly</div>
+    "Here's the thing most people miss. Stopping one no-show isn't worth ₹700 — it's worth ₹8,400, because that's what she spends here in a year. And every good review you collect isn't just a nice comment. It moves you up Google. Which brings you customers who've never heard of you and cost you nothing. That's why this gets <em>better</em> every month you run it, not worse."
+  </div>
+
+  <div class="tip"><b>And the real one, say it last:</b> <em>"All of this is boring, repetitive work that somebody in your salon is supposed to remember. Hand it over. You go back to doing the two things that actually grow this place — getting new customers in, and giving the ones in your chair a better time."</em></div>
+</div>
+
+<!-- ══════ 6 · PRICE ══════ -->
+<div class="sec" id="price">
+  <div class="st"><span class="k">06</span><h2>The price</h2><span class="n">say it plainly, then stop talking</span></div>
+  <p class="lead">Everyone pays the same. Never apologise for the number and never soften it with "only" or "just". Say it like it's a fact, because it is.</p>
+
+  <div class="pr">
+    <div class="pc hot">
+      <div class="tier">Growth<span class="pop">Pitch this</span></div>
+      <div class="amt">₹7,999<span>/month</span></div>
+      <div class="setup">+ ₹9,999 one-time setup</div>
+      <div class="cap">Up to 400 appointments a month · single salon or spa</div>
+      <ul>
+        <li>Booking by text or voice note</li>
+        <li>Reminders before every appointment</li>
+        <li>Google review requests</li>
+        <li>Unhappy customers caught before Google</li>
+        <li>Bad review? We write the reply</li>
+        <li>"Come back" reminders</li>
+        <li>Competitor rating watch</li>
+        <li>Monthly money-saved message</li>
+      </ul>
+    </div>
+    <div class="pc">
+      <div class="tier">Multi-branch</div>
+      <div class="amt">₹14,999<span>/month</span></div>
+      <div class="setup">+ ₹14,999 one-time setup</div>
+      <div class="cap">Unlimited appointments · up to 3 branches</div>
+      <ul>
+        <li>Everything in Growth</li>
+        <li>All branches, one summary</li>
+        <li>Per-branch breakdown</li>
+        <li>Quarterly review call</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="annual">
+    <b>The annual option — your only discount.</b> Pay for the year upfront and get <b>2 months free</b>. On Growth that's <b>₹16,000 saved</b>. Offer this instead of ever dropping the monthly price. It's also better for you: the client is locked in happily, they can't churn in month three, and your bonus is safe.
+  </div>
+
+  <h3 style="font-size:16px;font-weight:800;margin:30px 0 11px;" id="fee">Why there's a one-time fee — know this cold</h3>
+  <p class="lead" style="margin-top:0;">This is the objection you'll hear most. Don't get defensive. The setup fee is genuinely your friend, and here's why.</p>
+
+  <div class="why">
+    <div class="wl">"You're not buying a login. Before one message goes out, we do about a week of work that only happens once."</div>
+    <ul>
+      <li><b>We build the salon its own WhatsApp business number</b>, verified with Meta, <b>in the salon's name</b>. So when "Bloom Salon" texts Priya, she opens it. When an unknown number texts her, she doesn't. This is the part that actually makes the whole thing work — and it takes days, not minutes.</li>
+      <li><b>Every message format gets approved by Meta.</b> They review each one, some get rejected, we resubmit. The owner never sees any of this.</li>
+      <li><b>We connect their Google reviews the official way</b> — properly, so nothing breaks later.</li>
+      <li><b>We load their menu, prices, timings</b> and how often each service should repeat.</li>
+      <li><b>We move this week's diary in, live, on the call</b> — so reminders start going out the same day.</li>
+      <li><b>We add the staff's numbers</b> so anyone at the counter can text a booking, not just the owner.</li>
+    </ul>
+    <div class="kick">
+      Then land the part that matters to them: <b>"Because the build is paid for once, there's no contract."</b> No 12 months, no notice period. Leave any month and we hand over the full customer list. <b>Everyone else locks you into a year precisely because they didn't charge you upfront.</b> Ask them.
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 7 · FIRST CONTACT ══════ -->
+<div class="sec" id="first">
+  <div class="st"><span class="k">07</span><h2>First contact — phone, WhatsApp, email</h2><span class="n">switch language at the top of the page</span></div>
+  <p class="lead">The only job of first contact is to get a meeting. Not to sell, not to explain the price, not to send a brochure. Get ten minutes in the room and hang up.</p>
+
+  <!-- EN -->
+  <div class="lb on" data-l="en">
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Call</span>The phone call — under 60 seconds</div>
+      <div class="scr-b">
+        <div class="say"><div class="sl">Opening</div>"Hi, is that the owner of Bloom Salon? … My name's Rahul, I'm local, I work with salons around here. Have you got thirty seconds? I promise I'm not going to waste your time."</div>
+        <div class="stage">↳ Almost everyone says yes to thirty seconds. Nobody says yes to "a few minutes of your time".</div>
+        <div class="say"><div class="sl">The hook — ask, don't tell</div>"Quick question — in a normal week, how many people book with you and then just don't show up?"</div>
+        <div class="pause">↳ STOP TALKING. Let them answer. Their own number is what sells this, not yours.</div>
+        <div class="say"><div class="sl">The reason for meeting</div>"Right, that's about what I hear. So — we run a thing that reminds your customers on WhatsApp so they turn up, and asks the happy ones to leave you a Google review. No app, nothing for you to learn. I'd rather show you in person than explain it on the phone — it takes ten minutes. Are you in the salon Tuesday morning or is afternoon better?"</div>
+        <div class="tip"><b>Never ask "can I come by sometime?"</b> Always give two times. It changes the question from <em>whether</em> to meet into <em>when</em> — and that's a much easier yes.</div>
+        <div class="warn"><b>Do not say the price on this call.</b> If they push — "just tell me how much" — say: <em>"It depends on your size, and honestly I'd be guessing. Give me ten minutes on Tuesday and I'll show you the exact number for your salon."</em></div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">WhatsApp</span>The message — short, human, no brochure</div>
+      <div class="scr-b">
+        <div class="say">"Hi, is this Bloom Salon? 👋<br><br>I'm Rahul — I work with salons in Bandra on cutting down no-shows and getting more Google reviews.<br><br>Quick question: roughly how many no-shows do you get in a week?<br><br>If it's more than 4-5, there's a simple WhatsApp thing that fixes most of it. Happy to show you in 10 mins — no app, nothing to install. Are you around this week?"</div>
+        <div class="tip"><b>One question mark, one ask.</b> Long messages with three paragraphs and a PDF attached get ignored. Ask a question they can answer in one word.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Email</span>Only if they asked for it — email is the weakest channel</div>
+      <div class="scr-b">
+        <div class="say"><div class="sl">Subject line</div>Quick question about no-shows at Bloom Salon</div>
+        <div class="say">"Hi,<br><br>I work with salons and spas nearby on two things: getting fewer no-shows, and getting more Google reviews.<br><br>It works entirely on WhatsApp — there's no app for you or your staff to learn.<br><br>Most salons I speak to are losing ₹15,000–25,000 a month to people who book and don't turn up. I can show you your own number in about ten minutes.<br><br>Are you in the salon Tuesday or Wednesday morning?<br><br>Rahul"</div>
+        <div class="tip"><b>Always follow an email with a WhatsApp.</b> Salon owners don't live in their inbox — they live in WhatsApp. The email is just so you have something to reference.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HI -->
+  <div class="lb" data-l="hi">
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Call</span>Phone par — 60 second se kam</div>
+      <div class="scr-b">
+        <div class="say"><div class="sl">Shuruaat</div>"Hello sir/ma'am, Bloom Salon ke owner bol rahe hain? … Main Rahul, yahin paas mein hi rehta hoon, salons ke saath kaam karta hoon. Tees second hain aapke paas? Main aapka time waste nahi karunga, promise."</div>
+        <div class="stage">↳ "Tees second" par sab haan bolte hain. "Thoda time" par koi nahi.</div>
+        <div class="say"><div class="sl">Asli sawaal — poochho, bataao mat</div>"Ek baat batayiye — hafte mein kitne customer booking karke aate hi nahi hain?"</div>
+        <div class="pause">↳ CHUP HO JAAIYE. Unko bolne dijiye. Unka apna number hi bikri karta hai, aapka nahi.</div>
+        <div class="say"><div class="sl">Milne ki wajah</div>"Bilkul, yahi sunne ko milta hai. Toh hum ek cheez chalate hain — WhatsApp par aapke customer ko yaad dilata hai taaki wo aayein, aur jo khush hokar jaate hain unse Google review maang leta hai. Na koi app, na kuch seekhna. Phone par samjhane se accha main aake dikha doon — das minute lagenge. Mangalwar subah salon mein honge, ya shaam better hai?"</div>
+        <div class="tip"><b>"Kabhi aa jaaun?" kabhi mat poochhiye.</b> Hamesha do time dijiye. Sawaal <em>milna hai ya nahi</em> se badal kar <em>kab milna hai</em> ho jaata hai.</div>
+        <div class="warn"><b>Phone par price bilkul mat boliye.</b> Agar zid karein — <em>"Sir, ye aapke salon ke size par depend karta hai, abhi bataunga toh galat bataunga. Das minute dijiye, main aapke salon ka exact number nikaal ke dikha dunga."</em></div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">WhatsApp</span>Message — chhota rakhiye</div>
+      <div class="scr-b">
+        <div class="say">"Namaste 🙏 Bloom Salon?<br><br>Main Rahul — yahan Bandra mein salons ke saath kaam karta hoon, no-show kam karne aur Google review badhane par.<br><br>Ek sawaal: hafte mein kitne log book karke nahi aate?<br><br>Agar 4-5 se zyada hain, toh WhatsApp par hi ek simple solution hai. 10 minute mein dikha sakta hoon — koi app install nahi karni. Is hafte time milega?"</div>
+        <div class="tip"><b>Ek sawaal, ek request.</b> Lamba message aur PDF bhejenge toh koi nahi padhega.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Email</span>Sirf tab jab wo maangein</div>
+      <div class="scr-b">
+        <div class="say"><div class="sl">Subject</div>Bloom Salon ke no-shows ke baare mein ek sawaal</div>
+        <div class="say">"Namaste,<br><br>Main aas-paas ke salon aur spa ke saath do cheezon par kaam karta hoon — no-show kam karna, aur Google reviews badhana.<br><br>Poora system WhatsApp par chalta hai. Aapko ya aapke staff ko koi app nahi seekhni.<br><br>Zyadatar salon har mahine ₹15,000–25,000 sirf un logon ki wajah se khote hain jo book karke nahi aate. Main aapka apna number 10 minute mein nikaal ke dikha sakta hoon.<br><br>Mangalwar ya budhwar subah salon mein honge?<br><br>Rahul"</div>
+        <div class="tip"><b>Email ke baad WhatsApp zaroor karein.</b> Salon owner inbox mein nahi rehte — WhatsApp mein rehte hain.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MR -->
+  <div class="lb" data-l="mr">
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Call</span>Phone var — 60 second peksha kami</div>
+      <div class="scr-b">
+        <div class="say"><div class="sl">Suruvat</div>"Namaskar, Bloom Salon che maalak bolat aahat ka? … Mi Rahul, ithech jawal rahto, salon sobat kaam karto. Tumchya kade tees second aahet ka? Mi tumcha vel vaya ghalavnar nahi, promise."</div>
+        <div class="stage">↳ "Tees second" la sagle haan mhantat. "Thoda vel" la konich nahi.</div>
+        <div class="say"><div class="sl">Kharach prashna — vichara, sangu naka</div>"Ek sanga — athvdyala kiti customer booking karun yetach nahit?"</div>
+        <div class="pause">↳ GAPP BASA. Tyanna bolu dya. Tyancha swatacha aakda vikto, tumcha nahi.</div>
+        <div class="say"><div class="sl">Bhetnyache karan</div>"Barobar, hech aikayla miltay. Tar aamhi ek gosht chalvto — WhatsApp var tumchya customer la aathvan karun deto, mhanun te yetat. Aani je khush hoon jatat tyanchyakadun Google review magto. App nahi, kahi shikaycha nahi. Phone var sangnyapeksha mi yeun dakhavto — daha minit lagtil. Mangalwari sakali salon madhe asnar ka, ki sandhyakali bara?"</div>
+        <div class="tip"><b>"Kadhitari yeu ka?" asa vicharu naka.</b> Nehmi don vel dya. Prashna <em>bhetaycha ka</em> pasun <em>kadhi bhetaycha</em> asa badalto.</div>
+        <div class="warn"><b>Phone var kimmat sangu naka.</b> Jar agrah kela tar — <em>"Sir, he tumchya salon chya size var avlambun aahe. Ata sangitlyas chukicha sangen. Daha minit dya, mi tumchya salon cha exact aakda kadhun dakhavto."</em></div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">WhatsApp</span>Message — thodkyat</div>
+      <div class="scr-b">
+        <div class="say">"Namaskar 🙏 Bloom Salon?<br><br>Mi Rahul — ithe salon sobat kaam karto, no-show kami karnyasathi ani Google review vadhavnyasathi.<br><br>Ek prashna: athvdyala kiti log book karun yet nahit?<br><br>Jar 4-5 peksha jasta astil, tar WhatsApp varach ek sopa upay aahe. 10 minitat dakhavto — kuthlihi app install karaychi nahi. Ya athvdyat vel milel ka?"</div>
+        <div class="tip"><b>Ek prashna, ek vinanti.</b> Motha message ani PDF pathavlya var konihi vachnar nahi.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Email</span>Fakt tyanni magitlyavar</div>
+      <div class="scr-b">
+        <div class="say"><div class="sl">Subject</div>Bloom Salon chya no-shows baddal ek prashna</div>
+        <div class="say">"Namaskar,<br><br>Mi javalchya salon ani spa sobat don goshtinvar kaam karto — no-show kami karne, ani Google review vadhavne.<br><br>Sagla system WhatsApp varach chalto. Tumhala kinva tumchya staff la kuthlihi app shikaychi garaj nahi.<br><br>Bahutek salon dar mahinyala ₹15,000–25,000 fakt na yenarya lokanmule gamavtat. Mi tumcha swatacha aakda 10 minitat kadhun dakhavu shakto.<br><br>Mangalwari kinva budhwari sakali salon madhe asnar ka?<br><br>Rahul"</div>
+        <div class="tip"><b>Email nantar WhatsApp nakki kara.</b> Salon maalak inbox madhe nastat — WhatsApp madhe astat.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GU -->
+  <div class="lb" data-l="gu">
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Call</span>Phone par — 60 second thi ochhu</div>
+      <div class="scr-b">
+        <div class="say"><div class="sl">Sharuaat</div>"Namaste, Bloom Salon na malik bolo chho? … Hu Rahul, ahiya j najik rahu chhu, salon sathe kaam karu chhu. Tamari pase tris second chhe? Hu tamaro time waste nahi karu, promise."</div>
+        <div class="stage">↳ "Tris second" mate badha haa kahe chhe. "Thodo time" mate koi nahi.</div>
+        <div class="say"><div class="sl">Kharo sawaal — puchho, kaho nahi</div>"Ek vaat kaho — aathwadiya ma ketla customer booking karine aavta j nathi?"</div>
+        <div class="pause">↳ CHUP THAI JAO. Emne bolva do. Emno potano aakdo vechan kare chhe, tamaro nahi.</div>
+        <div class="say"><div class="sl">Malva nu karan</div>"Barabar, aa j sambhalva male chhe. To ame ek vastu chalaviye chhiye — WhatsApp par tamara customer ne yaad karaviye chhiye jethi e aave, ane je khush thai ne jaay eni pase thi Google review mangiye chhiye. Na koi app, na kai shikhvanu. Phone par samjavva karta hu aavi ne batavu — das minute lagshe. Mangalvare savare salon ma hasho, ke sanje saru rahe?"</div>
+        <div class="tip"><b>"Kyarek aavu?" kyarey na puchho.</b> Hammesha be time aapo. Sawaal <em>malvu ke nahi</em> thi badlaine <em>kyare malvu</em> thai jaay chhe.</div>
+        <div class="warn"><b>Phone par bhaav bilkul na kaho.</b> Jo aagrah kare to — <em>"Sir, aa tamara salon na size par aadharit chhe. Atyare kahish to khotu kahish. Das minute aapo, hu tamara salon no exact aakdo kadhi ne batavish."</em></div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">WhatsApp</span>Message — tunku rakho</div>
+      <div class="scr-b">
+        <div class="say">"Namaste 🙏 Bloom Salon?<br><br>Hu Rahul — ahiya salon sathe kaam karu chhu, no-show ochha karva ane Google review vadharva mate.<br><br>Ek sawaal: aathwadiya ma ketla log book karine nathi aavta?<br><br>Jo 4-5 thi vadhare hoy, to WhatsApp par j ek saralo upaay chhe. 10 minute ma batavi shaku — koi app install nathi karvani. Aa aathwadiye time madshe?"</div>
+        <div class="tip"><b>Ek sawaal, ek vinanti.</b> Lambo message ane PDF mokalsho to koi nahi vanche.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Email</span>Fakt tyare jyare e mange</div>
+      <div class="scr-b">
+        <div class="say"><div class="sl">Subject</div>Bloom Salon na no-shows vishe ek sawaal</div>
+        <div class="say">"Namaste,<br><br>Hu aaju-baaju na salon ane spa sathe be vastu par kaam karu chhu — no-show ochha karva, ane Google review vadharva.<br><br>Aakhu system WhatsApp par j chale chhe. Tamare ke tamara staff ne koi app shikhvani jarurat nathi.<br><br>Ghana salon dar mahine ₹15,000–25,000 fakt e loko na kaarane gumave chhe je book karine nathi aavta. Hu tamaro potano aakdo 10 minute ma kadhi ne batavi shaku.<br><br>Mangalvare ke budhvare savare salon ma hasho?<br><br>Rahul"</div>
+        <div class="tip"><b>Email pachhi WhatsApp jarur karo.</b> Salon malik inbox ma nathi rehta — WhatsApp ma rahe chhe.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 8 · THE MEETING ══════ -->
+<div class="sec" id="meet">
+  <div class="st"><span class="k">08</span><h2>The meeting — the full script</h2><span class="n">ten minutes, in this order, don't skip step 2</span></div>
+  <p class="lead">Walk in with a phone, a pen and one sheet of paper. Nothing else. No laptop, no printed brochure, no folder — the moment you open a folder it becomes a sales meeting and their guard goes up.</p>
+
+  <!-- EN -->
+  <div class="lb on" data-l="en">
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 1</span>Walk in — don't pitch yet (30 seconds)</div>
+      <div class="scr-b">
+        <div class="say">"Hi, Rahul — we spoke on the phone. Nice place, how long have you been here?"</div>
+        <div class="stage">↳ Look around. Notice something real — the chairs, how busy it is, a photo on the wall. Salon owners are proud of their place and almost nobody who walks in to sell them something acts like a human first.</div>
+        <div class="tip"><b>Read the room before you speak.</b> If there's a customer in the chair, say: <em>"You're busy — I'll wait, or shall I come back at 3?"</em> Offering to leave is the fastest way to be asked to stay.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 2</span>Ask, then shut up (2 minutes) — the most important step</div>
+      <div class="scr-b">
+        <div class="say"><div class="sl">Ask in this order</div>"Roughly how many customers do you do in a month?"<br><br>"And in a normal week, how many book and just don't turn up?"<br><br>"What's an average bill here?"<br><br>"Who reminds them — do you, or does someone at the counter?"<br><br>"And have you ever had a bad review you only found out about days later?"</div>
+        <div class="pause">↳ Write every answer down. Say nothing except "hmm" and "right". This is 80% of the sale and you have not pitched anything yet.</div>
+        <div class="tip"><b>Why this works:</b> by the time you speak, they've told you their problem in their own words. Now you're not selling — you're answering the thing they just said. Completely different conversation.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 3</span>Show, don't tell (1 minute) — this closes more deals than anything else</div>
+      <div class="scr-b">
+        <div class="say">"Let me just show you what it is — it's easier than explaining."</div>
+        <div class="stage">↳ Take out your phone. Send a booking into the demo number right in front of them: <em>"Priya 98200 12345 haircut kal 4 baje"</em>. Hold the phone where they can see. Wait for the reply.</div>
+        <div class="say">"That's it. That's the whole thing. That's what your girl at the counter does — types it like a text. Everything after that happens on its own."</div>
+        <div class="tip"><b>Hand them your phone and let them type one.</b> The moment they do it themselves, "I'll have to learn software" dies permanently. Nothing else you say all meeting is as powerful as this.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 4</span>Do the maths on paper (2 minutes)</div>
+      <div class="scr-b">
+        <div class="say">"Can I use this?" <span style="color:var(--dim);font-style:italic;">(their pen, their paper if possible)</span><br><br>"You said 8 no-shows a week, ₹700 a bill. So that's ₹5,600 a week walking out. ₹22,400 a month. Reminders usually cut that about in half — so call it ₹11,000 a month coming back to you."<br><br>"It costs ₹7,999 a month."</div>
+        <div class="pause">↳ Slide the paper across. SAY NOTHING. Let them read it. The first person to speak loses.</div>
+        <div class="say"><div class="sl">Then, once they've reacted</div>"And that's before a single review. The reviews, the comeback reminders, catching the unhappy ones — all of that is on top."</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 5</span>The price and the setup fee (1 minute)</div>
+      <div class="scr-b">
+        <div class="say">"So it's ₹7,999 a month, and ₹9,999 once at the start to set it up."</div>
+        <div class="pause">↳ Stop. Do not explain the setup fee unless they ask. Half of them won't.</div>
+        <div class="say"><div class="sl">If they flinch at ₹9,999</div>"That's a week of work that only happens once — we build you your own WhatsApp business number in your salon's name, get every message approved by Meta, connect your Google, load your menu, and move your diary in. And it's exactly why there's no contract. We've been paid for the build, so you can walk away any month. The ones who don't charge upfront tie you in for a year instead."</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 6</span>Close on the calendar, not the contract (1 minute)</div>
+      <div class="scr-b">
+        <div class="say">"I've got Thursday morning free for setup. Shall I hold it for you?"</div>
+        <div class="stage">↳ It's far easier to say yes to a time slot than to a signature. You're not asking them to commit to a product — you're asking about their Thursday.</div>
+        <div class="say"><div class="sl">Then, immediately</div>"Setup's ₹9,999 — shall we do it on UPI now so I can lock Thursday in?"</div>
+        <div class="warn"><b>Collect the money in the room.</b> A payment promised for tomorrow is a payment that never happens. If they truly can't pay now, get a date and a time in your phone in front of them, and send a WhatsApp confirming it before you're out of the door.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HI -->
+  <div class="lb" data-l="hi">
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 1</span>Andar jaayein — abhi pitch mat karein (30 second)</div>
+      <div class="scr-b">
+        <div class="say">"Namaste sir, Rahul — phone par baat hui thi. Achhi jagah hai, kitne saal ho gaye yahan?"</div>
+        <div class="stage">↳ Aas-paas dekhiye. Kuch sach mein notice kijiye — chairs, bheed, deewar par photo. Salon owner ko apni jagah par garv hota hai, aur bechne aane wala koi bhi insaan ki tarah baat nahi karta.</div>
+        <div class="tip"><b>Pehle mahaul dekhiye, phir boliye.</b> Agar chair par customer hai — <em>"Aap busy hain, main wait kar leta hoon, ya 3 baje aa jaaun?"</em> Jaane ki peshkash karna hi rukne ka sabse tez tareeka hai.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 2</span>Poochhiye, phir chup ho jaaiye (2 minute) — sabse zaroori step</div>
+      <div class="scr-b">
+        <div class="say"><div class="sl">Isi order mein poochhiye</div>"Mahine mein kitne customer aate hain lagbhag?"<br><br>"Aur hafte mein kitne book karke nahi aate?"<br><br>"Average bill kitna banta hai?"<br><br>"Yaad kaun dilata hai — aap ya counter par koi?"<br><br>"Kabhi aisa hua ki bura review aaya aur aapko 4-5 din baad pata chala?"</div>
+        <div class="pause">↳ Har jawab likhiye. Sirf "hmm" aur "achha" boliye. Ye 80% bikri hai — aur aapne abhi tak kuch becha bhi nahi.</div>
+        <div class="tip"><b>Ye kyun kaam karta hai:</b> jab tak aap bolte hain, wo apni problem apne shabdon mein bata chuke hote hain. Ab aap bech nahi rahe — aap unki hi baat ka jawab de rahe hain.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 3</span>Dikhaaiye, bataaiye mat (1 minute) — sabse zyada deal yahi close karta hai</div>
+      <div class="scr-b">
+        <div class="say">"Main dikha deta hoon, samjhane se aasan hai."</div>
+        <div class="stage">↳ Phone nikaaliye. Unke saamne demo number par booking bhejiye: <em>"Priya 98200 12345 haircut kal 4 baje"</em>. Phone aise pakadiye ki unhe dikhe. Reply ka intezaar kijiye.</div>
+        <div class="say">"Bas itna hi. Yahi poora system hai. Aapke counter wali ladki bas itna type karegi — jaise message karti hai. Uske baad sab apne aap."</div>
+        <div class="tip"><b>Apna phone unke haath mein dijiye aur ek booking type karwaiye.</b> Jis second wo khud karte hain, "software seekhna padega" wala darr hamesha ke liye khatam ho jaata hai.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 4</span>Kagaz par hisaab kijiye (2 minute)</div>
+      <div class="scr-b">
+        <div class="say">"Ye pen le loon?" <span style="color:var(--dim);font-style:italic;">(unka pen, unka kagaz ho toh behtar)</span><br><br>"Aapne bola hafte mein 8 no-show, bill ₹700. Matlab ₹5,600 hafte ka bahar. Mahine ka ₹22,400. Reminder se aadha kam ho jaata hai — toh lagbhag ₹11,000 mahina wapas."<br><br>"Iska kharcha ₹7,999 mahina hai."</div>
+        <div class="pause">↳ Kagaz unki taraf sarkaiye. KUCH MAT BOLIYE. Padhne dijiye. Jo pehle bolta hai, wo haarta hai.</div>
+        <div class="say"><div class="sl">Jab wo react kar lein</div>"Aur ye toh sirf no-show ka hisaab hai. Review, wapas bulane wale message, gusse wale customer ko pehle pakadna — wo sab iske upar hai."</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 5</span>Price aur setup fee (1 minute)</div>
+      <div class="scr-b">
+        <div class="say">"Toh ₹7,999 mahina, aur shuru mein ek baar ₹9,999 setup ka."</div>
+        <div class="pause">↳ Ruk jaaiye. Jab tak wo na poochhein, setup fee explain mat kijiye. Aadhe log poochhte hi nahi.</div>
+        <div class="say"><div class="sl">Agar ₹9,999 par atkein</div>"Wo ek hafte ka kaam hai jo sirf ek baar hota hai — aapke salon ke naam ka apna WhatsApp business number banta hai, har message Meta se approve hota hai, Google connect hota hai, menu chadhta hai, aur aapki diary andar aati hai. Aur isi wajah se koi contract nahi hai. Build ka paisa mil chuka, toh aap kisi bhi mahine chhod sakte hain. Jo upfront nahi lete, wo saal bhar ke liye baandh lete hain."</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 6</span>Calendar par close kijiye, contract par nahi (1 minute)</div>
+      <div class="scr-b">
+        <div class="say">"Guruvar subah mera setup ka slot khaali hai. Aapke liye rakh loon?"</div>
+        <div class="stage">↳ Signature se haan bolna mushkil hai, time slot se aasan. Aap product par commitment nahi maang rahe — bas unke guruvar ki baat kar rahe hain.</div>
+        <div class="say"><div class="sl">Turant iske baad</div>"Setup ₹9,999 hai — UPI kar dein abhi, taaki main guruvar pakka kar loon?"</div>
+        <div class="warn"><b>Paisa wahin room mein lijiye.</b> "Kal kar dunga" ka matlab kabhi nahi hota. Agar sach mein abhi nahi ho sakta, toh unke saamne apne phone mein date aur time daaliye, aur nikalne se pehle WhatsApp par confirm kar dijiye.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MR -->
+  <div class="lb" data-l="mr">
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 1</span>Aat ja — ajun pitch karu naka (30 second)</div>
+      <div class="scr-b">
+        <div class="say">"Namaskar sir, Rahul — phone var bolna zaali hoti. Chhan jaaga aahe, kiti varsha zaali ithe?"</div>
+        <div class="stage">↳ Aas-paas baga. Kahi tari khara notice kara — khurchya, gardi, bhintivarcha photo. Salon maalkanna tyanchya jaaget abhimaan asto, ani vikayla yenara konich manus mhanun bolat nahi.</div>
+        <div class="tip"><b>Aadhi vaatavaran baga, mag bola.</b> Jar khurchit customer asel — <em>"Tumhi busy aahat, mi thambto, ki 3 la yeu?"</em> Nighnyachi tayari dakhavne he thambnyacha sagalyat javal cha marg aahe.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 2</span>Vichara, mag gapp basa (2 minit) — sagalyat mahatvacha step</div>
+      <div class="scr-b">
+        <div class="say"><div class="sl">Yaach kramane vichara</div>"Mahinyala andaje kiti customer yetat?"<br><br>"Ani athvdyala kiti book karun yet nahit?"<br><br>"Sarasari bill kiti hoto?"<br><br>"Aathvan kon karun deta — tumhi ki counter varcha konitari?"<br><br>"Kadhi asa zaala ka ki vaait review aala ani tumhala 4-5 divsani kalla?"</div>
+        <div class="pause">↳ Pratyek uttar lihun ghya. Fakt "hmm" ani "barobar" mhana. Hi 80% vikri aahe — ani tumhi ajun kahi viklach nahi.</div>
+        <div class="tip"><b>He ka chalta:</b> tumhi bolayla lagepryant, tyanni tyanchi samasya tyanchya shabdat sangitleli aste. Ata tumhi vikat nahi — tyanni sangitlelya goshtiche uttar deta.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 3</span>Dakhava, sangu naka (1 minit) — sagalyat jasta deal hech close karta</div>
+      <div class="scr-b">
+        <div class="say">"Mi dakhavto, sangnyapeksha sopa aahe."</div>
+        <div class="stage">↳ Phone kadha. Tyanchya samor demo number var booking pathva: <em>"Priya 98200 12345 haircut udya 4 la"</em>. Phone asa dhara ki tyanna disel. Reply chi vaat baga.</div>
+        <div class="say">"Bas evdach. Hech sagla system aahe. Tumchya counter varchi mulgi fakt evdach type karel — message karte tasa. Tya nantar sagla aapoaap."</div>
+        <div class="tip"><b>Tumcha phone tyanchya hatat dya ani ek booking type karayla laava.</b> Je kshani te swata kartat, "software shikava lagel" hi bhiti kayamchi sampte.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 4</span>Kagadavar hishob kara (2 minit)</div>
+      <div class="scr-b">
+        <div class="say">"He pen gheu ka?" <span style="color:var(--dim);font-style:italic;">(tyancha pen, tyancha kagad asel tar utkrusht)</span><br><br>"Tumhi mhanalat athvdyala 8 no-show, bill ₹700. Mhanje ₹5,600 athvdyala bahar. Mahinyala ₹22,400. Aathvani ne he jvalpas nim-me kami hota — mhanje andaje ₹11,000 mahina parat."<br><br>"Yacha kharch ₹7,999 mahina aahe."</div>
+        <div class="pause">↳ Kagad tyanchyakade sarkava. KAHI BOLU NAKA. Vachu dya. Jo aadhi bolto, to haarto.</div>
+        <div class="say"><div class="sl">Tyanni pratikriya dilyavar</div>"Ani he fakt no-show cha hishob aahe. Review, parat bolavnare message, ragavlelya customer la aadhi pakadne — te sagla yachya varti aahe."</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 5</span>Kimmat ani setup fee (1 minit)</div>
+      <div class="scr-b">
+        <div class="say">"Tar ₹7,999 mahina, ani suruvatila ekda ₹9,999 setup cha."</div>
+        <div class="pause">↳ Thamba. Jopryant te vicharat nahit, setup fee explain karu naka. Ardhe log vicharatach nahit.</div>
+        <div class="say"><div class="sl">Jar ₹9,999 var adkle</div>"Te ek athvdyacha kaam aahe je fakt ekdach hota — tumchya salon chya navacha swatacha WhatsApp business number banto, pratyek message Meta kadun approve hoto, Google jodla jaato, menu chadhto, ani tumchi diary aat yete. Ani yaach mule kuthlahi contract nahi. Build che paise milale, mhanun tumhi kuthlyahi mahinyat sodu shakta. Je upfront ghet nahit, te varshbhar bandhun thevtat."</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 6</span>Calendar var close kara, contract var nahi (1 minit)</div>
+      <div class="scr-b">
+        <div class="say">"Guruvar sakali majha setup cha slot rikama aahe. Tumchyasathi thevu ka?"</div>
+        <div class="stage">↳ Sahi peksha vel-slot la haan mhanne sopa aste. Tumhi product var commitment magat nahi — fakt tyanchya guruvar baddal bolat aahat.</div>
+        <div class="say"><div class="sl">Lagech tya nantar</div>"Setup ₹9,999 aahe — UPI karta ka ata, mhanje mi guruvar pakka karto?"</div>
+        <div class="warn"><b>Paise tithech ghya.</b> "Udya karto" cha artha kadhich nahi aso. Jar kharach ata shakya nasel, tar tyanchya samor tumchya phone madhe date ani vel taka, ani baher padnyapurvi WhatsApp var confirm kara.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GU -->
+  <div class="lb" data-l="gu">
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 1</span>Andar jao — haju pitch na karo (30 second)</div>
+      <div class="scr-b">
+        <div class="say">"Namaste sir, Rahul — phone par vaat thai hati. Saras jagya chhe, ketla varsh thaya ahiya?"</div>
+        <div class="stage">↳ Aaju-baaju juo. Kaik saachu notice karo — khurshio, bhid, bhint par photo. Salon malik ne potani jagya no garv hoy chhe, ane vechva aavnar koi manas ni jem vaat nathi karto.</div>
+        <div class="tip"><b>Pehla mahol juo, pachhi bolo.</b> Jo khurshi par customer hoy — <em>"Tame busy chho, hu raah joi lau, ke 3 vagye aavu?"</em> Javani taiyari batavvi e rokaava no sauthi ochho rasto chhe.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 2</span>Puchho, pachhi chup thai jao (2 minute) — sauthi jaruri step</div>
+      <div class="scr-b">
+        <div class="say"><div class="sl">Aa j kram ma puchho</div>"Mahine ma aandaje ketla customer aave chhe?"<br><br>"Ane aathwadiya ma ketla book karine nathi aavta?"<br><br>"Sarerash bill ketlu thay chhe?"<br><br>"Yaad kon karave chhe — tame ke counter par koi?"<br><br>"Kyarey evu thayu ke kharab review aavyo ane tamne 4-5 divas pachhi khabar padi?"</div>
+        <div class="pause">↳ Dareke jawab lakho. Fakt "hmm" ane "barabar" kaho. Aa 80% vechan chhe — ane tame haju kai vechyu j nathi.</div>
+        <div class="tip"><b>Aa kem kaam kare chhe:</b> tame bolo tya sudhi ma, e emni samasya emna shabdo ma kahi chuke hoy chhe. Have tame vechta nathi — e j kahyu ene jawab aapo chho.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 3</span>Batavo, kaho nahi (1 minute) — sauthi vadhare deal aa j close kare chhe</div>
+      <div class="scr-b">
+        <div class="say">"Hu batavi dau, samjavva karta saru chhe."</div>
+        <div class="stage">↳ Phone kadho. Emni samey demo number par booking moklo: <em>"Priya 98200 12345 haircut kal 4 vagye"</em>. Phone evi rite pakdo ke emne dekhaay. Reply ni raah juo.</div>
+        <div class="say">"Bas aatlu j. Aa j aakhu system chhe. Tamara counter ni chokri fakt aatlu type karshe — message kare chhe em. Tya pachhi badhu jaate j."</div>
+        <div class="tip"><b>Tamaro phone emna hath ma aapo ane ek booking type karavo.</b> Je kshane e jaate kare chhe, "software shikhvu padshe" ni bik kayam mate puri thai jaay chhe.</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 4</span>Kagal par hisaab karo (2 minute)</div>
+      <div class="scr-b">
+        <div class="say">"Aa pen lau?" <span style="color:var(--dim);font-style:italic;">(emno pen, emno kagal hoy to sauthi saru)</span><br><br>"Tame kahyu aathwadiya ma 8 no-show, bill ₹700. Etle ₹5,600 aathwadiye bahar. Mahine ₹22,400. Yaad karavva thi aa lagbhag adhu thai jaay chhe — etle aandaje ₹11,000 mahine pachha."<br><br>"Ano kharch ₹7,999 mahine chhe."</div>
+        <div class="pause">↳ Kagal emni taraf sarkavo. KAI NA BOLO. Vanchva do. Je pehla bole chhe, e haare chhe.</div>
+        <div class="say"><div class="sl">E pratikriya aape pachhi</div>"Ane aa fakt no-show no hisaab chhe. Review, pachha bolavva na message, gusse thayela customer ne pehla pakadva — e badhu ana upar chhe."</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 5</span>Bhaav ane setup fee (1 minute)</div>
+      <div class="scr-b">
+        <div class="say">"To ₹7,999 mahine, ane sharuaat ma ek vaar ₹9,999 setup na."</div>
+        <div class="pause">↳ Ubha raho. Jya sudhi e na puchhe, setup fee samjavo nahi. Adha loko puchhta j nathi.</div>
+        <div class="say"><div class="sl">Jo ₹9,999 par atke</div>"E ek aathwadiya nu kaam chhe je fakt ek j vaar thay chhe — tamara salon na naam nu potanu WhatsApp business number bane chhe, dareke message Meta thi approve thay chhe, Google jodaay chhe, menu chadhe chhe, ane tamari diary andar aave chhe. Ane aa j kaarane koi contract nathi. Build na paisa mali gaya, etle tame gme te mahine chodi shako. Je upfront nathi leta, e varsh mate bandhi rakhe chhe."</div>
+      </div>
+    </div>
+
+    <div class="scr">
+      <div class="scr-h"><span class="ch">Step 6</span>Calendar par close karo, contract par nahi (1 minute)</div>
+      <div class="scr-b">
+        <div class="say">"Guruvare savare maro setup no slot khali chhe. Tamara mate rakhi lau?"</div>
+        <div class="stage">↳ Sahi karta time-slot ne haa kehvu saral chhe. Tame product par commitment nathi magta — fakt emna guruvar ni vaat karo chho.</div>
+        <div class="say"><div class="sl">Tarat j pachhi</div>"Setup ₹9,999 chhe — UPI kari do atyare, jethi hu guruvar pako kari lau?"</div>
+        <div class="warn"><b>Paisa tya j lo.</b> "Kale karish" no matlab kyarey nathi hoto. Jo kharekhar atyare shakya na hoy, to emni samey tamara phone ma date ane time nakho, ane bahar niklya pehla WhatsApp par confirm kari do.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size:16px;font-weight:800;margin:30px 0 12px;">What to talk about — and what to never bring up</h3>
+  <div class="dd">
+    <div class="ddb do">
+      <div class="h">✓ Talk about this</div>
+      <ul>
+        <li>Their no-show number — always their number, never yours</li>
+        <li>Money walking out the door every week</li>
+        <li>Their bad review story — ask, then listen</li>
+        <li>How little work it is: one tap</li>
+        <li>"There's no app, nothing to learn"</li>
+        <li>"There's no contract, leave any month"</li>
+        <li>Their staff being too busy to remember</li>
+        <li>The demo on your phone — show it early</li>
+        <li>Their Google rating and how it can move</li>
+      </ul>
+    </div>
+    <div class="ddb dont">
+      <div class="h">✕ Never bring up</div>
+      <ul>
+        <li>The words software, platform, dashboard, CRM, AI, automation</li>
+        <li>How it works technically — nobody cares, and it scares them</li>
+        <li>Other clients' names or their numbers</li>
+        <li>Competitors — never criticise another product by name</li>
+        <li>Discounts — not even hinting one might exist</li>
+        <li>Anything you're not sure about — say "I'll find out and text you today"</li>
+        <li>Long feature lists — three benefits beat ten features</li>
+        <li>Your commission or how the agent scheme works</li>
+        <li>Promises about exact results — say "typically", never "guaranteed"</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 9 · POWER PHRASES ══════ -->
+<div class="sec" id="power">
+  <div class="st"><span class="k">09</span><h2>Power phrases</h2><span class="n">the exact words that land — switch language above</span></div>
+  <p class="lead">These are the lines that do the heavy lifting. Learn them word for word in the language you'll actually sell in. A phrase said in the owner's own language lands about twice as hard as the same phrase in English.</p>
+
+  <!-- EN -->
+  <div class="lb on" data-l="en">
+    <div class="pp">
+      <div class="pp-h">⚡ English — say these exactly</div>
+      <div class="pp-b">
+        <div class="pp-r"><div class="ph">"If you can use WhatsApp, you already know how to use this."</div><div class="mean">Kills the fear of learning something new.</div><div class="use">Use when they say they're not technical</div></div>
+        <div class="pp-r"><div class="ph">"Your only job is one tap. Everything else happens on its own."</div><div class="mean">Kills the "I don't have time" objection.</div><div class="use">Use right after the demo</div></div>
+        <div class="pp-r"><div class="ph">"That's not ₹700 — that's ₹8,400, because she comes every month."</div><div class="mean">Turns one no-show into a year of lost money.</div><div class="use">Use during the maths</div></div>
+        <div class="pp-r"><div class="ph">"And that's before a single review."</div><div class="mean">Everything else becomes free upside. Then stop talking.</div><div class="use">Use the second you finish the sum</div></div>
+        <div class="pp-r"><div class="ph">"There's no contract. Leave any month and we hand you your customer list."</div><div class="mean">Removes all the risk of saying yes.</div><div class="use">Use early, not as a last resort</div></div>
+        <div class="pp-r"><div class="ph">"It's not that your staff won't do it. It's that they're already doing four jobs."</div><div class="mean">Blames the workload, never the people. Owner never gets defensive.</div><div class="use">Use when they say "we already remind them"</div></div>
+        <div class="pp-r"><div class="ph">"You go back to getting customers in and looking after them. Leave the boring bit to us."</div><div class="mean">Sells the freedom, not the features.</div><div class="use">Use as your closing line</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HI -->
+  <div class="lb" data-l="hi">
+    <div class="pp">
+      <div class="pp-h">⚡ हिंदी / Hinglish — bilkul aise hi boliye</div>
+      <div class="pp-b">
+        <div class="pp-r"><div class="ph">"WhatsApp chalana aata hai? Toh ye bhi aata hai."</div><div class="mean">Naya seekhne ka darr turant khatam.</div><div class="use">Jab wo kahein "hum technical nahi hain"</div></div>
+        <div class="pp-r"><div class="ph">"Aapka kaam sirf ek tap ka hai. Baaki sab apne aap."</div><div class="mean">"Time nahi hai" wala objection khatam.</div><div class="use">Demo ke turant baad</div></div>
+        <div class="pp-r"><div class="ph">"Ye ₹700 ka nuksaan nahi hai — ₹8,400 ka hai, kyunki wo har mahine aati hai."</div><div class="mean">Ek no-show ko poore saal ka nuksaan bana deta hai.</div><div class="use">Hisaab karte waqt</div></div>
+        <div class="pp-r"><div class="ph">"Aur ye toh sirf no-show ka hisaab hai. Review alag."</div><div class="mean">Baaki sab free lagne lagta hai. Bolkar chup ho jaaiye.</div><div class="use">Hisaab khatam hote hi</div></div>
+        <div class="pp-r"><div class="ph">"Koi contract nahi hai. Jab chaahein chhod dijiye, poori customer list aapko de denge."</div><div class="mean">Haan bolne ka risk zero ho jaata hai.</div><div class="use">Shuru mein hi boliye, aakhir mein nahi</div></div>
+        <div class="pp-r"><div class="ph">"Aapka staff kaam nahi karta aisa nahi hai — unke paas pehle se chaar kaam hain."</div><div class="mean">Ilzaam kaam par, logon par nahi. Owner defensive nahi hota.</div><div class="use">Jab kahein "hum toh already reminder bhejte hain"</div></div>
+        <div class="pp-r"><div class="ph">"Aap customer laane aur unhe khush rakhne par dhyaan dijiye. Boring kaam humein de dijiye."</div><div class="mean">Aazaadi bech rahe hain, feature nahi.</div><div class="use">Aakhri line ke taur par</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MR -->
+  <div class="lb" data-l="mr">
+    <div class="pp">
+      <div class="pp-h">⚡ मराठी — agdi asech bola</div>
+      <div class="pp-b">
+        <div class="pp-r"><div class="ph">"WhatsApp vaparta yeta? Mag he pan yeta."</div><div class="mean">Naveen shiknyachi bhiti lagech sampte.</div><div class="use">Jevha mhantil "aamhala technical kalat nahi"</div></div>
+        <div class="pp-r"><div class="ph">"Tumcha kaam fakt ek tap cha. Baaki sagla aapoaap."</div><div class="mean">"Vel nahi" ha objection sampto.</div><div class="use">Demo nantar lagech</div></div>
+        <div class="pp-r"><div class="ph">"He ₹700 cha nuksaan nahi — ₹8,400 cha aahe, karan ti dar mahinyala yete."</div><div class="mean">Ek no-show la varshbharacha nuksaan banavto.</div><div class="use">Hishob kartana</div></div>
+        <div class="pp-r"><div class="ph">"Ani he fakt no-show cha hishob aahe. Review vegla."</div><div class="mean">Baaki sagla fukat vaatayla lagta. Bolun gapp basa.</div><div class="use">Hishob sampatach</div></div>
+        <div class="pp-r"><div class="ph">"Kuthlahi contract nahi. Kadhihi soda, aamhi tumchi puri customer list deu."</div><div class="mean">Haan mhannyacha dhoka shunya hoto.</div><div class="use">Suruvatila cha bola, shevti nahi</div></div>
+        <div class="pp-r"><div class="ph">"Tumcha staff kaam karat nahi asa nahi — tyanchya kade aadhich chaar kaam aahet."</div><div class="mean">Dosh kaamavar, manasavar nahi. Maalak defensive hot nahi.</div><div class="use">Jevha mhantil "aamhi aadhich aathvan karto"</div></div>
+        <div class="pp-r"><div class="ph">"Tumhi customer aanne ani tyanna khush thevnyavar laksh dya. Kantalvana kaam aamhala dya."</div><div class="mean">Swatantrya vikat aahat, feature nahi.</div><div class="use">Shevatchi line mhanun</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GU -->
+  <div class="lb" data-l="gu">
+    <div class="pp">
+      <div class="pp-h">⚡ ગુજરાતી — bilkul aavu j bolo</div>
+      <div class="pp-b">
+        <div class="pp-r"><div class="ph">"WhatsApp vaaparta aavde chhe? To aa pan aavde chhe."</div><div class="mean">Navu shikhva ni bik tarat puri.</div><div class="use">Jyare kahe "ame technical nathi"</div></div>
+        <div class="pp-r"><div class="ph">"Tamaru kaam fakt ek tap nu. Baki badhu jaate j."</div><div class="mean">"Time nathi" no objection puro.</div><div class="use">Demo pachhi tarat</div></div>
+        <div class="pp-r"><div class="ph">"Aa ₹700 nu nukshaan nathi — ₹8,400 nu chhe, kem ke e dar mahine aave chhe."</div><div class="mean">Ek no-show ne aakha varsh nu nukshaan banave chhe.</div><div class="use">Hisaab karta vakhate</div></div>
+        <div class="pp-r"><div class="ph">"Ane aa fakt no-show no hisaab chhe. Review alag."</div><div class="mean">Baki badhu muft lagva mande chhe. Kahi ne chup thai jao.</div><div class="use">Hisaab puro thata j</div></div>
+        <div class="pp-r"><div class="ph">"Koi contract nathi. Gme tyare chodi do, ame tamari aakhi customer list aapi daishu."</div><div class="mean">Haa kehva no risk shunya thai jaay chhe.</div><div class="use">Sharuaat ma j bolo, chhelle nahi</div></div>
+        <div class="pp-r"><div class="ph">"Tamaro staff kaam nathi karto evu nathi — emni pase pehla thi chaar kaam chhe."</div><div class="mean">Dosh kaam par, manas par nahi. Malik defensive nathi thato.</div><div class="use">Jyare kahe "ame to pehla thi j yaad karaviye chhiye"</div></div>
+        <div class="pp-r"><div class="ph">"Tame customer laavva ane emne khush rakhva par dhyaan aapo. Kantalajanak kaam amne aapi do."</div><div class="mean">Aazadi vecho chho, feature nahi.</div><div class="use">Chhelli line tarike</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 10 · OBJECTIONS ══════ -->
+<div class="sec" id="obj">
+  <div class="st"><span class="k">10</span><h2>When they push back</h2><span class="n">tap any one to open it</span></div>
+  <p class="lead">An objection is not a no. It's usually the first honest thing they've said. Answer one properly rather than three quickly — and always ask which objection is the real one.</p>
+
+  <div class="obj"><div class="obj-q"><span class="ic">₹</span>"It's too expensive."<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"Let's check that against your own numbers." — then do the maths out loud, on paper. "So the question isn't whether ₹7,999 is a lot. It's whether ₹11,000 coming back is worth ₹7,999 going out. And the reviews are on top of that, free."</div>
+    <div class="tip"><b>Don't defend the price</b> or compare to other products. The moment you justify, you've agreed it's expensive. Go straight to their no-show number.</div>
+  </div></div>
+
+  <div class="obj"><div class="obj-q"><span class="ic">₹</span>"₹9,999 upfront is too much — remove it."<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"I can't remove it, but let me tell you what it buys — it's not profit, it's a week of work." Run the list: your own verified WhatsApp number in your salon's name, every message approved by Meta, Google connected, menu loaded, diary moved in. "And it's exactly why there's no contract. We've been paid for the build, so you're free to leave any month. The ones who don't charge upfront lock you in for a year instead — ask them."</div>
+    <div class="tip"><b>If they still won't:</b> offer to split it — ₹5,000 now, ₹4,999 on day 30. <b>Never zero.</b> A free setup gets treated like a free thing.</div>
+  </div></div>
+
+  <div class="obj"><div class="obj-q"><span class="ic">!</span>"We already send reminders."<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"Good — then you already believe in it, which makes this easy. Who sends them?" <em>(Reception.)</em> "And on the days she's busy, or off, or it's a Saturday rush?"</div>
+    <div class="pause">↳ Pause here. Let them answer. They know.</div>
+    <div class="say">"That's the gap. And the bigger one: does she ask every happy customer for a Google review? Does she catch the unhappy one before they post? Does she tell you on the 1st how much money it saved you? That's the part nobody does by hand."</div>
+    <div class="tip"><b>This is a buying signal, not a rejection.</b> They've already accepted the premise. Slow down here — don't rush past it.</div>
+  </div></div>
+
+  <div class="obj"><div class="obj-q"><span class="ic">!</span>"I don't have time to learn new software."<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"There's nothing to learn — that's the whole point. No app, no login, no dashboard. You text us the booking like you'd text your sister. After the appointment you tap one green tick. That's it. If you can use WhatsApp, you're already trained."</div>
+    <div class="tip"><b>Then show them.</b> Open WhatsApp and send a booking into the demo number right there. The reply comes back in five seconds. <b>This closes more deals than anything else in this playbook.</b></div>
+  </div></div>
+
+  <div class="obj"><div class="obj-q"><span class="ic">!</span>"We tried something like this. It didn't work."<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"What happened?"</div>
+    <div class="pause">↳ Listen properly. It's almost always: staff stopped updating it.</div>
+    <div class="say">"Right — and that's exactly why they fail. Every one of them needs somebody to open software and type things in. After two weeks nobody does. Ours needs one tap on WhatsApp, on the phone that's already in your hand. And if your team stops tapping, we see it from our side within a day and I call you."</div>
+    <div class="tip"><b>Ask which one they tried.</b> If it was a booking app or billing system: <em>"That's a different thing — that's software for you to run. This is a service that runs for you."</em></div>
+  </div></div>
+
+  <div class="obj"><div class="obj-q"><span class="ic">!</span>"My customers will get irritated by messages."<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"Two reminders before their appointment, and one message after. That's it — not marketing blasts, not offers. Nobody has ever been annoyed at being reminded about their own appointment; they get annoyed when they forget and lose the slot. And every message has a STOP option — anyone who wants out is out instantly and permanently."</div>
+    <div class="tip">If they're worried about their <em>premium</em> customers specifically: messages go out in the salon's own name, written properly. Show them a real one on your phone.</div>
+  </div></div>
+
+  <div class="obj"><div class="obj-q"><span class="ic">?</span>"Let me think about it / I'll ask my partner."<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"Of course — it's your money. Can I ask one thing though: is it the price, or is it whether it'll actually work?"</div>
+    <div class="pause">↳ Wait. The real objection comes out here. Answer that one, not the polite one.</div>
+    <div class="say">"Tell you what. Let me set up the reminders this week. By Friday you'll see confirmations landing on your own phone from your own customers. If it isn't obviously working by day 30, cancel — there's no contract, and we hand you your customer list on the way out."</div>
+    <div class="tip"><b>Never leave without a next date.</b> If they genuinely need the partner: <em>"When are you both around? I'll come back then — ten minutes, both of you."</em> Put it in your phone in front of them.</div>
+  </div></div>
+
+  <div class="obj"><div class="obj-q"><span class="ic">₹</span>"Give me a discount."<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"On the monthly I can't — and honestly you wouldn't want me to. Everyone pays the same, and you'd be pretty annoyed later to find the salon down the road got it cheaper. What I can do is the annual: pay for the year upfront and two months are free. On Growth that's ₹16,000 back in your pocket."</div>
+    <div class="tip"><b>Hold this line.</b> A client who negotiates once will negotiate every quarter. Annual is the only lever — and it's the better outcome for you anyway.</div>
+  </div></div>
+
+  <div class="obj"><div class="obj-q"><span class="ic">?</span>"What if it doesn't work for us?"<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"Then you cancel. No contract, no notice period, no penalty. And we export your full customer list and review history and hand it to you — it's your data, we're only holding it. The only thing you'd have spent is the setup, and that's already bought you a verified WhatsApp business number in your own name that stays yours."</div>
+    <div class="tip"><b>This is your strongest card.</b> Most competitors can't say it. Use it early rather than saving it for the end.</div>
+  </div></div>
+
+  <div class="obj"><div class="obj-q"><span class="ic">?</span>"After Diwali. / Next month. / After the season."<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"Fair enough. Let me just put a number on the wait." — use their own figures — "At 8 no-shows a week, two months of waiting is about ₹45,000 gone. Setup takes a week, so if we start now you're live <b>before</b> the rush. And the rush is exactly when a no-show hurts most, because that slot could have been sold twice over."</div>
+    <div class="tip"><b>If they still won't move:</b> get the date in writing and book the follow-up before you leave. A vague "next month" is a no wearing a polite face.</div>
+  </div></div>
+
+  <div class="obj"><div class="obj-q"><span class="ic">!</span>"My salon is small, I don't need all this."<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"How many appointments in a week?"</div>
+    <div class="pause">↳ Under 25 a week — walk away politely. The maths won't hold and they'll cancel by month three.</div>
+    <div class="say"><div class="sl">If it's 40+ a week, it does hold</div>"Then it's not small in the way that matters. And honestly, small is where a no-show hurts most. When a big chain loses a slot they've got twenty more that day. When you lose one, that's your whole afternoon gone."</div>
+    <div class="tip"><b>Walking away is a skill, not a failure.</b> You're paid on clients who stay, not clients who sign. A bad-fit client costs you the bonus and two months of your time.</div>
+  </div></div>
+
+  <div class="obj"><div class="obj-q"><span class="ic">?</span>"Can I just take the reviews part?"<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"The review part only works because of the rest. We only ask for a review after you've told us the customer actually turned up and was happy — that's what makes it land instead of feeling like spam. Without the appointment side it's just another blasting tool. Those exist for ₹999 a month, and they're the reason people ignore review requests now."</div>
+    <div class="tip">Same answer for "can I just take the reminders?" The pieces are worth far more together.</div>
+  </div></div>
+
+  <div class="obj"><div class="obj-q"><span class="ic">?</span>"Is my customer data safe? Who sees it?"<span class="car">›</span></div><div class="obj-a">
+    <div class="say">"Only you. We hold it for you, we never sell it, and we never message your customers about anything except their own appointments with you. No offers, no ads, nothing from us. And the day you leave, we export the whole list and hand it over."</div>
+    <div class="tip">Rare objection, but the owners who ask it are usually the serious, higher-value ones. Answer plainly and don't get flustered.</div>
+  </div></div>
+</div>
+
+<!-- ══════ 11 · WHAT THEY GIVE ══════ -->
+<div class="sec" id="give">
+  <div class="st"><span class="k">11</span><h2>What they have to give us</h2><span class="n">say this BEFORE they pay — surprises after payment cause refunds</span></div>
+  <p class="lead">Go through this list on the closing call. Five minutes here saves you a wasted week and an angry client. The three yellow ones are the ones that actually block go-live.</p>
+
+  <div class="need">
+    <div class="need-r must"><div class="e">📱</div><div>
+      <div class="t">A phone number that has never had WhatsApp on it</div>
+      <div class="d">This is the one that trips everybody up, so say it clearly and early. A brand-new SIM (₹200 from any shop) or an old spare number is fine — but if WhatsApp is on it now, or ever was and wasn't removed properly, Meta will reject it. <b>The salon keeps this number</b> — it becomes their business line forever.</div>
+      <div class="flag"><b>If they say "I'll use my personal number" — no.</b> That number already has WhatsApp. Ask them to buy a fresh SIM before setup day. This one line saves you a wasted week.</div>
+    </div></div>
+
+    <div class="need-r must"><div class="e">📄</div><div>
+      <div class="t">A business document — GST certificate, Udyam, or shop licence</div>
+      <div class="d">Meta checks the business is real before the number can send messages in its name. <b>The name on the document must match the name they want on messages.</b> If the licence says "Sharma Enterprises" but they want "Bloom Salon", flag it on the call — fixable then, not after we've submitted.</div>
+    </div></div>
+
+    <div class="need-r must"><div class="e">🔗</div><div>
+      <div class="t">Five minutes to approve Google access</div>
+      <div class="d">We email a link. The owner opens it, signs in with the Google account that manages their business listing, clicks Allow. Sixty seconds of clicking — but they need to know <b>which</b> Google account it is. Half the time the login sits with a cousin or an old agency. Ask on the call: <em>"who set up your Google listing?"</em></div>
+    </div></div>
+
+    <div class="need-r"><div class="e">💇</div><div>
+      <div class="t">Service menu with prices</div>
+      <div class="d">A photo of the rate card is fine. We also ask how often each service should repeat — haircut every 3 weeks, facial every 6 — so the comeback reminders land at the right time.</div>
+    </div></div>
+
+    <div class="need-r"><div class="e">📖</div><div>
+      <div class="t">This week's bookings and the staff's phone numbers</div>
+      <div class="d">A photo of the register or diary page. We load it live on the call so reminders start the same day. Staff numbers get authorised so anyone at the counter can text a booking, not just the owner.</div>
+    </div></div>
+
+    <div class="need-r"><div class="e">📊</div><div>
+      <div class="t">Two numbers: no-shows last month, and average bill</div>
+      <div class="d">This is the baseline. Without it the monthly "we saved you ₹X" message has nothing to measure against. A rough guess is fine — just get a number written down.</div>
+    </div></div>
+
+    <div class="need-r"><div class="e">🖼</div><div>
+      <div class="t">Their logo</div>
+      <div class="d">Any decent image. It goes on the monthly summary.</div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════ 12 · TIMELINE + GO LIVE ══════ -->
+<div class="sec" id="live">
+  <div class="st"><span class="k">12</span><h2>How long it takes, and the day it goes live</h2><span class="n">promise 7 working days — never promise faster</span></div>
+  <p class="lead">Walk them through this on the closing call so nothing is a surprise. Under-promising here is why clients stay calm during setup week.</p>
+
+  <div class="tl">
+    <div class="tl-r"><div class="d">Day 0</div><div class="c"><b>Setup fee paid, 30-minute onboarding call.</b> We collect everything from the list above. This is the only call they have to sit through.</div></div>
+    <div class="tl-r"><div class="d">Day 1–2</div><div class="c"><b>We build their WhatsApp business line</b> and submit the business to Meta for verification. Nothing needed from them.</div></div>
+    <div class="tl-r"><div class="d">Day 2–4</div><div class="c"><b>Meta reviews every message format.</b> This is the slow part and it's outside anyone's control — 24 to 48 hours per batch, sometimes a resubmission. This is exactly why we don't promise 48-hour activation.</div></div>
+    <div class="tl-r"><div class="d">Day 3–5</div><div class="c"><b>Google connected, menu and prices loaded, this week's diary moved in.</b> The owner clicks Allow on one emailed link. Five minutes.</div></div>
+    <div class="tl-r live"><div class="d">Day 5–7</div><div class="c"><b>Live.</b> We email their Rebound number and a one-page card. The first reminders go out the same day.</div></div>
+  </div>
+
+  <h3 style="font-size:16px;font-weight:800;margin:28px 0 11px;">The day it goes live — the three things they do</h3>
+  <div class="golive">
+    <ol>
+      <li><b>We email their Rebound number.</b> One number, in their salon's name. That's the whole product — no app to download, no password to remember.</li>
+      <li><b>Save it in every staff phone</b> as "Rebound". The owner's, the receptionist's, anyone who takes bookings.</li>
+      <li><b>Each person sends "Hi" to it once.</b> That's how we know their phone is allowed to book. They get a welcome message straight back with three example bookings to copy.</li>
+      <li><b>Send the first real booking.</b> Type it like a text message. A confirmation comes back in about five seconds — and that's it, they're running.</li>
+    </ol>
+    <div class="tip" style="margin-top:13px;"><b>Then for the first two weeks</b> we check every message before it reaches a customer, so nothing odd goes out while the system learns their services and their regulars' names. They'll see us approving in the background. After day 15 it runs on its own. <b>Tell them this upfront</b> — it turns "what if it makes a mistake?" into "oh, that's reassuring."</div>
+  </div>
+</div>
+
+<!-- ══════ 13 · WHO ══════ -->
+<div class="sec" id="who">
+  <div class="st"><span class="k">13</span><h2>Who to spend your day on</h2><span class="n">walking away fast is the highest-paid skill you have</span></div>
+  <p class="lead">You have about 40 salon visits in you each month. Spending three of them on a business that will never buy is the most expensive mistake in this job.</p>
+
+  <div class="qual">
+    <div class="qb yes">
+      <div class="qh">✓ Good prospect — spend real time here</div>
+      <ul>
+        <li>Salon or spa, appointment-based, not walk-in</li>
+        <li>3.5–4.3★ on Google with 40–250 reviews — enough to care, room to improve</li>
+        <li>Owner is on the premises and answers for themselves</li>
+        <li>Average bill ₹500+ and a visible diary or register</li>
+        <li>40+ appointments a week</li>
+        <li>They already send reminders by hand, or wish they did</li>
+        <li>They can tell you their no-show number without thinking</li>
+      </ul>
+    </div>
+    <div class="qb no">
+      <div class="qh">✕ Walk away politely — today, not next month</div>
+      <ul>
+        <li>Mostly walk-in, no appointment book — there's nothing to remind</li>
+        <li>Manager-run, owner "comes on Sundays" — you'll do the pitch three times and still lose</li>
+        <li>Under 25 appointments a week — the maths won't hold, they'll cancel by month three</li>
+        <li>Already deep inside full salon software they pay for and actually use</li>
+        <li>Haggling on price before they've heard what it does</li>
+        <li>No Google listing at all, and no interest in having one</li>
+        <li>Says "send me details on WhatsApp" three times without ever meeting</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip"><b>The fastest qualifying question in this job:</b> <em>"Roughly how many people book and don't turn up in a week?"</em> If they know the number instantly, they feel the pain and you have a real prospect. If they shrug and say "not many" — it's not a priority for them, thank them and go next door. Genuinely, go next door: salons cluster, and the one two shops away might be your best client this month.</div>
+</div>
+
+<!-- ══════ 14 · CLOSE ══════ -->
+<div class="sec" id="close">
+  <div class="st"><span class="k">14</span><h2>The close</h2><span class="n">in this order — don't skip step 1</span></div>
+
+  <div class="close">
+    <div class="close-h">Six steps, ten minutes</div>
+    <ol>
+      <li><b>Show, don't tell.</b> Send a booking into the demo number from your own phone, standing in front of them. Let them watch the reply come back. Ten seconds.</li>
+      <li><b>Ask the two numbers.</b> No-shows a week, average bill. Write the maths on paper and slide it across. Say nothing while they read it.</li>
+      <li><b>Name the price and stop.</b> "It's ₹7,999 a month plus ₹9,999 setup." Then stop talking. <b>The next person to speak loses.</b></li>
+      <li><b>Handle one objection properly</b> — not three quickly. Ask "is it the price, or is it whether it'll work?" and answer the real one.</li>
+      <li><b>Close on the calendar, not the contract.</b> "I've got Thursday morning free for setup — shall I hold it for you?" It's far easier to say yes to a slot than to a signature.</li>
+      <li><b>Collect the setup fee on the spot.</b> UPI, in front of you. A payment promised for tomorrow is a payment made never.</li>
+    </ol>
+    <div class="fin">You're not selling software. You're telling a salon owner how much money walked out of their door last month — and then handing them the way to stop it.</div>
+  </div>
+
+  <h3 style="font-size:16px;font-weight:800;margin:30px 0 11px;">Before you walk out of any meeting</h3>
+  <div class="chk">
+    <div class="chk-r"><div class="b"></div><div class="n">Always</div><div>Their no-show number and average bill, written down</div></div>
+    <div class="chk-r"><div class="b"></div><div class="n">Always</div><div>They have seen the demo on your phone, with their own eyes</div></div>
+    <div class="chk-r"><div class="b"></div><div class="n">Always</div><div>A next date in your phone — even if it's a no for now</div></div>
+    <div class="chk-r"><div class="b"></div><div class="n">Always</div><div>Their WhatsApp number saved, with the salon name</div></div>
+    <div class="chk-r"><div class="b"></div><div class="n">If yes</div><div>Setup fee collected by UPI, in the room</div></div>
+    <div class="chk-r"><div class="b"></div><div class="n">If yes</div><div>They know they need a fresh SIM with no WhatsApp on it</div></div>
+    <div class="chk-r"><div class="b"></div><div class="n">If yes</div><div>They know who controls their Google listing login</div></div>
+    <div class="chk-r"><div class="b"></div><div class="n">Same day</div><div>A WhatsApp sent confirming what was agreed, in writing</div></div>
+  </div>
+</div>
+
+<div class="foot">
+  <b>Rebound</b> — Agent Sales Playbook · Internal use only, do not hand this to a client<br>
+  If you can use WhatsApp, you can use Rebound. Because Rebound <em>is</em> WhatsApp.
+</div>
+
+</div>
+
+<button class="pbtn" onclick="window.print()">Save as PDF</button>
+
+<script>
+document.querySelectorAll(".obj-q").forEach(function(q){
+  q.addEventListener("click", function(){ q.parentElement.classList.toggle("open"); });
+});
+document.querySelectorAll(".lg").forEach(function(b){
+  b.addEventListener("click", function(){
+    var L = b.dataset.l;
+    document.querySelectorAll(".lg").forEach(function(x){ x.classList.toggle("on", x === b); });
+    document.querySelectorAll(".lb").forEach(function(x){ x.classList.toggle("on", x.dataset.l === L); });
+    window.scrollBy({top:-1, behavior:"instant"});
+  });
+});
+</script>
+</body>
+</html>

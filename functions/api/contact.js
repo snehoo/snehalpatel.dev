@@ -26,7 +26,7 @@ export async function onRequest(context) {
         to: 'snehalp@gmail.com',
         subject: `New message from ${name}`,
         html: `
-          <h2>New Contact Form Submission</h2>
+          <h2>New Message from snehalpatel.dev</h2>
           <p><strong>Name:</strong> ${escapeHtml(name)}</p>
           <p><strong>Email:</strong> ${escapeHtml(email)}</p>
           <p><strong>Message:</strong></p>

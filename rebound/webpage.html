@@ -1,394 +1,1453 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Rebound — Your whole front desk is one WhatsApp chat</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #EFE8DE; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-    #__bundler_loading { position: fixed; bottom: 20px; right: 20px; font: 13px/1.4 -apple-system, BlinkMacSystemFont, sans-serif; color: #666; background: #fff; padding: 8px 14px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); z-index: 10000; }
-    #__bundler_thumbnail { position: fixed; inset: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #EFE8DE; z-index: 9999; }
-    #__bundler_thumbnail svg { width: 100%; height: 100%; object-fit: contain; }
-    #__bundler_placeholder { color: #999; font-size: 14px; }
-  </style>
-  <noscript>
-    <style>#__bundler_loading { display: none; }</style>
-    <div style="position:fixed;bottom:12px;left:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#999;background:rgba(255,255,255,0.9);padding:6px 12px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.08);z-index:10000;">
-      This page requires JavaScript to display.
-    </div>
-  </noscript>
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>Rebound. Your whole front desk is one WhatsApp chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --bg:#EFE8DE;
+  --bg-soft:#F6F1E9;
+  --surface:#FDFBF7;
+  --ink:#132A22;
+  --muted:#5C6B62;
+  --line:rgba(19,42,34,.13);
+  --line-strong:rgba(19,42,34,.3);
+  --accent:#1BA84F;
+  --accent-deep:#0E5D2F;
+  --accent-soft:rgba(27,168,79,.12);
+  --gold:#B4770F;
+  --bad:#B3452F;
+  --bad-soft:rgba(179,69,47,.12);
+  --bubble-out:#D9FDD3;
+  --bubble-in:#FFFFFF;
+  --bubble-ink:#0F211A;
+  --chat-bg:#E5DDD1;
+  --phone-frame:#101613;
+  --shadow:0 24px 60px -24px rgba(19,42,34,.35);
+  --tick:#34B7F1;
+  --btn-ink:#06210f;
+  --you:#C77A16;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0B141A; --bg-soft:#0F1B22; --surface:#15242D;
+    --ink:#E9EDEF; --muted:#8696A0;
+    --line:rgba(233,237,239,.12); --line-strong:rgba(233,237,239,.28);
+    --accent:#25D366; --accent-deep:#7BE3A4; --accent-soft:rgba(37,211,102,.13);
+    --gold:#E4B04E;
+    --bad:#E07A64; --bad-soft:rgba(224,122,100,.13);
+    --bubble-out:#005C4B; --bubble-in:#202C33; --bubble-ink:#E9EDEF;
+    --chat-bg:#0B141A; --phone-frame:#2A3942;
+    --shadow:0 24px 60px -24px rgba(0,0,0,.7);
+    --you:#E8A33D;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#EFE8DE; --bg-soft:#F6F1E9; --surface:#FDFBF7;
+  --ink:#132A22; --muted:#5C6B62;
+  --line:rgba(19,42,34,.13); --line-strong:rgba(19,42,34,.3);
+  --accent:#1BA84F; --accent-deep:#0E5D2F; --accent-soft:rgba(27,168,79,.12);
+  --gold:#B4770F;
+  --bad:#B3452F; --bad-soft:rgba(179,69,47,.12);
+  --bubble-out:#D9FDD3; --bubble-in:#FFFFFF; --bubble-ink:#0F211A;
+  --chat-bg:#E5DDD1; --phone-frame:#101613;
+  --shadow:0 24px 60px -24px rgba(19,42,34,.35);
+  --you:#C77A16;
+}
+:root[data-theme="dark"]{
+  --bg:#0B141A; --bg-soft:#0F1B22; --surface:#15242D;
+  --ink:#E9EDEF; --muted:#8696A0;
+  --line:rgba(233,237,239,.12); --line-strong:rgba(233,237,239,.28);
+  --accent:#25D366; --accent-deep:#7BE3A4; --accent-soft:rgba(37,211,102,.13);
+  --gold:#E4B04E;
+  --bad:#E07A64; --bad-soft:rgba(224,122,100,.13);
+  --bubble-out:#005C4B; --bubble-in:#202C33; --bubble-ink:#E9EDEF;
+  --chat-bg:#0B141A; --phone-frame:#2A3942;
+  --shadow:0 24px 60px -24px rgba(0,0,0,.7);
+  --you:#E8A33D;
+}
+
+/* ============ BASE ============ */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+h1,h2,h3{margin:0; letter-spacing:-.02em; text-wrap:balance; line-height:1.1}
+p{margin:0}
+a{color:inherit}
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent-deep);
+}
+.eyebrow::before{content:""; width:22px; height:2px; background:var(--accent); border-radius:2px}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1160px; margin:0 auto; padding:0 24px}
+
+/* word-by-word heading reveal */
+h2.reveal .w{display:inline-block; overflow:hidden; vertical-align:top; padding-bottom:.08em; margin-bottom:-.08em}
+h2.reveal .wi{display:inline-block; transform:translateY(115%); transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+h2.reveal.on .wi{transform:none}
+
+/* ---- WhatsApp-style speech tails (every bubble outside the phone demos) ---- */
+.tl-r,.tl-l{position:relative}
+.tl-r::before,.tl-l::before{
+  content:""; position:absolute; bottom:0; width:14px; height:16px; background:inherit;
+}
+.tl-r::before{right:-9px; clip-path:path('M0 0 C2 6 6 12 14 16 L0 16 Z')}
+.tl-l::before{left:-9px; clip-path:path('M14 0 C12 6 8 12 0 16 L14 16 Z')}
+
+/* drifting background chat bubbles, identical to the convo bubbles, just empty */
+.bub{
+  position:absolute; pointer-events:none; z-index:0; box-shadow:var(--shadow); opacity:.45;
+  display:none; /* background bubbles hidden for now, delete this line to bring them back */
+}
+.bub.green{background:var(--bubble-out); border-radius:18px 18px 6px 18px}
+.bub.plain{background:var(--bubble-in); border-radius:18px 18px 18px 6px}
+
+/* ============ NAV ============ */
+.nav{
+  position:fixed; inset:0 0 auto 0; z-index:50;
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  background:color-mix(in srgb, var(--bg) 80%, transparent);
+  border-bottom:1px solid transparent; transition:border-color .3s;
+}
+.nav.scrolled{border-color:var(--line)}
+.nav-in{max-width:1160px; margin:0 auto; padding:13px 24px; display:flex; align-items:center; gap:22px}
+.logo{display:flex; align-items:center; gap:9px; font-weight:800; font-size:19px; letter-spacing:-.02em; text-decoration:none}
+.nav-links{display:flex; gap:20px; margin-left:auto; font-size:14px; font-weight:600}
+.nav-links a{text-decoration:none; color:var(--muted); transition:color .2s}
+.nav-links a:hover,.nav-links a:focus-visible{color:var(--ink)}
+.theme-btn{
+  background:none; border:1.5px solid var(--line); color:var(--muted); cursor:pointer;
+  width:38px; height:38px; border-radius:50%; display:grid; place-items:center; flex:none;
+  transition:border-color .2s, color .2s;
+}
+.theme-btn:hover{border-color:var(--accent); color:var(--ink)}
+.theme-btn svg{width:17px; height:17px}
+.btn{
+  display:inline-flex; align-items:center; gap:9px;
+  background:var(--accent); color:var(--btn-ink); border:none; cursor:pointer;
+  font-weight:700; font-size:15px; padding:12px 22px; border-radius:999px;
+  text-decoration:none; transition:transform .18s, box-shadow .18s;
+  box-shadow:0 8px 24px -10px var(--accent);
+}
+.btn:hover{transform:translateY(-2px); box-shadow:0 14px 30px -10px var(--accent)}
+.btn:focus-visible,a:focus-visible,summary:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+.btn.small{padding:9px 18px; font-size:14px}
+.btn.ghost{background:transparent; color:var(--ink); box-shadow:none; border:1.5px solid var(--line)}
+.btn.ghost:hover{border-color:var(--accent); box-shadow:none}
+
+/* ============ HERO ============ */
+.hero{min-height:94vh; display:flex; align-items:center; padding:120px 0 60px; position:relative; overflow:hidden}
+.hero-grid{display:grid; grid-template-columns:1.12fr .88fr; gap:60px; align-items:center; position:relative; z-index:1}
+.hero h1{font-size:clamp(40px,5.2vw,68px); font-weight:800; letter-spacing:-.035em}
+.hero h1 em{font-style:normal; color:var(--accent-deep)}
+.hero-sub{margin:22px 0 30px; max-width:52ch; font-size:18px; color:var(--muted)}
+.hero-ctas{display:flex; gap:14px; flex-wrap:wrap; align-items:center}
+.hero-zero{margin-top:32px; display:flex; gap:20px; flex-wrap:wrap; font-size:14px; font-weight:600; color:var(--muted)}
+.hero-zero span{display:inline-flex; align-items:center; gap:7px}
+.hero-zero b{color:var(--accent-deep)}
+.hero-phone-wrap{display:flex; flex-direction:column; align-items:center; gap:14px}
+.hero-note{font-size:15px; color:var(--muted); text-align:center; max-width:280px}
+.scroll-cue{
+  position:absolute; bottom:22px; left:50%; transform:translateX(-50%);
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--muted);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.scroll-cue::after{
+  content:""; width:1.5px; height:34px; background:linear-gradient(var(--accent),transparent);
+  animation:drip 1.8s ease-in-out infinite;
+}
+@keyframes drip{0%,100%{transform:scaleY(.4); transform-origin:top}50%{transform:scaleY(1)}}
+
+/* ============ PHONE (shared) ============ */
+.phone{
+  width:300px; background:var(--phone-frame); border-radius:42px; padding:9px;
+  box-shadow:var(--shadow), inset 0 0 0 1.5px rgba(255,255,255,.09);
+  position:relative; flex:none;
+}
+.phone::before{
+  content:""; position:absolute; top:18px; left:50%; transform:translateX(-50%);
+  width:88px; height:22px; background:var(--phone-frame); border-radius:99px; z-index:4;
+}
+.screen{
+  border-radius:34px; overflow:hidden; background:var(--chat-bg);
+  display:flex; flex-direction:column; position:relative; height:100%;
+}
+.screen::before{
+  content:""; position:absolute; inset:0; opacity:.5; pointer-events:none; z-index:0;
+  background-image:radial-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1.5px);
+  background-size:22px 22px;
+}
+.wa-head{
+  background:var(--surface); padding:30px 14px 9px; display:flex; align-items:center; gap:10px;
+  border-bottom:1px solid var(--line); position:relative; z-index:3;
+}
+.wa-head .avatar{width:34px; height:34px; border-radius:50%; background:var(--accent); display:grid; place-items:center; flex:none}
+.wa-head .avatar svg{width:19px; height:19px}
+.wa-head .wtitle{line-height:1.2; min-width:0}
+.wa-head .wtitle b{font-size:14.5px; display:block}
+.wa-head .wtitle span{font-size:11px; color:var(--accent)}
+.wa-head .dots{margin-left:auto; color:var(--muted); font-weight:800; letter-spacing:2px}
+.chat{
+  flex:1; padding:12px 11px; display:flex; flex-direction:column;
+  overflow:hidden; justify-content:flex-end; position:relative; z-index:1; min-height:0;
+}
+.bubble{
+  max-width:86%; padding:8px 11px 6px; border-radius:12px; position:relative;
+  font-size:13px; line-height:1.45; color:var(--bubble-ink);
+  box-shadow:0 1px 1px rgba(0,0,0,.08); width:fit-content; margin:4px 0; flex:none;
+  animation:pop .4s cubic-bezier(.3,1.3,.5,1) both;
+}
+.bubble.in{background:var(--bubble-in); border-top-left-radius:3px; align-self:flex-start}
+.bubble.out{background:var(--bubble-out); border-top-right-radius:3px; align-self:flex-end}
+.bubble .meta{
+  display:flex; justify-content:flex-end; gap:4px; align-items:center;
+  font-size:10px; color:color-mix(in srgb, var(--bubble-ink) 55%, transparent); margin-top:2px;
+}
+.bubble .ticks{color:var(--tick); font-weight:700; letter-spacing:-.12em}
+.bubble b{font-weight:700}
+.bubble .doc{
+  display:flex; align-items:center; gap:9px; background:color-mix(in srgb, var(--bubble-ink) 7%, transparent);
+  border-radius:9px; padding:8px 10px; margin-top:7px; font-size:12px; font-weight:600;
+}
+.bubble .doc .dicon{
+  width:30px; height:30px; border-radius:7px; background:#D64541; color:#fff;
+  display:grid; place-items:center; font-size:9px; font-weight:800; flex:none;
+}
+.wa-btns{display:flex; flex-direction:column; margin-top:9px; border-top:1px solid rgba(0,0,0,.08)}
+.wa-btn{
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  padding:10px 8px; min-height:44px;
+  border:none; background:transparent;
+  color:#25D366; font-size:12px; font-weight:600; text-align:center;
+  border-bottom:1px solid rgba(0,0,0,.08);
+}
+.wa-btn:last-child{border-bottom:none;}
+.wa-btn::before{content:"↩"; font-size:13px; color:#25D366; flex-none;}
+[data-theme="dark"] .wa-btns{border-top-color:rgba(255,255,255,.08)}
+[data-theme="dark"] .wa-btn{border-bottom-color:rgba(255,255,255,.08)}
+.daychip{
+  align-self:center; margin:9px auto 5px; width:fit-content; flex:none;
+  background:color-mix(in srgb, var(--surface) 88%, transparent);
+  color:var(--muted); font-size:10.5px; font-weight:700; letter-spacing:.06em;
+  padding:4px 12px; border-radius:8px; box-shadow:0 1px 1px rgba(0,0,0,.06);
+  text-transform:uppercase; animation:pop .4s both;
+}
+.typing-b{display:flex; gap:3px; padding:5px 3px; align-items:center}
+.typing-b i{width:6px;height:6px;border-radius:50%;background:color-mix(in srgb,var(--bubble-ink) 40%,transparent);animation:blink 1.2s infinite}
+.typing-b i:nth-child(2){animation-delay:.2s}.typing-b i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@keyframes pop{from{opacity:0; transform:translateY(12px) scale(.94)}to{opacity:1; transform:none}}
+.wa-input{display:flex; align-items:center; gap:7px; padding:8px 9px 12px; position:relative; z-index:2}
+.wa-field{
+  flex:1; background:var(--surface); border-radius:999px; padding:9px 14px;
+  font-size:13px; line-height:1.3; min-height:36px; display:flex; align-items:center;
+  color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.07); min-width:0;
+}
+.wa-field .ph{color:var(--muted); opacity:.8}
+.wa-field .txt{white-space:nowrap; overflow:hidden}
+.wa-field .caret{
+  display:inline-block; width:1.5px; height:15px; background:var(--accent);
+  margin-left:1px; animation:caret 1s steps(1) infinite; flex:none;
+}
+@keyframes caret{50%{opacity:0}}
+.wa-send{
+  width:38px; height:38px; border-radius:50%; background:var(--accent); flex:none;
+  display:grid; place-items:center; color:var(--btn-ink); transition:transform .2s;
+}
+.wa-send.pulse{transform:scale(1.12)}
+.wa-send svg{width:17px; height:17px}
+
+/* ============ LEAKS ============ */
+.leaks{padding:110px 0 90px; position:relative; overflow:hidden}
+.leaks h2, .sec h2{font-size:clamp(32px,4vw,50px); font-weight:800; letter-spacing:-.03em; margin:14px 0 16px}
+.sec-sub{color:var(--muted); font-size:17px; max-width:58ch}
+.leak-row{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:52px; position:relative; z-index:1}
+.leak{
+  background:var(--surface); border:1px solid var(--line); border-radius:20px;
+  padding:26px 24px 28px; opacity:0; transform:translateY(46px);
+  transition:opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1);
+  height:374px; box-sizing:border-box; display:flex; flex-direction:column;
+}
+.leak.on{opacity:1; transform:none}
+.leak .rb{
+  display:inline-block; background:var(--bubble-in); color:var(--bubble-ink);
+  border-radius:14px; padding:8px 14px; font-size:15px; font-weight:800;
+  box-shadow:0 1px 2px rgba(0,0,0,.1); margin-bottom:16px; margin-left:9px;
+}
+.leak .rb em{font-style:normal; color:var(--accent-deep)}
+.leak p{font-size:14.5px; color:var(--muted)}.leak p:not(.cost){flex:1}
+.leak .cost{margin-top:auto; padding-top:16px; font-size:13px; font-weight:700; color:var(--gold)}
+
+/* ============ CONVO (bubbles slide in/out on scroll) ============ */
+.convo{position:relative; padding:90px 0; overflow:hidden}
+.convo-in{max-width:820px; margin:0 auto; padding:0 24px; display:flex; flex-direction:column; gap:14px}
+.convo-b{
+  padding:16px 22px 12px; font-size:clamp(17px,2vw,22px); font-weight:700; line-height:1.4;
+  letter-spacing:-.01em; box-shadow:var(--shadow); width:fit-content; max-width:min(440px,88%);
+  color:var(--bubble-ink); will-change:transform,opacity;
+}
+.convo-b .meta{display:flex; justify-content:flex-end; gap:4px; font-size:11px; font-weight:600; color:color-mix(in srgb, var(--bubble-ink) 55%, transparent); margin-top:4px}
+.convo-b .ticks{color:var(--tick); letter-spacing:-.12em}
+.convo-b em{font-style:normal; color:var(--accent-deep)}
+.convo-b.plain{background:var(--bubble-in); border-radius:18px 18px 18px 6px; align-self:flex-start}
+.convo-b.green{background:var(--bubble-out); border-radius:18px 18px 6px 18px; align-self:flex-end}
+.convo-gap{height:30px}
+.convo-close{
+  margin-top:56px; text-align:center; font-size:clamp(19px,2.4vw,26px); font-weight:800;
+  opacity:0; transform:translateY(22px); transition:opacity .7s, transform .7s;
+}
+.convo-close.on{opacity:1; transform:none}
+.convo-close b{color:var(--accent-deep)}
+
+/* ============ SCROLLYTELLING ============ */
+.story{position:relative; padding:80px 0 40px}
+.story-grid{display:grid; grid-template-columns:minmax(0,1fr) 400px; gap:70px; align-items:start}
+.steps{display:flex; flex-direction:column}
+.step{min-height:92vh; display:flex; flex-direction:column; justify-content:center; padding:40px 0}
+.step-card{opacity:.22; transform:translateY(26px); transition:opacity .5s ease, transform .5s cubic-bezier(.2,.8,.2,1)}
+.step.active .step-card{opacity:1; transform:none}
+.step .k{
+  display:inline-flex; align-items:center; gap:10px; font-size:12px; font-weight:800;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--accent-deep); margin-bottom:16px;
+}
+.step .k i{
+  font-style:normal; width:26px; height:26px; border-radius:50%; background:var(--accent);
+  color:var(--btn-ink); display:grid; place-items:center; font-size:12px;
+}
+.step h3{font-size:clamp(27px,3vw,40px); font-weight:800; letter-spacing:-.03em; margin-bottom:16px}
+.step .body{font-size:17px; color:var(--muted); max-width:46ch}
+.tipbox{
+  margin-top:24px; max-width:430px;
+  background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent);
+  border-radius:0 14px 14px 0; padding:15px 18px;
+}
+.tipbox .t{font-size:11px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--accent-deep); margin-bottom:5px}
+.tipbox p{font-size:14px; color:var(--muted)}
+.tipbox p b{color:var(--ink)}
+.phone-col{
+  position:sticky; top:64px; height:calc(100vh - 84px);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+}
+.phone-col .phone{height:min(580px, calc(100vh - 260px))}
+.mob-title{display:none; font-size:13px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-deep)}
+.phone-tip{
+  max-width:330px; width:100%; min-height:70px;
+  background:var(--surface); border:1px solid var(--line);
+  border-radius:14px; padding:12px 16px; box-shadow:0 10px 30px -18px rgba(0,0,0,.35);
+  font-size:13px; line-height:1.5; color:var(--muted);
+  opacity:0; transform:translateY(12px);
+  transition:opacity .5s, transform .5s cubic-bezier(.2,.8,.2,1);
+}
+.phone-tip.on{opacity:1; transform:none}
+.phone-tip .t{font-size:10.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-deep); display:block; margin-bottom:3px}
+.phone-tip b{color:var(--ink)}
+.phone-ctl{display:flex; flex-direction:column; align-items:center; gap:12px}
+.dots-row{display:flex; align-items:center; gap:14px}
+.chapters{display:flex; gap:9px}
+.chapters button{
+  width:10px; height:10px; border-radius:50%; background:var(--line-strong); border:none; padding:0;
+  cursor:pointer; transition:background .3s, transform .3s;
+}
+.chapters button.on{background:var(--accent); transform:scale(1.4)}
+.arrow{
+  display:none; width:38px; height:38px; border-radius:50%; border:1.5px solid var(--line-strong);
+  background:var(--surface); color:var(--ink); font-size:18px; line-height:1; cursor:pointer;
+  align-items:center; justify-content:center; padding:0 0 2px;
+}
+.replay{
+  background:var(--surface); border:1.5px solid var(--accent); color:var(--ink);
+  font:600 13px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  padding:9px 16px; border-radius:99px; cursor:pointer;
+  animation:glowPulse 2.6s ease-in-out infinite;
+  transition:transform .2s;
+}
+.replay:hover{transform:scale(1.05)}
+@keyframes glowPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}
+  50%{box-shadow:0 0 16px 3px rgba(37,211,102,.35)}
+}
+
+/* ============ WITH vs WITHOUT ============ */
+.vs{padding:110px 0; position:relative; overflow:hidden}
+.vs-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:1000px; margin:52px auto 0; position:relative; z-index:1}
+.vs-col{
+  background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:26px 24px;
+}
+.vs-col.good{border-color:color-mix(in srgb, var(--accent) 45%, transparent)}
+.vs-col h3{font-size:16px; font-weight:800; letter-spacing:.02em; padding-bottom:14px; border-bottom:1px solid var(--line); margin-bottom:6px}
+.vs-col.bad h3{color:var(--bad)}
+.vs-col.good h3{color:var(--accent-deep)}
+.vs-step{
+  display:flex; gap:13px; padding:13px 0; align-items:flex-start;
+  opacity:0; transform:translateY(14px);
+  transition:opacity .45s ease, transform .45s cubic-bezier(.2,.8,.2,1);
+}
+.vs-step.on{opacity:1; transform:none}
+.vs-step .ic{
+  width:36px; height:36px; border-radius:50%; flex:none; display:grid; place-items:center;
+  font-size:16px; background:var(--bg-soft); border:1px solid var(--line);
+}
+.vs-step .tx{font-size:14.5px; color:var(--ink); line-height:1.5}
+.vs-step .tx .say{
+  display:inline-block; background:var(--bubble-out); color:var(--bubble-ink);
+  border-radius:9px; padding:1px 9px; font-size:13px; font-weight:600; margin-left:6px;
+}
+.badge{
+  display:inline-block; margin-top:6px; font-size:10px; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; padding:3px 9px; border-radius:6px;
+}
+.badge.you{background:color-mix(in srgb, var(--you) 15%, transparent); color:var(--you)}
+.badge.auto{background:var(--accent-soft); color:var(--accent-deep)}
+.badge.bad{background:var(--bad-soft); color:var(--bad)}
+.vs-result{
+  margin-top:12px; padding:14px 16px; border-radius:12px; font-size:14px; font-weight:700;
+  opacity:0; transform:translateY(14px); transition:opacity .5s, transform .5s;
+}
+.vs-result.on{opacity:1; transform:none}
+.vs-col.bad .vs-result{background:var(--bad-soft); color:var(--bad)}
+.vs-col.good .vs-result{background:var(--accent-soft); color:var(--accent-deep)}
+.vs-ctl{text-align:center; margin-top:30px}
+.vs-close{
+  margin-top:30px; text-align:center; font-size:clamp(17px,2vw,21px); font-weight:700; color:var(--muted);
+  opacity:0; transform:translateY(18px); transition:opacity .7s, transform .7s;
+}
+.vs-close.on{opacity:1; transform:none}
+.vs-close b{color:var(--accent-deep)}
+
+/* ============ PRICING ============ */
+.sec{padding:110px 0; position:relative; overflow:hidden}
+.sec .wrap{position:relative; z-index:1}
+.plans{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:52px; align-items:stretch}
+.plan{
+  background:var(--surface); border:1px solid var(--line); border-radius:22px; padding:30px 26px;
+  display:flex; flex-direction:column; position:relative;
+  opacity:0; transform:translateY(40px); transition:opacity .6s, transform .6s cubic-bezier(.2,.8,.2,1);
+}
+.plan.on{opacity:1; transform:none}
+.plan.pop{border-color:var(--accent); box-shadow:0 20px 50px -25px var(--accent)}
+.plan .flag{
+  position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+  background:var(--accent); color:var(--btn-ink); font-size:11px; font-weight:800;
+  letter-spacing:.1em; text-transform:uppercase; padding:5px 14px; border-radius:99px;
+}
+.plan h3{font-size:17px; font-weight:800; letter-spacing:.02em}
+.plan .price{margin:12px 0 2px; font-size:40px; font-weight:800; letter-spacing:-.03em}
+.plan .price small{font-size:15px; font-weight:600; color:var(--muted)}
+.plan .fine{font-size:12.5px; color:var(--muted); margin-bottom:20px}
+.plan ul{list-style:none; margin:0 0 26px; padding:0; display:flex; flex-direction:column; gap:11px; font-size:14px}
+.plan li{display:flex; gap:10px; align-items:flex-start; color:var(--muted)}
+.plan li::before{content:"✓"; color:var(--accent); font-weight:800; flex:none}
+.plan li b{color:var(--ink); font-weight:650}
+.plan .btn{margin-top:auto; justify-content:center}
+.plan-note{margin-top:26px; text-align:center; font-size:13.5px; color:var(--muted)}
+
+/* ============ SETUP / PAYBACK ============ */
+.setup-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:52px}
+.panel{
+  background:var(--surface); border:1px solid var(--line); border-radius:22px; padding:32px 30px;
+  opacity:0; transform:translateY(36px); transition:opacity .7s, transform .7s cubic-bezier(.2,.8,.2,1);
+}
+.panel.on{opacity:1; transform:none}
+.panel h3{font-size:20px; font-weight:800; margin-bottom:20px}
+.panel ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:13px; font-size:14.5px}
+.panel li{display:flex; gap:11px; color:var(--muted)}
+.panel li::before{content:"✓"; color:var(--accent); font-weight:800; flex:none}
+.panel li b{color:var(--ink); font-weight:650}
+.math{display:flex; flex-direction:column; font-size:15px}
+.math .row{display:flex; justify-content:space-between; gap:16px; padding:15px 0; border-bottom:1px dashed var(--line); align-items:baseline}
+.math .row:last-of-type{border-bottom:none}
+.math .lbl{color:var(--muted); max-width:30ch}
+.math .val{font-weight:800; font-size:19px; white-space:nowrap; color:var(--gold)}
+.math .val.plain{color:var(--ink)}
+.payoff{margin-top:14px; padding:16px; background:var(--accent-soft); border-radius:14px; font-size:14px; color:var(--muted)}
+.payoff b{color:var(--accent-deep)}
+
+/* ============ FAQ ============ */
+.faq{max-width:760px; margin:52px auto 0}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{
+  cursor:pointer; list-style:none; display:flex; justify-content:space-between; gap:20px;
+  padding:22px 4px; font-weight:700; font-size:17px; align-items:center;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+"; font-size:24px; font-weight:400; color:var(--accent); transition:transform .3s; flex:none}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq .a{padding:0 4px 24px; color:var(--muted); font-size:15.5px; max-width:65ch}
+
+/* ============ CTA / FOOTER ============ */
+.cta{padding:130px 0 120px; text-align:center; position:relative; overflow:hidden}
+.cta::before{
+  content:""; position:absolute; inset:auto -20% -60% -20%; height:120%;
+  background:radial-gradient(ellipse at bottom, var(--accent-soft), transparent 65%);
+  pointer-events:none;
+}
+.cta .wrap{position:relative; z-index:1}
+.cta h2{font-size:clamp(36px,5vw,62px); font-weight:800; letter-spacing:-.035em}
+.cta h2 em{font-style:normal; color:var(--accent-deep)}
+.cta p{margin:20px auto 34px; color:var(--muted); font-size:18px; max-width:44ch}
+.wa-line{margin-top:28px; font-size:15.5px; color:var(--muted)}
+.wa-line b{color:var(--accent-deep)}
+footer{border-top:1px solid var(--line); padding:30px 0 40px; font-size:13.5px; color:var(--muted)}
+footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:980px){
+  .hero{min-height:0; padding-bottom:90px}
+  .hero-grid{grid-template-columns:1fr; gap:44px}
+  .leak-row{grid-template-columns:1fr 1fr}
+  .plans,.setup-grid,.vs-grid{grid-template-columns:1fr}
+  #leak-report .wrap > div[style*="grid"]{grid-template-columns:1fr}
+  .plan.pop{order:-1}
+  /* demo becomes a tap-through carousel: full-size phone, no scroll steps */
+  .steps{display:none}
+  .story-grid{grid-template-columns:1fr; gap:0}
+  .phone-col{
+    position:static; height:auto; gap:12px; padding:0;
+  }
+  .phone-col .phone{width:min(300px, 88vw); height:min(560px, 72vh)}
+  .mob-title{display:block}
+  .arrow{display:inline-flex}
+  .phone-tip{max-width:min(330px, 88vw)}
+  .convo-b{max-width:82%}
+}
+@media (max-width:560px){
+  .nav-links{display:none}
+  .leak-row{grid-template-columns:1fr}
+}
+
+/* ============ MOTION SAFETY ============ */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001s !important; transition-duration:.001s !important}
+  html{scroll-behavior:auto}
+  .leak,.plan,.panel,.step-card,.vs-step,.vs-result,.vs-close,.convo-close{opacity:1 !important; transform:none !important}
+  h2.reveal .wi{transform:none !important}
+  .convo-b{opacity:1 !important; transform:none !important}
+}
+</style>
 </head>
 <body>
-  <div id="__bundler_thumbnail">
-  <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
-    <rect width="120" height="80" fill="#EFE8DE"></rect>
-    <path d="M24 52c0-16 11-27 23-27s23 11 23 27" stroke="#1BA84F" stroke-width="8" stroke-linecap="round" fill="none"></path>
-    <path d="M24 52l-6.5-10.5M24 52l11.5-4.5" stroke="#1BA84F" stroke-width="8" stroke-linecap="round" fill="none"></path>
-    <rect x="60" y="28" width="46" height="8" rx="4" fill="#132A22" opacity=".18"></rect>
-    <rect x="60" y="42" width="36" height="6" rx="3" fill="#132A22" opacity=".12"></rect>
-    <rect x="60" y="54" width="40" height="6" rx="3" fill="#132A22" opacity=".12"></rect>
-  </svg>
-</div>
-  <div id="__bundler_loading">Unpacking...</div>
 
-  <script>
-    
-document.addEventListener('DOMContentLoaded', async function() {
-  const loading = document.getElementById('__bundler_loading');
-  function setStatus(msg) { if (loading) loading.textContent = msg; }
+<!-- ============ NAV ============ -->
+<nav class="nav" id="nav" aria-label="Main">
+  <div class="nav-in">
+    <a class="logo" href="#top" aria-label="Rebound home">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <path d="M4 17c0-6.5 4.5-11 9.5-11S23 10.5 23 17" stroke="var(--accent)" stroke-width="3.4" stroke-linecap="round"></path>
+        <path d="M4 17l-2.6-4.2M4 17l4.6-1.8" stroke="var(--accent)" stroke-width="3.4" stroke-linecap="round"></path>
+      </svg>
+      Rebound
+    </a>
+    <div class="nav-links">
+      <a href="#leaks">The leaks</a>
+      <a href="#story">See it work</a>
+      <a href="#who">With vs without</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch between light and dark theme">
+      <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"></circle><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3L19 19M19 5l-1.7 1.7M6.7 17.3L5 19"></path></svg>
+      <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"></path></svg>
+    </button>
+    <a class="btn small" href="#cta">Get started</a>
+  </div>
+</nav>
 
-  const FONT_MIME = /^(font[/]|application[/](x-)?font-|application[/]vnd\.ms-fontobject)/i;
-  const MIME_TOKEN = /^[\w.+-]+[/][\w.+-]+$/;
-  function toBase64(bytes) {
-    let bin = '';
-    for (let i = 0; i < bytes.length; i += 0x8000) {
-      bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
-    }
-    return btoa(bin);
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <i class="bub plain tl-l" data-plx="-0.09" style="width:200px;height:120px;bottom:70px;left:28px" aria-hidden="true"></i>
+  <i class="bub plain tl-l" data-plx="0.06" style="width:150px;height:96px;top:24%;left:36%" aria-hidden="true"></i>
+  <i class="bub green tl-r" data-plx="-0.05" style="width:130px;height:84px;bottom:10%;right:30%" aria-hidden="true"></i>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Runs entirely on WhatsApp</span>
+      <h1 style="margin-top:18px">
+        Your whole front desk<br>is <em>one WhatsApp chat.</em>
+      </h1>
+      <p class="hero-sub">
+        Built for salons and spas. Text a booking the way you'd text a friend.
+        Rebound handles the reminders, the reviews and the repeat visits, and sends you
+        one message a month showing the money it saved you. No app. No dashboard. No training.
+      </p>
+      <div class="hero-ctas">
+        <a class="btn" href="#cta">Start rebounding</a>
+        <a class="btn ghost" href="#story">Watch it work ↓</a>
+      </div>
+      <div class="hero-zero">
+        <span><b>✓</b> Zero apps</span>
+        <span><b>✓</b> Zero dashboards</span>
+        <span><b>✓</b> Zero training</span>
+      </div>
+    </div>
+    <div class="hero-phone-wrap">
+      <div class="phone" style="height:560px" role="img" aria-label="Phone showing the Rebound WhatsApp chat with a booking being confirmed">
+        <div class="screen">
+          <div class="wa-head">
+            <div class="avatar">
+              <svg viewBox="0 0 26 26" fill="none" aria-hidden="true">
+                <path d="M4 17c0-6.5 4.5-11 9.5-11S23 10.5 23 17" stroke="#06210f" stroke-width="3.4" stroke-linecap="round"></path>
+                <path d="M4 17l-2.6-4.2M4 17l4.6-1.8" stroke="#06210f" stroke-width="3.4" stroke-linecap="round"></path>
+              </svg>
+            </div>
+            <div class="wtitle"><b>Rebound</b><span>online</span></div>
+            <div class="dots" aria-hidden="true">⋮</div>
+          </div>
+          <div class="chat" id="heroChat"></div>
+          <div class="wa-input" aria-hidden="true">
+            <div class="wa-field"><span class="ph">Message</span></div>
+            <div class="wa-send">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4zm6-4a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93V22h2v-3.07A8 8 0 0 0 20 11h-2z"></path></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="hero-note">↑ That's the entire workflow, a chat you already know how to use.</p>
+    </div>
+  </div>
+  <div class="scroll-cue" aria-hidden="true">Scroll</div>
+</header>
+
+<!-- ============ LEAKS ============ -->
+<section class="leaks" id="leaks">
+  <i class="bub green tl-r" data-plx="0.08" style="width:180px;height:110px;top:50px;right:34px" aria-hidden="true"></i>
+  <i class="bub plain tl-l" data-plx="-0.06" style="width:160px;height:98px;bottom:40px;left:30px" aria-hidden="true"></i>
+  <div class="wrap" style="position:relative;z-index:1">
+    <span class="eyebrow">Why your month feels lighter than your diary</span>
+    <h2 class="reveal">Everything that leaks can rebound.</h2>
+    <p class="sec-sub">Four small leaks quietly drain every salon and spa, one empty chair, one silent customer, one missing review, one drifting regular at a time. Rebound turns each one around.</p>
+    <div class="leak-row" data-reveal="">
+      <article class="leak">
+        <span class="rb tl-l">Rebound your <em>no-shows</em></span>
+        <p>People book, then forget. The chair sits empty and the money walks out with it. Rebound reminds them at the right time, and if someone goes quiet, it warns you while there's still time to fill the gap.</p>
+        <p class="cost num">This one hole costs a typical shop ₹4,800 a week.</p>
+      </article>
+      <article class="leak">
+        <span class="rb tl-l">Rebound your<br><em>reviews</em></span>
+        <p>Happy customers smile and go home quiet. Unhappy ones tell Google. Rebound flips that: happy people get a friendly nudge to tell Google, unhappy ones reach <em>you</em> first, so you can fix it with one phone call.</p>
+        <p class="cost">Your next customer reads your reviews before your price list.</p>
+      </article>
+      <article class="leak">
+        <span class="rb tl-l">Rebound your <em>customers</em></span>
+        <p>A haircut is due again in 3 weeks. Nobody calls, so nobody comes. Rebound remembers for you and invites each customer back exactly when they're due, before they drift.</p>
+        <p class="cost">Repeat visits are free money, no ads needed.</p>
+      </article>
+      <article class="leak">
+        <span class="rb tl-l">Rebound your <em>lost regulars</em></span>
+        <p>Some customers drift even after a nudge. Rebound waits for their personal gap, then sends ₹200–500 of free services, timed to their own rhythm, never a blast campaign.</p>
+        <p class="cost">Win one back and the voucher pays for itself that same visit.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONVO (bubbles slide in/out as you scroll) ============ -->
+<section class="convo" aria-label="What rebounds">
+  <div class="convo-in">
+    <div class="convo-b plain tl-l" data-slidex="0.4">She forgot her 4pm.<span class="meta num">4:15 pm</span></div>
+    <div class="convo-b green tl-r" data-slidex="-0.4">Reminded. She came. <em>That's a rebound.</em><span class="meta num">4:16 pm <span class="ticks">✓✓</span></span></div>
+    <div class="convo-gap"></div>
+    <div class="convo-b plain tl-l" data-slidex="0.4">Loved it. Told no one.<span class="meta num">6:02 pm</span></div>
+    <div class="convo-b green tl-r" data-slidex="-0.4">One nudge → 5★ on Google. <em>That's a rebound.</em><span class="meta num">6:04 pm <span class="ticks">✓✓</span></span></div>
+    <div class="convo-gap"></div>
+    <div class="convo-b plain tl-l" data-slidex="0.4">Never came back.<span class="meta num">3 weeks later</span></div>
+    <div class="convo-b green tl-r" data-slidex="-0.4">Invited on day 21 → rebooked. <em>That's a rebound.</em><span class="meta num">day 21 <span class="ticks">✓✓</span></span></div>
+    <div class="convo-gap"></div>
+    <div class="convo-b plain tl-l" data-slidex="0.4">Stopped coming in March.<span class="meta num">7 weeks gone</span></div>
+    <div class="convo-b green tl-r" data-slidex="-0.4">Services worth ₹400 free → she's back. <em>That's a rebound.</em><span class="meta num">week 7 <span class="ticks">✓✓</span></span></div>
+    <p class="convo-close" data-reveal-solo="">Bookings, reviews, regulars, everything bounces back.<br><b>That's why it's called Rebound.</b></p>
+  </div>
+</section>
+
+<!-- ============ SCROLLYTELLING ============ -->
+<section class="story" id="story">
+  <div class="wrap">
+    <span class="eyebrow">Watch a real day, message by message</span>
+    <h2 class="reveal" style="font-size:clamp(32px,4vw,50px); font-weight:800; letter-spacing:-.03em; margin:14px 0 8px">You type. Rebound runs.</h2>
+    <p class="sec-sub">The phone below plays each moment of a salon owner's day, exactly as it happens. This is the whole product; there is nothing else to learn.</p>
+  </div>
+  <div class="wrap story-grid">
+    <div class="steps" id="steps">
+
+      <div class="step" data-ch="0">
+        <div class="step-card">
+          <span class="k"><i>1</i> Book in one text</span>
+          <h3>Type it like you'd tell a friend.</h3>
+          <p class="body">"Priya 98200 12345 haircut kal 4pm", that's a complete booking. Rebound writes it down and says Got it. If something's unclear, it asks one question. It never guesses.</p>
+          <div class="tipbox">
+            <p class="t">Also works</p>
+            <p><b>Forward a customer's message, or send a 6-second voice note</b> between clients. Your staff can book too, anyone at the counter.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-ch="1">
+        <div class="step-card">
+          <span class="k"><i>2</i> Reminders run themselves</span>
+          <h3>You do nothing. The chair gets saved.</h3>
+          <p class="body">Rebound reminds every customer at the right time, in your business name. And when someone goes quiet, you get a heads-up while there's still time to fill the spot, not after it's gone.</p>
+          <div class="tipbox">
+            <p class="t">In your name</p>
+            <p>Messages come from <b>"Bloom Salon", not a stranger's number.</b> That's why customers actually reply.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-ch="2">
+        <div class="step-card">
+          <span class="k"><i>3</i> Close the day in one reply</span>
+          <h3>✅ or ❌, that's your whole paperwork.</h3>
+          <p class="body">After each visit, one question: did they come? Tap once and you're done, no register, no spreadsheet. Missed a few? One 9pm message closes the whole day in a single reply.</p>
+          <div class="tipbox">
+            <p class="t">Why it matters</p>
+            <p>That one tap quietly powers everything else, <b>the reviews, the come-back nudges and your monthly money report.</b></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-ch="3">
+        <div class="step-card">
+          <span class="k"><i>4</i> Your day &amp; week, on demand</span>
+          <h3>Two magic words: TODAY and WEEK.</h3>
+          <p class="body">Type TODAY and today's list arrives in seconds. Type WEEK and you see your next seven days, who's coming, who hasn't said yes yet, where the free slots are.</p>
+          <div class="tipbox">
+            <p class="t">How you do it</p>
+            <p>Just type <b>TODAY</b> or <b>WEEK</b> in the same chat. That's the entire reporting system.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-ch="4">
+        <div class="step-card">
+          <span class="k"><i>5</i> Reviews, defended</span>
+          <h3>Upset customers reach you before they reach Google.</h3>
+          <p class="body">Everyone gets a quiet "how was it?" after their visit. Happy people are invited to tell Google. Upset ones reach you first, with their number, so one phone call can fix it. If a bad review still shows up, a polite reply sits ready and waiting.</p>
+          <div class="tipbox">
+            <p class="t">How you do it</p>
+            <p>You reply <b>APPROVE</b>. One word, the reply is posted and your reputation stays answered.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-ch="5">
+        <div class="step-card">
+          <span class="k"><i>6</i> Proof, on the 1st</span>
+          <h3>One message. Real rupees. Every month.</h3>
+          <p class="body">On the 1st, one message lands: how many no-shows you dodged, how much money you kept, how many new reviews came in, and how many drifting customers came back on a win-back voucher. Then the part no one else gives you: the one thing to fix next month.</p>
+          <div class="tipbox">
+            <p class="t">Honest math</p>
+            <p>Counted against <b>your own before-Rebound numbers</b>, never inflated, never invented. Screenshot it, show it off.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-ch="6">
+        <div class="step-card">
+          <span class="k"><i>7</i> Type anything. It just works.</span>
+          <h3>Every command you'll ever need.</h3>
+          <p class="body">You never need to memorise syntax. But here's everything the chat understands, type any of these in plain text and Rebound handles it. Type <b>COUPON</b> to switch win-back vouchers on/off, change amounts, or adjust the wait time.</p>
+          <div class="tipbox">
+            <p class="t">Also works</p>
+            <p><b>aaj</b> = today, <b>kal</b> = tomorrow. Hinglish is first-class.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="phone-col">
+      <p class="mob-title" id="mobTitle"></p>
+      <div class="phone" role="img" aria-label="Phone showing the Rebound WhatsApp chat, playing each scene">
+        <div class="screen">
+          <div class="wa-head">
+            <div class="avatar">
+              <svg viewBox="0 0 26 26" fill="none" aria-hidden="true">
+                <path d="M4 17c0-6.5 4.5-11 9.5-11S23 10.5 23 17" stroke="#06210f" stroke-width="3.4" stroke-linecap="round"></path>
+                <path d="M4 17l-2.6-4.2M4 17l4.6-1.8" stroke="#06210f" stroke-width="3.4" stroke-linecap="round"></path>
+              </svg>
+            </div>
+            <div class="wtitle"><b>Rebound</b><span id="waStatus">online</span></div>
+            <div class="dots" aria-hidden="true">⋮</div>
+          </div>
+          <div class="chat" id="chat" aria-live="polite"></div>
+          <div class="wa-input">
+            <div class="wa-field" id="waField"><span class="ph" id="waPh">Message</span><span class="txt" id="waTxt"></span></div>
+            <div class="wa-send" id="waSend">
+              <svg id="micIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4zm6-4a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93V22h2v-3.07A8 8 0 0 0 20 11h-2z"></path></svg>
+              <svg id="sendIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M3.4 20.4l17.4-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.2L4 11l9 1-9 1-2 6.2a1 1 0 0 0 1.4 1.2z"></path></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-tip" id="phoneTip"></div>
+      <div class="phone-ctl">
+        <div class="dots-row">
+          <button class="arrow" id="prevBtn" type="button" aria-label="Previous scene">‹</button>
+          <div class="chapters" id="chapDots"></div>
+          <button class="arrow" id="nextBtn" type="button" aria-label="Next scene">›</button>
+        </div>
+        <button class="replay" id="replayBtn" type="button">↺ Replay this chat</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WITH vs WITHOUT ============ -->
+<section class="vs" id="who">
+  <i class="bub green tl-r" data-plx="0.09" style="width:190px;height:115px;top:70px;right:36px" aria-hidden="true"></i>
+  <i class="bub plain tl-l" data-plx="-0.07" style="width:170px;height:104px;bottom:110px;left:32px" aria-hidden="true"></i>
+  <div class="wrap" style="position:relative;z-index:1">
+    <div style="text-align:center">
+      <span class="eyebrow" style="justify-content:center">Same customer, same haircut</span>
+      <h2 class="reveal">Your week without Rebound. And with it.</h2>
+      <p class="sec-sub" style="margin:0 auto">Priya books a haircut for tomorrow, 4pm. Watch what happens next.</p>
+    </div>
+    <div class="vs-grid" id="vsGrid">
+      <div class="vs-col bad">
+        <h3>✗ Without Rebound</h3>
+        <div class="vs-step"><span class="ic">📒</span><span class="tx">You scribble it in the register between two clients.<br><span class="badge you">You do it</span></span></div>
+        <div class="vs-step"><span class="ic">📞</span><span class="tx">You try to remind her yourself, if you remember.<br><span class="badge you">You do it</span></span></div>
+        <div class="vs-step"><span class="ic">🪑</span><span class="tx">She forgets. The 4pm chair sits empty.<br><span class="badge bad">Money gone</span></span></div>
+        <div class="vs-step"><span class="ic">🤐</span><span class="tx">She loved her last visit, but Google never finds out.<br><span class="badge bad">Nobody asks</span></span></div>
+        <div class="vs-step"><span class="ic">📆</span><span class="tx">Three weeks pass. Nobody invites her back.<br><span class="badge bad">Nobody remembers</span></span></div>
+        <div class="vs-result">Result: empty chairs, a silent Google page, and you doing all the remembering.</div>
+      </div>
+      <div class="vs-col good">
+        <h3>✓ With Rebound</h3>
+        <div class="vs-step"><span class="ic">💬</span><span class="tx">You text: <span class="say tl-r">Priya haircut kal 4pm</span><br><span class="badge you">You · 5 seconds</span></span></div>
+        <div class="vs-step"><span class="ic">⏰</span><span class="tx">Priya gets reminded, from your salon's own name.<br><span class="badge auto">Automatic</span></span></div>
+        <div class="vs-step"><span class="ic">✅</span><span class="tx">She shows up. You tap ✅.<br><span class="badge you">You · one tap</span></span></div>
+        <div class="vs-step"><span class="ic">⭐</span><span class="tx">She's asked how it went, then invited to tell Google.<br><span class="badge auto">Automatic</span></span></div>
+        <div class="vs-step"><span class="ic">🔁</span><span class="tx">Day 21: she's invited back. She books again.<br><span class="badge auto">Automatic</span></span></div>
+        <div class="vs-result">Result: one text and one tap. Rebound did everything else.</div>
+      </div>
+    </div>
+    <div class="vs-ctl"><button class="replay" id="vsReplay" type="button">↺ Replay</button></div>
+    <p class="vs-close" id="vsClose">You set Rebound up once. After that, your only jobs are <b>one text and one tap.</b></p>
+  </div>
+</section>
+
+
+<!-- ============ LEAK REPORT ============ -->
+<section class="sec" id="leak-report" style="padding-top:0">
+  <div class="wrap">
+    <span class="eyebrow">The Leak Report</span>
+    <h2 class="reveal">Everyone else tells you what happened.<br>We tell you what to fix.</h2>
+    <p class="sec-sub">On the 1st you get your numbers, no-shows dodged, money kept, reviews gained. Then one more line most tools will never give you.</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:52px; align-items:center">
+      <div>
+        <p style="font-size:17px; color:var(--muted); line-height:1.65; margin-bottom:28px">We read your private ratings, your Google reviews and your rebooking patterns together, and find the one thing quietly costing you customers that month.</p>
+        <div style="background:var(--accent-soft); border-left:3px solid var(--accent); border-radius:0 14px 14px 0; padding:18px 22px; margin-bottom:20px">
+          <p style="font-size:11px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--accent-deep); margin-bottom:6px">Included with Growth, not an add-on</p>
+          <p style="font-size:14.5px; color:var(--muted); line-height:1.6">The Leak Report is part of your monthly Proof on Growth and Pro. The one line no competitor will give you.</p>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:12px">
+        <div class="tl-r" style="background:var(--bubble-out); border-radius:18px 18px 6px 18px; padding:18px 20px 14px; box-shadow:var(--shadow); max-width:400px; width:100%">
+          <p style="font-size:13.5px; color:var(--bubble-ink); line-height:1.6; margin-bottom:14px">📈 <b>Your Rebound Proof. June</b><br><br>No-shows dodged: <b class="num">9</b><br>Money kept: <b class="num">₹6,300</b><br>New Google reviews: <b class="num">+9</b><br>Your rating: <b class="num">4.1★ → 4.3★</b></p>
+          <div style="padding-top:14px; border-top:1px solid rgba(19,42,34,.14)">
+            <p style="font-size:13px; font-weight:800; color:var(--bubble-ink); margin-bottom:5px">What to fix</p>
+            <p style="font-size:13px; color:var(--bubble-ink); line-height:1.55; font-style:italic">3 of your 8 unhappy replies this month mention Saturday waiting. Try 15-minute gaps after 4pm.</p>
+          </div>
+          <div style="display:flex; justify-content:flex-end; margin-top:8px; gap:4px; align-items:center"><span style="font-size:10px; color:color-mix(in srgb, var(--bubble-ink) 50%, transparent)">1 Jun · 9:00 am</span><span style="font-size:10px; color:#34B7F1; font-weight:700; letter-spacing:-.12em">✓✓</span></div>
+        </div>
+        <p style="font-size:13px; color:var(--muted); padding-right:4px">↑ A WhatsApp message, not a PDF.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section class="sec" id="pricing" style="padding-top:0">
+  <i class="bub plain tl-l" data-plx="0.06" style="width:165px;height:100px;top:30%;left:26px" aria-hidden="true"></i>
+  <i class="bub green tl-r" data-plx="-0.08" style="width:185px;height:112px;bottom:8%;right:30px" aria-hidden="true"></i>
+  <div class="wrap">
+    <span class="eyebrow">Pricing</span>
+    <h2 class="reveal">Simple plans. Real payback.</h2>
+    <p class="sec-sub">Done-for-you from day one. Nothing to install, nothing to learn.</p>
+    <div class="plans" data-reveal="">
+      <article class="plan">
+        <h3>Starter</h3>
+        <p class="price num">₹4,999<small>/mo</small></p>
+        <p class="fine num">+ ₹9,999 one-time setup · up to 150 appointments</p>
+        <ul>
+          <li><b>WhatsApp bookings</b> by text or voice note</li>
+          <li>Reminders before every appointment</li>
+          <li>Easy reschedules, empty-slot warnings</li>
+          <li>Come-back nudges, timed per service</li>
+          <li>Monthly message showing money saved</li>
+        </ul>
+        <a class="btn ghost" href="#cta">Choose Starter</a>
+      </article>
+      <article class="plan pop">
+        <span class="flag">Most popular</span>
+        <h3>Growth</h3>
+        <p class="price num">₹7,999<small>/mo</small></p>
+        <p class="fine num">+ ₹9,999 one-time setup · up to 400 appointments</p>
+        <ul>
+          <li>Everything in Starter</li>
+          <li>Win-back offers for customers who’ve drifted, timed to their own rhythm</li>
+          <li><b>Private "how was it?"</b> after every visit</li>
+          <li>Unhappy customers caught before they reach Google</li>
+          <li>Google review invitations</li>
+          <li>Bad review? We write the reply, you just say APPROVE</li>
+          <li>Competitor rating watch</li>
+          <li><b>Monthly report tells you what to fix, not just what happened</b></li>
+        </ul>
+        <a class="btn" href="#cta">Choose Growth</a>
+      </article>
+      <article class="plan">
+        <h3>Pro</h3>
+        <p class="price num">₹14,999<small>/mo</small></p>
+        <p class="fine num">+ ₹14,999 one-time setup · unlimited appointments</p>
+        <ul>
+          <li>Everything in Growth</li>
+          <li><b>Up to 3 branches</b>, one merged Proof</li>
+          <li>Per-branch breakdown</li>
+          <li>Quarterly strategy call</li>
+        </ul>
+        <a class="btn ghost" href="#cta">Choose Pro</a>
+      </article>
+    </div>
+    <p class="plan-note">Annual plan: <b>2 months free</b> · No lock-in, cancel anytime and we hand you back all your reviews and your customer list. It's your data.</p>
+  </div>
+</section>
+
+<!-- ============ SETUP ============ -->
+<section class="sec" id="setup" style="padding-top:0">
+  <div class="wrap">
+    <span class="eyebrow">The one-time setup</span>
+    <h2>Why <span class="num">₹9,999</span>?</h2>
+    <p class="sec-sub">Because it's real, done-for-you work, and it usually pays for itself in about a month.</p>
+    <div class="setup-grid" data-reveal="">
+      <div class="panel">
+        <h3>What the setup buys you</h3>
+        <ul>
+          <li><span><b>Your own WhatsApp Business line</b>, official, in your business name. Customers reply to "Bloom Salon"; they ignore unknown numbers.</span></li>
+          <li><span><b>Your Google reviews connected the official way</b>, you tap "Allow" once on your phone. Takes a minute.</span></li>
+          <li><span><b>Your menu, prices and message style</b> set up to sound like you.</span></li>
+          <li><span><b>This week's diary moved over live on the call</b>, reminders working from hour one.</span></li>
+          <li><span><b>Your staff's numbers added</b>, anyone at the counter can text a booking.</span></li>
+          <li><span><b>Your first real bookings watched live with you</b>, so nothing surprises you.</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>The payback math</h3>
+        <div class="math">
+          <div class="row"><span class="lbl">A typical salon or spa loses 8 no-shows a week × ₹600</span><span class="val num">₹4,800<small style="font-size:12px;font-weight:600"> /wk</small></span></div>
+          <div class="row"><span class="lbl">Reminders and follow-ups typically save 40–60% of that</span><span class="val num">₹2,000–2,900<small style="font-size:12px;font-weight:600"> /wk</small></span></div>
+          <div class="row"><span class="lbl">Setup fee usually earned back in</span><span class="val plain num">~4–5 weeks</span></div>
+        </div>
+        <p class="payoff">After that it's yours for good: the number, the messages, the review connection and the habit. <b>The setup is paid once, the leak was weekly.</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="sec" id="faq" style="padding-top:0">
+  <div class="wrap">
+    <div style="text-align:center">
+      <span class="eyebrow" style="justify-content:center">FAQ</span>
+      <h2 class="reveal">Questions? Answers.</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>Do I need to install an app or learn a dashboard?</summary>
+        <p class="a">No. Rebound has no app, no login and no dashboard. Everything, bookings in, reminders out, review alerts, your monthly report, happens inside one WhatsApp chat. If you can use WhatsApp, you already know how to use Rebound.</p>
+      </details>
+      <details>
+        <summary>How do I add a booking?</summary>
+        <p class="a">Forward it, type it, or send a voice note, in plain, everyday language, English or Hinglish. "Priya 98200 12345 haircut kal 4pm" is enough. Rebound writes it down and confirms back within seconds. If anything is unclear, it asks, it never guesses.</p>
+      </details>
+      <details>
+        <summary>Which number do my customers see messages from?</summary>
+        <p class="a">Your own. During setup we create an official WhatsApp Business account in your business name. You'll need one mobile number dedicated to your business WhatsApp, if you don't have one, we help you arrange it on the setup call. A message from "Bloom Salon" gets answered; a message from an unknown number gets ignored.</p>
+      </details>
+      <details>
+        <summary>What happens when someone leaves a bad review?</summary>
+        <p class="a">First, every customer gets a private "how was your visit?" message. If someone wasn't happy, you're told immediately so you can call and make it right. The Google invite still goes to everyone, we never pick and choose, because that's against Google's rules and can get a listing removed. If a poor review does appear, you get a polite, ready-made reply, say APPROVE and it's posted.</p>
+      </details>
+      <details>
+        <summary>What do I need to get started?</summary>
+        <p class="a">Three things: your appointment diary (any format, even photos of a register work), your Google business listing login, and a mobile number dedicated to your business WhatsApp. We handle everything else on one setup call.</p>
+      </details>
+      <details>
+        <summary>Is this only for salons?</summary>
+        <p class="a">Salons and spas, yes, that's deliberate. Both run the same way: one diary, walk-in-adjacent bookings, and a service menu where people return every few weeks. Come-back gaps are set per service, so a haircut nudges at 3 weeks and a facial at 6. Clinics, gyms and physios are on the roadmap, not live, we'd rather do two things properly than five badly.</p>
+      </details>
+      <details>
+        <summary>Won’t people just wait for the free offer instead of booking normally?</summary>
+        <p class="a">It doesn’t work on a schedule, so there’s nothing to wait for. It only goes out after someone’s personal gap has passed and they’re already overdue, someone who books regularly will never see one. There’s a long wait before anyone can receive a second one, and it stops entirely if two are ignored. And honestly: someone who comes back every four months for a ₹400 offer is still coming to you four times a year instead of going elsewhere.</p>
+      </details>
+      <details>
+        <summary>What happens if I go over my plan’s appointment limit?</summary>
+        <p class="a">Nothing stops. Every reminder still goes out, we will never switch off your customer messages over a billing question. You'll get a friendly heads-up at around 80%, and we'll talk about moving you up a plan when it suits you.</p>
+      </details>
+      <details>
+        <summary>How do I know it's actually working?</summary>
+        <p class="a">On the 1st of every month, one message lands in your chat: no-shows dodged, money kept, reviews gained, and how your rating moved against the shop you asked us to watch. Counted against your own numbers from before Rebound, one honest number, not a dashboard.</p>
+      </details>
+      <details>
+        <summary>What if I want to leave?</summary>
+        <p class="a">Cancel anytime. We hand you back all your reviews and your customer list, it's your data, and it leaves with you.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta" id="cta">
+  <i class="bub green tl-r" data-plx="0.08" style="width:200px;height:120px;top:40px;left:34px" aria-hidden="true"></i>
+  <i class="bub plain tl-l" data-plx="-0.06" style="width:180px;height:108px;bottom:70px;right:34px" aria-hidden="true"></i>
+  <i class="bub plain tl-l" data-plx="0.05" style="width:130px;height:82px;top:20%;right:18%" aria-hidden="true"></i>
+  <i class="bub green tl-r" data-plx="-0.04" style="width:120px;height:76px;bottom:14%;left:16%" aria-hidden="true"></i>
+  <div class="wrap">
+    <h2>Stop leaking.<br><em>Start rebounding.</em></h2>
+    <p>Set up in one call. Working the same day. Pays for itself in weeks.</p>
+    <a class="btn" style="font-size:17px; padding:16px 32px" href="https://wa.me/?text=Hi%20Rebound%2C%20I%27d%20like%20to%20get%20started">Get started on WhatsApp</a>
+    <p class="wa-line">If you can use WhatsApp, you already know how to use Rebound. <b>Nothing new to learn.</b></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Rebound. All rights reserved.</span>
+    <a href="mailto:snehalp@gmail.com" style="color:var(--muted)">snehalp@gmail.com</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var mobileMQ = matchMedia("(max-width: 980px)");
+  var root = document.documentElement;
+
+  /* ---- theme toggle ---- */
+  var themeBtn = document.getElementById("themeBtn");
+  var sunIcon = document.getElementById("sunIcon");
+  var moonIcon = document.getElementById("moonIcon");
+  function currentTheme(){
+    return root.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
   }
+  function syncThemeIcon(){
+    var dark = currentTheme() === "dark";
+    sunIcon.style.display = dark ? "" : "none";
+    moonIcon.style.display = dark ? "none" : "";
+  }
+  try{
+    var saved = localStorage.getItem("rb-theme");
+    if(saved === "light" || saved === "dark") root.dataset.theme = saved;
+  }catch(e){}
+  syncThemeIcon();
+  themeBtn.addEventListener("click", function(){
+    var next = currentTheme() === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    try{ localStorage.setItem("rb-theme", next); }catch(e){}
+    syncThemeIcon();
+  });
 
-  // Error sink persists across replaceWith since it's on window, not the DOM.
-  window.addEventListener('error', function(e) {
-    // Failed resource loads (CSP-blocked links, scripts, images) fire plain
-    // events at the element — warn only; real JS errors carry message/error.
-    if (!e.message && !e.error && e.target && e.target !== window) {
-      console.warn('[bundle] resource failed to load:',
-        e.target.tagName, String(e.target.src || e.target.href || ''));
-      return;
-    }
-    var p = document.body || document.documentElement;
-    var d = document.getElementById('__bundler_err') || p.appendChild(document.createElement('div'));
-    d.id = '__bundler_err';
-    d.style.cssText = 'position:fixed;bottom:12px;left:12px;right:12px;font:12px/1.4 ui-monospace,monospace;background:#2a1215;color:#ff8a80;padding:10px 14px;border-radius:8px;border:1px solid #5c2b2e;z-index:99999;white-space:pre-wrap;max-height:40vh;overflow:auto';
-    d.textContent = (d.textContent ? d.textContent + String.fromCharCode(10) : '') +
-      '[bundle] ' + (e.message || e.type) +
-      (e.filename ? ' (' + e.filename.slice(0, 60) + ':' + e.lineno + ')' : '');
-  }, true);
+  /* ---- nav shadow ---- */
+  var nav = document.getElementById("nav");
+  addEventListener("scroll", function(){ nav.classList.toggle("scrolled", scrollY > 8); }, {passive:true});
 
-  try {
-    const manifestEl = document.querySelector('script[type="__bundler/manifest"]');
-    const templateEl = document.querySelector('script[type="__bundler/template"]');
-    if (!manifestEl || !templateEl) {
-      setStatus('Error: missing bundle data');
-      console.error('[bundler] Missing script tags — manifestEl:', !!manifestEl, 'templateEl:', !!templateEl);
-      return;
-    }
+  /* ---- heading word-reveal ---- */
+  document.querySelectorAll("h2.reveal").forEach(function(h){
+    if(reduced) return;
+    var words = h.textContent.trim().split(/\s+/);
+    h.textContent = "";
+    words.forEach(function(w, i){
+      var o = document.createElement("span"); o.className = "w";
+      var s = document.createElement("span"); s.className = "wi";
+      s.textContent = w;
+      s.style.transitionDelay = (i * 70) + "ms";
+      o.appendChild(s); h.appendChild(o);
+      h.appendChild(document.createTextNode(" "));
+    });
+  });
+  var revealTxtIO = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add("on"); revealTxtIO.unobserve(e.target); }
+    });
+  }, {threshold:.6});
+  document.querySelectorAll("h2.reveal").forEach(function(h){ revealTxtIO.observe(h); });
 
-    const manifest = JSON.parse(manifestEl.textContent);
-    let template = JSON.parse(templateEl.textContent);
-
-    // Nested page bundles (iframe targets). Each ships ONCE, in the ROOT
-    // document's manifest; frame srcs carry an about:blank#<uuid> marker
-    // instead of a substitutable uuid. Every document mints the blobs for
-    // its OWN frames — from local text at the root, or text obtained from
-    // its DIRECT parent over the relay protocol below — so each frame
-    // navigation stays same-origin with its initiator and a deduped page
-    // loads at any depth on any host, including a file:// download's
-    // opaque origins (where a blob minted by one document cannot be
-    // navigated to by another).
-    const pageOrderEl = document.querySelector('script[type="__bundler/page_order"]');
-    const pageOrder = pageOrderEl ? JSON.parse(pageOrderEl.textContent) : [];
-    const pageSet = new Set(pageOrder);
-    const pageTexts = {};
-
-    // ── Nested-page text protocol (parent-chain relay) ──
-    // Page bundles ship once, in the ROOT document's manifest. Every
-    // document mints the blobs for its OWN frames, obtaining page text
-    // through a strict parent-chain relay: a document only ever SENDS to
-    // its direct parent (which, for every document the publisher's own
-    // runtime minted, is another publisher document) and only ACCEPTS
-    // text from that direct parent; requests from below are honored only
-    // for the document's own child frames, and the ROOT never sends
-    // upward at all. That last rule is load-bearing: the artifact host's
-    // frame-ancestors allows claude.ai (and friends) to frame an
-    // artifact, so window.top can be a FOREIGN document — a top-addressed
-    // protocol would hand page uuids to that ancestor and accept forged
-    // "page text" from it, minting attacker HTML as an artifact-origin
-    // blob document. The chain never touches the ancestor: requests stop
-    // at the root, replies are origin-addressed per hop (never '*' when
-    // an origin exists), and both directions are origin-gated (on https
-    // a foreign sender's origin can never equal this document's; in
-    // opaque contexts — file:// — everything serializes as 'null', where
-    // an embedded EXTERNAL frame still fails the gate by carrying its
-    // own real origin, and a sandboxed child of such a frame is excluded
-    // by the own-child-frames check plus uuid unguessability). Shape is
-    // deny-by-default: one request form, one reply form, no error
-    // replies.
-    // window.origin is the SERIALIZED SECURITY origin ('null' in opaque
-    // contexts such as a sandboxed preview iframe) — location.origin is
-    // computed from the URL and stays 'https://…' even when the document
-    // is sandboxed, which would misgate every opaque chain.
-    const OWN_TARGET = /^https?:[/][/]/.test(window.origin || '')
-      ? window.origin
-      : '*';
-    function trustedOrigin(e) {
-      if (e.origin === window.origin) return true; // https chains; opaque==opaque
-      // file:// trees: Chrome serializes the file document's origin as
-      // 'file://' while the blob: documents it mints serialize as 'null',
-      // so the two legitimate shapes can never string-match — accept the
-      // pair in both directions. https origins never serialize as either,
-      // and sender identity (own child frame / direct parent) is checked
-      // separately.
-      return (
-        (e.origin === 'null' &&
-          (window.origin === 'file://' ||
-            window.location.protocol === 'file:')) ||
-        (/^file:/.test(e.origin) && window.origin === 'null')
-      );
-    }
-    // Non-empty only in the root document (nested bundles ship an empty
-    // island), so it doubles as the root marker: the root answers from
-    // local text and treats a miss as authoritative — never relaying to
-    // its (possibly foreign) parent.
-    const isPageRoot = pageOrder.length > 0;
-    const blobUrls = {};
-    const resourceBlobs = {};
-    const UUID_SHAPE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-    const pendingFrames = {}; // uuid -> [{el, frag}] awaiting text for own frames
-    const pendingRelays = {}; // uuid -> [childWindow] awaiting text to pass down
-    function mountPage(el, frag, text) {
-      const pageBlob = new Blob([text], { type: 'text/html' });
-      const u = URL.createObjectURL(pageBlob);
-      resourceBlobs[u] = pageBlob;
-      el.src = u + frag;
-    }
-    function deliverPage(uuid, text) {
-      const frames = pendingFrames[uuid];
-      delete pendingFrames[uuid];
-      if (frames) for (const f of frames) mountPage(f.el, f.frag, text);
-      const relays = pendingRelays[uuid];
-      delete pendingRelays[uuid];
-      if (relays) {
-        for (const cw of relays) {
-          try { cw.postMessage({ __bundler_page: uuid, __bundler_text: text }, OWN_TARGET); } catch (err) { /* gone */ }
+  /* ---- group reveal ---- */
+  var revealIO = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        var kids = e.target.children;
+        for(var i=0;i<kids.length;i++){
+          (function(el,i){ setTimeout(function(){ el.classList.add("on"); }, reduced?0:i*130); })(kids[i],i);
         }
-      }
-    }
-    function ownFrameWindows() {
-      const out = [];
-      for (const f of Array.from(document.querySelectorAll('iframe'))) {
-        try { if (f.contentWindow) out.push(f.contentWindow); } catch (err) { /* detached */ }
-      }
-      return out;
-    }
-    window.addEventListener('message', function (e) {
-      const d = e.data;
-      if (!d || typeof d !== 'object' || !e.source) return;
-      // Origin gate first; the structural checks below (own-child-frames
-      // for requests, direct-parent + solicited-uuid for replies, the
-      // root's never-relay rule) are what hold in fully opaque chains
-      // where origin strings can't discriminate — a sandboxed root's
-      // FOREIGN wrapper still fails all three even though both serialize
-      // as real-vs-'null' rather than matching.
-      if (!trustedOrigin(e)) return;
-      if (typeof d.__bundler_need === 'string' && UUID_SHAPE.test(d.__bundler_need)) {
-        // Requests are honored only for this document's own child frames.
-        if (ownFrameWindows().indexOf(e.source) < 0) return;
-        const uuid = d.__bundler_need;
-        const text = pageTexts[uuid];
-        if (typeof text === 'string') {
-          try { e.source.postMessage({ __bundler_page: uuid, __bundler_text: text }, OWN_TARGET); } catch (err) { /* gone */ }
-          return;
-        }
-        if (isPageRoot || window.parent === window) return; // authoritative miss
-        const waiting = pendingRelays[uuid];
-        if (waiting) {
-          if (waiting.indexOf(e.source) < 0) waiting.push(e.source);
-          return;
-        }
-        // Never-answered uuids would otherwise accumulate forever under a
-        // request spray; past the cap (far above any real page count) new
-        // relays are dropped rather than remembered.
-        if (Object.keys(pendingRelays).length >= 128) return;
-        pendingRelays[uuid] = [e.source];
-        window.parent.postMessage({ __bundler_need: uuid }, OWN_TARGET);
-      } else if (
-        typeof d.__bundler_page === 'string' &&
-        UUID_SHAPE.test(d.__bundler_page) &&
-        typeof d.__bundler_text === 'string'
-      ) {
-        // The shape test is load-bearing beyond tidiness: the solicited
-        // check below uses the in operator, which matches prototype keys
-        // ('__proto__', 'constructor') — an unshaped key would reach
-        // deliverPage and throw, painting the error banner.
-        // Text is accepted only from the direct parent — the document
-        // that minted this one.
-        if (e.source !== window.parent || window.parent === window) return;
-        if (!(d.__bundler_page in pendingFrames) && !(d.__bundler_page in pendingRelays)) return;
-        deliverPage(d.__bundler_page, d.__bundler_text);
+        revealIO.unobserve(e.target);
       }
     });
+  }, {threshold:.15});
+  document.querySelectorAll("[data-reveal]").forEach(function(el){ revealIO.observe(el); });
 
-    const uuids = Object.keys(manifest);
-    setStatus('Unpacking ' + uuids.length + ' assets...');
+  /* ---- solo reveal ---- */
+  var soloIO = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add("on"); soloIO.unobserve(e.target); }
+    });
+  }, {threshold:.4});
+  document.querySelectorAll("[data-reveal-solo]").forEach(function(el){ soloIO.observe(el); });
 
-    await Promise.all(uuids.map(async (uuid) => {
-      const entry = manifest[uuid];
-      try {
-        const binaryStr = atob(entry.data);
-        const bytes = new Uint8Array(binaryStr.length);
-        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
-
-        let finalBytes = bytes;
-        if (entry.compressed) {
-          if (typeof DecompressionStream !== 'undefined') {
-            const ds = new DecompressionStream('gzip');
-            const writer = ds.writable.getWriter();
-            const reader = ds.readable.getReader();
-            writer.write(bytes);
-            writer.close();
-            const chunks = [];
-            let totalLen = 0;
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
-              chunks.push(value);
-              totalLen += value.length;
-            }
-            finalBytes = new Uint8Array(totalLen);
-            let offset = 0;
-            for (const chunk of chunks) { finalBytes.set(chunk, offset); offset += chunk.length; }
-          } else {
-            console.warn('DecompressionStream not available, asset ' + uuid + ' may not render');
-          }
-        }
-
-        if (pageSet.has(uuid)) {
-          pageTexts[uuid] = new TextDecoder().decode(finalBytes);
-          return;
-        }
-        if (FONT_MIME.test(entry.mime) && MIME_TOKEN.test(entry.mime)) {
-          // Strict artifact hosts allow font-src data: but not blob:.
-          blobUrls[uuid] = 'data:' + entry.mime + ';base64,' +
-            (entry.compressed ? toBase64(finalBytes) : entry.data);
-        } else {
-          const blob = new Blob([finalBytes], { type: entry.mime });
-          blobUrls[uuid] = URL.createObjectURL(blob);
-          resourceBlobs[blobUrls[uuid]] = blob;
-        }
-      } catch (err) {
-        console.error('Failed to decode asset ' + uuid + ':', err);
-        const blob = new Blob([], { type: entry.mime });
-        blobUrls[uuid] = URL.createObjectURL(blob);
-        resourceBlobs[blobUrls[uuid]] = blob;
-      }
-    }));
-
-    const extResEl = document.querySelector('script[type="__bundler/ext_resources"]');
-    const extResources = extResEl ? JSON.parse(extResEl.textContent) : [];
-    const resourceMap = {};
-    for (const entry of extResources) {
-      if (blobUrls[entry.uuid]) resourceMap[entry.id] = blobUrls[entry.uuid];
+  /* ---- parallax drift + convo slide-in/out ---- */
+  var plxEls = [].slice.call(document.querySelectorAll("[data-plx]"));
+  var slideEls = [].slice.call(document.querySelectorAll("[data-slidex]"));
+  var motionOn = !reduced;
+  function frame(){
+    if(!motionOn) return;
+    var vh = innerHeight, vh2 = vh/2;
+    if(!mobileMQ.matches){
+      plxEls.forEach(function(el){
+        var r = el.getBoundingClientRect();
+        if(r.bottom < -200 || r.top > vh + 200) return;
+        var off = (r.top + r.height/2 - vh2) * parseFloat(el.dataset.plx);
+        el.style.transform = "translateY(" + off.toFixed(1) + "px)";
+      });
     }
-
-    // Artifact-host CSP (connect-src 'self') refuses fetch() of blob: URLs —
-    // consumers read these Blobs directly. Survives the swap like the error sink.
-    window.__resourceBlobs = resourceBlobs;
-
-    setStatus('Rendering...');
-    // Page uuids have no blob here — they ride inside about:blank#<uuid>
-    // frame markers the pass below resolves after the swap.
-    for (const uuid of uuids) {
-      if (pageSet.has(uuid)) continue;
-      template = template.split(uuid).join(blobUrls[uuid]);
-    }
-
-    // Strip integrity + crossorigin — blob URLs from a file:// document inherit
-    // a null origin, so crossorigin forces a CORS fetch that SRI then rejects.
-    // The manifest bytes are ours; SRI protects against CDN compromise, not this.
-    template = template.replace(/\s+integrity="[^"]*"/gi, '').replace(/\s+crossorigin="[^"]*"/gi, '');
-
-    const resourceScript = '<script>window.__resources = ' +
-      JSON.stringify(resourceMap).replace(/<\//g, '<\\/') +
-      ';</' + 'script>';
-    // Inject after <head> so the DOCTYPE stays first; prepending the script
-    // would push the parser into quirks mode. DOMParser always emits a <head>
-    // (synthesizing one if the source HTML omitted it) but may carry
-    // attributes through, so match the full opening tag. slice() rather than
-    // replace() keeps us clear of $-pattern substitution in resourceScript.
-    const headOpen = template.match(/<head[^>]*>/i);
-    if (headOpen) {
-      const i = headOpen.index + headOpen[0].length;
-      template = template.slice(0, i) + resourceScript + template.slice(i);
-    }
-
-    // Parse the template and swap the root element. Scripts inserted via
-    // DOMParser/replaceWith are inert per spec — re-create each with
-    // createElement so they execute, awaiting onload for src scripts to
-    // preserve ordering (React before ReactDOM before Babel before text/babel).
-    const doc = new DOMParser().parseFromString(template, 'text/html');
-    document.documentElement.replaceWith(doc.documentElement);
-
-    // Resolve page-frame markers: mint this document's own blob for each
-    // framed page — from local text when this is the root, otherwise by
-    // asking the direct parent over the relay protocol above. An
-    // unanswered request leaves the frame on about:blank, the same
-    // degraded state as a refused embed.
-    {
-      const MARKER = /^about:blank#([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(#.*)?$/;
-      const needed = [];
-      for (const el of Array.from(document.querySelectorAll('iframe'))) {
-        const m = MARKER.exec(el.getAttribute('src') || '');
-        if (!m) continue;
-        const text = pageTexts[m[1]];
-        if (typeof text === 'string') {
-          mountPage(el, m[2] || '', text);
-        } else if (window.parent !== window && !isPageRoot) {
-          const had = pendingFrames[m[1]];
-          (pendingFrames[m[1]] = had || []).push({ el: el, frag: m[2] || '' });
-          if (!had) needed.push(m[1]);
-        }
-      }
-      for (const uuid of needed) {
-        window.parent.postMessage({ __bundler_need: uuid }, OWN_TARGET);
-      }
-    }
-
-    const dead = Array.from(document.scripts);
-    for (const old of dead) {
-      const s = document.createElement('script');
-      for (const a of old.attributes) s.setAttribute(a.name, a.value);
-      s.textContent = old.textContent;
-      // text/babel scripts with a src: read and inline. transformScriptTags
-      // does XHR against the src, but blob:null/ from a file:// origin is
-      // silently dropped. Inlining makes it a plain inline babel script,
-      // which transformScriptTags handles unconditionally.
-      if ((s.type === 'text/babel' || s.type === 'text/jsx') && s.src) {
-        const pre = resourceBlobs[s.src.split('#')[0]];
-        s.textContent = pre ? await pre.text() : await (await fetch(s.src)).text();
-        s.removeAttribute('src');
-      }
-      const p = s.src ? new Promise(function(r) { s.onload = s.onerror = r; }) : null;
-      old.replaceWith(s);
-      if (p) await p;
-    }
-    // Babel standalone auto-transforms type=text/babel on DOMContentLoaded,
-    // which fired before we swapped the document. Trigger manually if present.
-    if (window.Babel && typeof window.Babel.transformScriptTags === 'function') {
-      window.Babel.transformScriptTags();
-    }
-  } catch (err) {
-    setStatus('Error unpacking: ' + err.message);
-    console.error('Bundle unpack error:', err);
+    slideEls.forEach(function(el){
+      var r = el.getBoundingClientRect();
+      if(r.bottom < -300 || r.top > vh + 300) return;
+      var off = r.top + r.height/2 - vh2;           /* px from viewport centre */
+      var tx = off * parseFloat(el.dataset.slidex);  /* slide toward the sides */
+      var fade = Math.max(0, Math.min(1, 1.25 - Math.abs(off)/(vh*.62)));
+      el.style.transform = "translateX(" + tx.toFixed(1) + "px)";
+      el.style.opacity = fade.toFixed(2);
+    });
   }
-});
+  var ticking = false;
+  addEventListener("scroll", function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(function(){ frame(); ticking = false; }); }
+  }, {passive:true});
+  addEventListener("resize", frame);
+  frame();
 
-  </script>
+  /* ---- with-vs-without animation ---- */
+  var vsGrid = document.getElementById("vsGrid");
+  var vsClose = document.getElementById("vsClose");
+  var badRows = vsGrid.querySelectorAll(".bad .vs-step, .bad .vs-result");
+  var goodRows = vsGrid.querySelectorAll(".good .vs-step, .good .vs-result");
+  var vsTimers = [];
+  function runVs(){
+    vsTimers.forEach(clearTimeout); vsTimers = [];
+    [].concat([].slice.call(badRows), [].slice.call(goodRows)).forEach(function(r){ r.classList.remove("on"); });
+    vsClose.classList.remove("on");
+    void vsGrid.offsetWidth;
+    var step = reduced ? 0 : 750;
+    for(var i=0; i<badRows.length; i++){
+      (function(i){
+        vsTimers.push(setTimeout(function(){
+          badRows[i].classList.add("on");
+          if(goodRows[i]) goodRows[i].classList.add("on");
+        }, (i+1)*step));
+      })(i);
+    }
+    vsTimers.push(setTimeout(function(){ vsClose.classList.add("on"); }, (badRows.length+1)*step + 250));
+  }
+  var vsIO = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){ runVs(); vsIO.unobserve(e.target); }
+    });
+  }, {threshold:.25});
+  vsIO.observe(vsGrid);
+  document.getElementById("vsReplay").addEventListener("click", runVs);
 
-  <script type="__bundler/manifest">
-{}
-  </script>
+  /* ---- shared bubble helpers ---- */
+  function T(t){ return '<span class="meta num">'+t+'</span>'; }
+  function TK(t){ return '<span class="meta num">'+t+' <span class="ticks">✓✓</span></span>'; }
+  function BTN(btns){ return '<div class="wa-btns">'+btns.map(function(b){ return '<span class="wa-btn">'+b+'</span>'; }).join('')+'</div>'; }
+  function cmdCard(){
+    var rows = [
+      ["aaj / kal","Today's / tomorrow's appointment list"],
+      ["week","Next 7 days at a glance"],
+      ["done","End-of-day summary (✅ ❌ 🔁 counts)"],
+      ["DEL 2","Cancel slot 2, confirms customer name first"],
+      ["find Priya","All upcoming bookings for Priya"],
+      ["find 2345","Look up customer by last 4 digits"],
+      ["APPROVE","Post the drafted review reply"],
+      ["STOP","Opt a customer out of all messages"],
+    ];
+    var cust = [
+      ["YES / NO","Confirm or reschedule reminder"],
+      ["1 to 5","Rating (4–5 triggers Google invite)"],
+    ];
+    var s = '<div style="font-size:10.5px;padding:2px 0;width:100%">';
+    s += '<div style="font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:7px">You type</div>';
+    rows.forEach(function(r){
+      s += '<div style="display:flex;gap:6px;padding:4px 0;border-bottom:1px solid rgba(19,42,34,.08)">';
+      s += '<span style="font-weight:800;color:var(--ink);min-width:72px;flex:none;font-size:10.5px">'+r[0]+'</span>';
+      s += '<span style="color:var(--muted);font-size:10px;line-height:1.35">'+r[1]+'</span></div>';
+    });
+    s += '<div style="font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-deep);margin:10px 0 6px">Customers reply</div>';
+    cust.forEach(function(r){
+      s += '<div style="display:flex;gap:6px;padding:4px 0;border-bottom:1px solid rgba(19,42,34,.08)">';
+      s += '<span style="font-weight:800;color:var(--ink);min-width:72px;flex:none;font-size:10.5px">'+r[0]+'</span>';
+      s += '<span style="color:var(--muted);font-size:10px;line-height:1.35">'+r[1]+'</span></div>';
+    });
+    s += '</div>';
+    return s;
+  }
 
-  <script type="__bundler/ext_resources">
-[]
-  </script>
+  /* ---- hero mini-conversation ---- */
+  var heroChat = document.getElementById("heroChat");
+  var heroMsgs = [
+    {c:"daychip", h:"Monday"},
+    {c:"bubble out", h:'Priya 98200 12345 haircut kal 4pm'+TK("9:41")},
+    {c:"bubble in",  h:'Got it ✔ <b>Priya · Haircut · Tue 4:00 pm</b>, reminders are on.'+T("9:41")},
+    {c:"bubble in",  h:'I\'ll invite her back in 21 days too 🔁'+T("9:42")}
+  ];
+  heroMsgs.forEach(function(m, i){
+    setTimeout(function(){
+      var d = document.createElement("div");
+      d.className = m.c; d.innerHTML = m.h;
+      heroChat.appendChild(d);
+    }, reduced ? 0 : 500 + i*900);
+  });
 
-  <script type="__bundler/page_order">
-[]
-  </script>
+  /* ================= DEMO PHONE ENGINE ================= */
+  var chat    = document.getElementById("chat");
+  var tipEl   = document.getElementById("phoneTip");
+  var dotsEl  = document.getElementById("chapDots");
+  var mobTitle= document.getElementById("mobTitle");
+  var waTxt   = document.getElementById("waTxt");
+  var waPh    = document.getElementById("waPh");
+  var waField = document.getElementById("waField");
+  var waSend  = document.getElementById("waSend");
+  var micIcon = document.getElementById("micIcon");
+  var sendIcon= document.getElementById("sendIcon");
+  var waStatus= document.getElementById("waStatus");
 
-  <script type="__bundler/template">
-"<!DOCTYPE html>\n<html lang=\"en\"><head>\n<meta charset=\"utf-8\">\n<title>Rebound — Your whole front desk is one WhatsApp chat<\u002Ftitle>\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n<style>\n/* ============ TOKENS ============ */\n:root{\n  --bg:#EFE8DE;\n  --bg-soft:#F6F1E9;\n  --surface:#FDFBF7;\n  --ink:#132A22;\n  --muted:#5C6B62;\n  --line:rgba(19,42,34,.13);\n  --line-strong:rgba(19,42,34,.3);\n  --accent:#1BA84F;\n  --accent-deep:#0E5D2F;\n  --accent-soft:rgba(27,168,79,.12);\n  --gold:#B4770F;\n  --bad:#B3452F;\n  --bad-soft:rgba(179,69,47,.12);\n  --bubble-out:#D9FDD3;\n  --bubble-in:#FFFFFF;\n  --bubble-ink:#0F211A;\n  --chat-bg:#E5DDD1;\n  --phone-frame:#101613;\n  --shadow:0 24px 60px -24px rgba(19,42,34,.35);\n  --tick:#34B7F1;\n  --btn-ink:#06210f;\n  --you:#C77A16;\n}\n@media (prefers-color-scheme: dark){\n  :root{\n    --bg:#0B141A; --bg-soft:#0F1B22; --surface:#15242D;\n    --ink:#E9EDEF; --muted:#8696A0;\n    --line:rgba(233,237,239,.12); --line-strong:rgba(233,237,239,.28);\n    --accent:#25D366; --accent-deep:#7BE3A4; --accent-soft:rgba(37,211,102,.13);\n    --gold:#E4B04E;\n    --bad:#E07A64; --bad-soft:rgba(224,122,100,.13);\n    --bubble-out:#005C4B; --bubble-in:#202C33; --bubble-ink:#E9EDEF;\n    --chat-bg:#0B141A; --phone-frame:#2A3942;\n    --shadow:0 24px 60px -24px rgba(0,0,0,.7);\n    --you:#E8A33D;\n  }\n}\n:root[data-theme=\"light\"]{\n  --bg:#EFE8DE; --bg-soft:#F6F1E9; --surface:#FDFBF7;\n  --ink:#132A22; --muted:#5C6B62;\n  --line:rgba(19,42,34,.13); --line-strong:rgba(19,42,34,.3);\n  --accent:#1BA84F; --accent-deep:#0E5D2F; --accent-soft:rgba(27,168,79,.12);\n  --gold:#B4770F;\n  --bad:#B3452F; --bad-soft:rgba(179,69,47,.12);\n  --bubble-out:#D9FDD3; --bubble-in:#FFFFFF; --bubble-ink:#0F211A;\n  --chat-bg:#E5DDD1; --phone-frame:#101613;\n  --shadow:0 24px 60px -24px rgba(19,42,34,.35);\n  --you:#C77A16;\n}\n:root[data-theme=\"dark\"]{\n  --bg:#0B141A; --bg-soft:#0F1B22; --surface:#15242D;\n  --ink:#E9EDEF; --muted:#8696A0;\n  --line:rgba(233,237,239,.12); --line-strong:rgba(233,237,239,.28);\n  --accent:#25D366; --accent-deep:#7BE3A4; --accent-soft:rgba(37,211,102,.13);\n  --gold:#E4B04E;\n  --bad:#E07A64; --bad-soft:rgba(224,122,100,.13);\n  --bubble-out:#005C4B; --bubble-in:#202C33; --bubble-ink:#E9EDEF;\n  --chat-bg:#0B141A; --phone-frame:#2A3942;\n  --shadow:0 24px 60px -24px rgba(0,0,0,.7);\n  --you:#E8A33D;\n}\n\n/* ============ BASE ============ */\n*{box-sizing:border-box}\nhtml{scroll-behavior:smooth}\nbody{\n  margin:0; background:var(--bg); color:var(--ink);\n  font:16px/1.65 -apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;\n  -webkit-font-smoothing:antialiased; overflow-x:hidden;\n}\nh1,h2,h3{margin:0; letter-spacing:-.02em; text-wrap:balance; line-height:1.1}\np{margin:0}\na{color:inherit}\n.eyebrow{\n  display:inline-flex; align-items:center; gap:8px;\n  font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;\n  color:var(--accent-deep);\n}\n.eyebrow::before{content:\"\"; width:22px; height:2px; background:var(--accent); border-radius:2px}\n.num{font-variant-numeric:tabular-nums}\n.wrap{max-width:1160px; margin:0 auto; padding:0 24px}\n\n/* word-by-word heading reveal */\nh2.reveal .w{display:inline-block; overflow:hidden; vertical-align:top; padding-bottom:.08em; margin-bottom:-.08em}\nh2.reveal .wi{display:inline-block; transform:translateY(115%); transition:transform .7s cubic-bezier(.2,.8,.2,1)}\nh2.reveal.on .wi{transform:none}\n\n/* ---- WhatsApp-style speech tails (every bubble outside the phone demos) ---- */\n.tl-r,.tl-l{position:relative}\n.tl-r::before,.tl-l::before{\n  content:\"\"; position:absolute; bottom:0; width:14px; height:16px; background:inherit;\n}\n.tl-r::before{right:-9px; clip-path:path('M0 0 C2 6 6 12 14 16 L0 16 Z')}\n.tl-l::before{left:-9px; clip-path:path('M14 0 C12 6 8 12 0 16 L14 16 Z')}\n\n/* drifting background chat bubbles — identical to the convo bubbles, just empty */\n.bub{\n  position:absolute; pointer-events:none; z-index:0; box-shadow:var(--shadow); opacity:.45;\n  display:none; /* background bubbles hidden for now — delete this line to bring them back */\n}\n.bub.green{background:var(--bubble-out); border-radius:18px 18px 6px 18px}\n.bub.plain{background:var(--bubble-in); border-radius:18px 18px 18px 6px}\n\n/* ============ NAV ============ */\n.nav{\n  position:fixed; inset:0 0 auto 0; z-index:50;\n  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);\n  background:color-mix(in srgb, var(--bg) 80%, transparent);\n  border-bottom:1px solid transparent; transition:border-color .3s;\n}\n.nav.scrolled{border-color:var(--line)}\n.nav-in{max-width:1160px; margin:0 auto; padding:13px 24px; display:flex; align-items:center; gap:22px}\n.logo{display:flex; align-items:center; gap:9px; font-weight:800; font-size:19px; letter-spacing:-.02em; text-decoration:none}\n.nav-links{display:flex; gap:20px; margin-left:auto; font-size:14px; font-weight:600}\n.nav-links a{text-decoration:none; color:var(--muted); transition:color .2s}\n.nav-links a:hover,.nav-links a:focus-visible{color:var(--ink)}\n.theme-btn{\n  background:none; border:1.5px solid var(--line); color:var(--muted); cursor:pointer;\n  width:38px; height:38px; border-radius:50%; display:grid; place-items:center; flex:none;\n  transition:border-color .2s, color .2s;\n}\n.theme-btn:hover{border-color:var(--accent); color:var(--ink)}\n.theme-btn svg{width:17px; height:17px}\n.btn{\n  display:inline-flex; align-items:center; gap:9px;\n  background:var(--accent); color:var(--btn-ink); border:none; cursor:pointer;\n  font-weight:700; font-size:15px; padding:12px 22px; border-radius:999px;\n  text-decoration:none; transition:transform .18s, box-shadow .18s;\n  box-shadow:0 8px 24px -10px var(--accent);\n}\n.btn:hover{transform:translateY(-2px); box-shadow:0 14px 30px -10px var(--accent)}\n.btn:focus-visible,a:focus-visible,summary:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:3px}\n.btn.small{padding:9px 18px; font-size:14px}\n.btn.ghost{background:transparent; color:var(--ink); box-shadow:none; border:1.5px solid var(--line)}\n.btn.ghost:hover{border-color:var(--accent); box-shadow:none}\n\n/* ============ HERO ============ */\n.hero{min-height:94vh; display:flex; align-items:center; padding:120px 0 60px; position:relative; overflow:hidden}\n.hero-grid{display:grid; grid-template-columns:1.12fr .88fr; gap:60px; align-items:center; position:relative; z-index:1}\n.hero h1{font-size:clamp(40px,5.2vw,68px); font-weight:800; letter-spacing:-.035em}\n.hero h1 em{font-style:normal; color:var(--accent-deep)}\n.hero-sub{margin:22px 0 30px; max-width:52ch; font-size:18px; color:var(--muted)}\n.hero-ctas{display:flex; gap:14px; flex-wrap:wrap; align-items:center}\n.hero-zero{margin-top:32px; display:flex; gap:20px; flex-wrap:wrap; font-size:14px; font-weight:600; color:var(--muted)}\n.hero-zero span{display:inline-flex; align-items:center; gap:7px}\n.hero-zero b{color:var(--accent-deep)}\n.hero-phone-wrap{display:flex; flex-direction:column; align-items:center; gap:14px}\n.hero-note{font-size:15px; color:var(--muted); text-align:center; max-width:280px}\n.scroll-cue{\n  position:absolute; bottom:22px; left:50%; transform:translateX(-50%);\n  font-size:12px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--muted);\n  display:flex; flex-direction:column; align-items:center; gap:8px;\n}\n.scroll-cue::after{\n  content:\"\"; width:1.5px; height:34px; background:linear-gradient(var(--accent),transparent);\n  animation:drip 1.8s ease-in-out infinite;\n}\n@keyframes drip{0%,100%{transform:scaleY(.4); transform-origin:top}50%{transform:scaleY(1)}}\n\n/* ============ PHONE (shared) ============ */\n.phone{\n  width:300px; background:var(--phone-frame); border-radius:42px; padding:9px;\n  box-shadow:var(--shadow), inset 0 0 0 1.5px rgba(255,255,255,.09);\n  position:relative; flex:none;\n}\n.phone::before{\n  content:\"\"; position:absolute; top:18px; left:50%; transform:translateX(-50%);\n  width:88px; height:22px; background:var(--phone-frame); border-radius:99px; z-index:4;\n}\n.screen{\n  border-radius:34px; overflow:hidden; background:var(--chat-bg);\n  display:flex; flex-direction:column; position:relative; height:100%;\n}\n.screen::before{\n  content:\"\"; position:absolute; inset:0; opacity:.5; pointer-events:none; z-index:0;\n  background-image:radial-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1.5px);\n  background-size:22px 22px;\n}\n.wa-head{\n  background:var(--surface); padding:30px 14px 9px; display:flex; align-items:center; gap:10px;\n  border-bottom:1px solid var(--line); position:relative; z-index:3;\n}\n.wa-head .avatar{width:34px; height:34px; border-radius:50%; background:var(--accent); display:grid; place-items:center; flex:none}\n.wa-head .avatar svg{width:19px; height:19px}\n.wa-head .wtitle{line-height:1.2; min-width:0}\n.wa-head .wtitle b{font-size:14.5px; display:block}\n.wa-head .wtitle span{font-size:11px; color:var(--accent)}\n.wa-head .dots{margin-left:auto; color:var(--muted); font-weight:800; letter-spacing:2px}\n.chat{\n  flex:1; padding:12px 11px; display:flex; flex-direction:column;\n  overflow:hidden; justify-content:flex-end; position:relative; z-index:1; min-height:0;\n}\n.bubble{\n  max-width:86%; padding:8px 11px 6px; border-radius:12px; position:relative;\n  font-size:13px; line-height:1.45; color:var(--bubble-ink);\n  box-shadow:0 1px 1px rgba(0,0,0,.08); width:fit-content; margin:4px 0; flex:none;\n  animation:pop .4s cubic-bezier(.3,1.3,.5,1) both;\n}\n.bubble.in{background:var(--bubble-in); border-top-left-radius:3px; align-self:flex-start}\n.bubble.out{background:var(--bubble-out); border-top-right-radius:3px; align-self:flex-end}\n.bubble .meta{\n  display:flex; justify-content:flex-end; gap:4px; align-items:center;\n  font-size:10px; color:color-mix(in srgb, var(--bubble-ink) 55%, transparent); margin-top:2px;\n}\n.bubble .ticks{color:var(--tick); font-weight:700; letter-spacing:-.12em}\n.bubble b{font-weight:700}\n.bubble .doc{\n  display:flex; align-items:center; gap:9px; background:color-mix(in srgb, var(--bubble-ink) 7%, transparent);\n  border-radius:9px; padding:8px 10px; margin-top:7px; font-size:12px; font-weight:600;\n}\n.bubble .doc .dicon{\n  width:30px; height:30px; border-radius:7px; background:#D64541; color:#fff;\n  display:grid; place-items:center; font-size:9px; font-weight:800; flex:none;\n}\n.wa-btns{display:flex; flex-direction:column; margin-top:9px; border-top:1px solid rgba(0,0,0,.08)}\n.wa-btn{\n  display:flex; align-items:center; justify-content:center; gap:6px;\n  padding:10px 8px; min-height:44px;\n  border:none; background:transparent;\n  color:#25D366; font-size:12px; font-weight:600; text-align:center;\n  border-bottom:1px solid rgba(0,0,0,.08);\n}\n.wa-btn:last-child{border-bottom:none;}\n.wa-btn::before{content:\"↩\"; font-size:13px; color:#25D366; flex-none;}\n[data-theme=\"dark\"] .wa-btns{border-top-color:rgba(255,255,255,.08)}\n[data-theme=\"dark\"] .wa-btn{border-bottom-color:rgba(255,255,255,.08)}\n.daychip{\n  align-self:center; margin:9px auto 5px; width:fit-content; flex:none;\n  background:color-mix(in srgb, var(--surface) 88%, transparent);\n  color:var(--muted); font-size:10.5px; font-weight:700; letter-spacing:.06em;\n  padding:4px 12px; border-radius:8px; box-shadow:0 1px 1px rgba(0,0,0,.06);\n  text-transform:uppercase; animation:pop .4s both;\n}\n.typing-b{display:flex; gap:3px; padding:5px 3px; align-items:center}\n.typing-b i{width:6px;height:6px;border-radius:50%;background:color-mix(in srgb,var(--bubble-ink) 40%,transparent);animation:blink 1.2s infinite}\n.typing-b i:nth-child(2){animation-delay:.2s}.typing-b i:nth-child(3){animation-delay:.4s}\n@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}\n@keyframes pop{from{opacity:0; transform:translateY(12px) scale(.94)}to{opacity:1; transform:none}}\n.wa-input{display:flex; align-items:center; gap:7px; padding:8px 9px 12px; position:relative; z-index:2}\n.wa-field{\n  flex:1; background:var(--surface); border-radius:999px; padding:9px 14px;\n  font-size:13px; line-height:1.3; min-height:36px; display:flex; align-items:center;\n  color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.07); min-width:0;\n}\n.wa-field .ph{color:var(--muted); opacity:.8}\n.wa-field .txt{white-space:nowrap; overflow:hidden}\n.wa-field .caret{\n  display:inline-block; width:1.5px; height:15px; background:var(--accent);\n  margin-left:1px; animation:caret 1s steps(1) infinite; flex:none;\n}\n@keyframes caret{50%{opacity:0}}\n.wa-send{\n  width:38px; height:38px; border-radius:50%; background:var(--accent); flex:none;\n  display:grid; place-items:center; color:var(--btn-ink); transition:transform .2s;\n}\n.wa-send.pulse{transform:scale(1.12)}\n.wa-send svg{width:17px; height:17px}\n\n/* ============ LEAKS ============ */\n.leaks{padding:110px 0 90px; position:relative; overflow:hidden}\n.leaks h2, .sec h2{font-size:clamp(32px,4vw,50px); font-weight:800; letter-spacing:-.03em; margin:14px 0 16px}\n.sec-sub{color:var(--muted); font-size:17px; max-width:58ch}\n.leak-row{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:52px; position:relative; z-index:1}\n.leak{\n  background:var(--surface); border:1px solid var(--line); border-radius:20px;\n  padding:26px 24px 28px; opacity:0; transform:translateY(46px);\n  transition:opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1);\n}\n.leak.on{opacity:1; transform:none}\n.leak .rb{\n  display:inline-block; background:var(--bubble-in); color:var(--bubble-ink);\n  border-radius:14px; padding:8px 14px; font-size:15px; font-weight:800;\n  box-shadow:0 1px 2px rgba(0,0,0,.1); margin-bottom:16px; margin-left:9px;\n}\n.leak .rb em{font-style:normal; color:var(--accent-deep)}\n.leak p{font-size:14.5px; color:var(--muted)}\n.leak .cost{margin-top:16px; font-size:13px; font-weight:700; color:var(--gold)}\n\n/* ============ CONVO (bubbles slide in/out on scroll) ============ */\n.convo{position:relative; padding:90px 0; overflow:hidden}\n.convo-in{max-width:820px; margin:0 auto; padding:0 24px; display:flex; flex-direction:column; gap:14px}\n.convo-b{\n  padding:16px 22px 12px; font-size:clamp(17px,2vw,22px); font-weight:700; line-height:1.4;\n  letter-spacing:-.01em; box-shadow:var(--shadow); width:fit-content; max-width:min(440px,88%);\n  color:var(--bubble-ink); will-change:transform,opacity;\n}\n.convo-b .meta{display:flex; justify-content:flex-end; gap:4px; font-size:11px; font-weight:600; color:color-mix(in srgb, var(--bubble-ink) 55%, transparent); margin-top:4px}\n.convo-b .ticks{color:var(--tick); letter-spacing:-.12em}\n.convo-b em{font-style:normal; color:var(--accent-deep)}\n.convo-b.plain{background:var(--bubble-in); border-radius:18px 18px 18px 6px; align-self:flex-start}\n.convo-b.green{background:var(--bubble-out); border-radius:18px 18px 6px 18px; align-self:flex-end}\n.convo-gap{height:30px}\n.convo-close{\n  margin-top:56px; text-align:center; font-size:clamp(19px,2.4vw,26px); font-weight:800;\n  opacity:0; transform:translateY(22px); transition:opacity .7s, transform .7s;\n}\n.convo-close.on{opacity:1; transform:none}\n.convo-close b{color:var(--accent-deep)}\n\n/* ============ SCROLLYTELLING ============ */\n.story{position:relative; padding:80px 0 40px}\n.story-grid{display:grid; grid-template-columns:minmax(0,1fr) 400px; gap:70px; align-items:start}\n.steps{display:flex; flex-direction:column}\n.step{min-height:92vh; display:flex; flex-direction:column; justify-content:center; padding:40px 0}\n.step-card{opacity:.22; transform:translateY(26px); transition:opacity .5s ease, transform .5s cubic-bezier(.2,.8,.2,1)}\n.step.active .step-card{opacity:1; transform:none}\n.step .k{\n  display:inline-flex; align-items:center; gap:10px; font-size:12px; font-weight:800;\n  letter-spacing:.14em; text-transform:uppercase; color:var(--accent-deep); margin-bottom:16px;\n}\n.step .k i{\n  font-style:normal; width:26px; height:26px; border-radius:50%; background:var(--accent);\n  color:var(--btn-ink); display:grid; place-items:center; font-size:12px;\n}\n.step h3{font-size:clamp(27px,3vw,40px); font-weight:800; letter-spacing:-.03em; margin-bottom:16px}\n.step .body{font-size:17px; color:var(--muted); max-width:46ch}\n.tipbox{\n  margin-top:24px; max-width:430px;\n  background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent);\n  border-radius:0 14px 14px 0; padding:15px 18px;\n}\n.tipbox .t{font-size:11px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--accent-deep); margin-bottom:5px}\n.tipbox p{font-size:14px; color:var(--muted)}\n.tipbox p b{color:var(--ink)}\n.phone-col{\n  position:sticky; top:64px; height:calc(100vh - 84px);\n  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;\n}\n.phone-col .phone{height:min(580px, calc(100vh - 260px))}\n.mob-title{display:none; font-size:13px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-deep)}\n.phone-tip{\n  max-width:330px; width:100%; min-height:70px;\n  background:var(--surface); border:1px solid var(--line);\n  border-radius:14px; padding:12px 16px; box-shadow:0 10px 30px -18px rgba(0,0,0,.35);\n  font-size:13px; line-height:1.5; color:var(--muted);\n  opacity:0; transform:translateY(12px);\n  transition:opacity .5s, transform .5s cubic-bezier(.2,.8,.2,1);\n}\n.phone-tip.on{opacity:1; transform:none}\n.phone-tip .t{font-size:10.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-deep); display:block; margin-bottom:3px}\n.phone-tip b{color:var(--ink)}\n.phone-ctl{display:flex; flex-direction:column; align-items:center; gap:12px}\n.dots-row{display:flex; align-items:center; gap:14px}\n.chapters{display:flex; gap:9px}\n.chapters button{\n  width:10px; height:10px; border-radius:50%; background:var(--line-strong); border:none; padding:0;\n  cursor:pointer; transition:background .3s, transform .3s;\n}\n.chapters button.on{background:var(--accent); transform:scale(1.4)}\n.arrow{\n  display:none; width:38px; height:38px; border-radius:50%; border:1.5px solid var(--line-strong);\n  background:var(--surface); color:var(--ink); font-size:18px; line-height:1; cursor:pointer;\n  align-items:center; justify-content:center; padding:0 0 2px;\n}\n.replay{\n  background:var(--surface); border:1.5px solid var(--accent); color:var(--ink);\n  font:600 13px/1 -apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,sans-serif;\n  padding:9px 16px; border-radius:99px; cursor:pointer;\n  animation:glowPulse 2.6s ease-in-out infinite;\n  transition:transform .2s;\n}\n.replay:hover{transform:scale(1.05)}\n@keyframes glowPulse{\n  0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}\n  50%{box-shadow:0 0 16px 3px rgba(37,211,102,.35)}\n}\n\n/* ============ WITH vs WITHOUT ============ */\n.vs{padding:110px 0; position:relative; overflow:hidden}\n.vs-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:1000px; margin:52px auto 0; position:relative; z-index:1}\n.vs-col{\n  background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:26px 24px;\n}\n.vs-col.good{border-color:color-mix(in srgb, var(--accent) 45%, transparent)}\n.vs-col h3{font-size:16px; font-weight:800; letter-spacing:.02em; padding-bottom:14px; border-bottom:1px solid var(--line); margin-bottom:6px}\n.vs-col.bad h3{color:var(--bad)}\n.vs-col.good h3{color:var(--accent-deep)}\n.vs-step{\n  display:flex; gap:13px; padding:13px 0; align-items:flex-start;\n  opacity:0; transform:translateY(14px);\n  transition:opacity .45s ease, transform .45s cubic-bezier(.2,.8,.2,1);\n}\n.vs-step.on{opacity:1; transform:none}\n.vs-step .ic{\n  width:36px; height:36px; border-radius:50%; flex:none; display:grid; place-items:center;\n  font-size:16px; background:var(--bg-soft); border:1px solid var(--line);\n}\n.vs-step .tx{font-size:14.5px; color:var(--ink); line-height:1.5}\n.vs-step .tx .say{\n  display:inline-block; background:var(--bubble-out); color:var(--bubble-ink);\n  border-radius:9px; padding:1px 9px; font-size:13px; font-weight:600; margin-left:6px;\n}\n.badge{\n  display:inline-block; margin-top:6px; font-size:10px; font-weight:800; letter-spacing:.1em;\n  text-transform:uppercase; padding:3px 9px; border-radius:6px;\n}\n.badge.you{background:color-mix(in srgb, var(--you) 15%, transparent); color:var(--you)}\n.badge.auto{background:var(--accent-soft); color:var(--accent-deep)}\n.badge.bad{background:var(--bad-soft); color:var(--bad)}\n.vs-result{\n  margin-top:12px; padding:14px 16px; border-radius:12px; font-size:14px; font-weight:700;\n  opacity:0; transform:translateY(14px); transition:opacity .5s, transform .5s;\n}\n.vs-result.on{opacity:1; transform:none}\n.vs-col.bad .vs-result{background:var(--bad-soft); color:var(--bad)}\n.vs-col.good .vs-result{background:var(--accent-soft); color:var(--accent-deep)}\n.vs-ctl{text-align:center; margin-top:30px}\n.vs-close{\n  margin-top:30px; text-align:center; font-size:clamp(17px,2vw,21px); font-weight:700; color:var(--muted);\n  opacity:0; transform:translateY(18px); transition:opacity .7s, transform .7s;\n}\n.vs-close.on{opacity:1; transform:none}\n.vs-close b{color:var(--accent-deep)}\n\n/* ============ PRICING ============ */\n.sec{padding:110px 0; position:relative; overflow:hidden}\n.sec .wrap{position:relative; z-index:1}\n.plans{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:52px; align-items:stretch}\n.plan{\n  background:var(--surface); border:1px solid var(--line); border-radius:22px; padding:30px 26px;\n  display:flex; flex-direction:column; position:relative;\n  opacity:0; transform:translateY(40px); transition:opacity .6s, transform .6s cubic-bezier(.2,.8,.2,1);\n}\n.plan.on{opacity:1; transform:none}\n.plan.pop{border-color:var(--accent); box-shadow:0 20px 50px -25px var(--accent)}\n.plan .flag{\n  position:absolute; top:-13px; left:50%; transform:translateX(-50%);\n  background:var(--accent); color:var(--btn-ink); font-size:11px; font-weight:800;\n  letter-spacing:.1em; text-transform:uppercase; padding:5px 14px; border-radius:99px;\n}\n.plan h3{font-size:17px; font-weight:800; letter-spacing:.02em}\n.plan .price{margin:12px 0 2px; font-size:40px; font-weight:800; letter-spacing:-.03em}\n.plan .price small{font-size:15px; font-weight:600; color:var(--muted)}\n.plan .fine{font-size:12.5px; color:var(--muted); margin-bottom:20px}\n.plan ul{list-style:none; margin:0 0 26px; padding:0; display:flex; flex-direction:column; gap:11px; font-size:14px}\n.plan li{display:flex; gap:10px; align-items:flex-start; color:var(--muted)}\n.plan li::before{content:\"✓\"; color:var(--accent); font-weight:800; flex:none}\n.plan li b{color:var(--ink); font-weight:650}\n.plan .btn{margin-top:auto; justify-content:center}\n.plan-note{margin-top:26px; text-align:center; font-size:13.5px; color:var(--muted)}\n\n/* ============ SETUP / PAYBACK ============ */\n.setup-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:52px}\n.panel{\n  background:var(--surface); border:1px solid var(--line); border-radius:22px; padding:32px 30px;\n  opacity:0; transform:translateY(36px); transition:opacity .7s, transform .7s cubic-bezier(.2,.8,.2,1);\n}\n.panel.on{opacity:1; transform:none}\n.panel h3{font-size:20px; font-weight:800; margin-bottom:20px}\n.panel ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:13px; font-size:14.5px}\n.panel li{display:flex; gap:11px; color:var(--muted)}\n.panel li::before{content:\"✓\"; color:var(--accent); font-weight:800; flex:none}\n.panel li b{color:var(--ink); font-weight:650}\n.math{display:flex; flex-direction:column; font-size:15px}\n.math .row{display:flex; justify-content:space-between; gap:16px; padding:15px 0; border-bottom:1px dashed var(--line); align-items:baseline}\n.math .row:last-of-type{border-bottom:none}\n.math .lbl{color:var(--muted); max-width:30ch}\n.math .val{font-weight:800; font-size:19px; white-space:nowrap; color:var(--gold)}\n.math .val.plain{color:var(--ink)}\n.payoff{margin-top:14px; padding:16px; background:var(--accent-soft); border-radius:14px; font-size:14px; color:var(--muted)}\n.payoff b{color:var(--accent-deep)}\n\n/* ============ FAQ ============ */\n.faq{max-width:760px; margin:52px auto 0}\n.faq details{border-bottom:1px solid var(--line)}\n.faq summary{\n  cursor:pointer; list-style:none; display:flex; justify-content:space-between; gap:20px;\n  padding:22px 4px; font-weight:700; font-size:17px; align-items:center;\n}\n.faq summary::-webkit-details-marker{display:none}\n.faq summary::after{content:\"+\"; font-size:24px; font-weight:400; color:var(--accent); transition:transform .3s; flex:none}\n.faq details[open] summary::after{transform:rotate(45deg)}\n.faq .a{padding:0 4px 24px; color:var(--muted); font-size:15.5px; max-width:65ch}\n\n/* ============ CTA / FOOTER ============ */\n.cta{padding:130px 0 120px; text-align:center; position:relative; overflow:hidden}\n.cta::before{\n  content:\"\"; position:absolute; inset:auto -20% -60% -20%; height:120%;\n  background:radial-gradient(ellipse at bottom, var(--accent-soft), transparent 65%);\n  pointer-events:none;\n}\n.cta .wrap{position:relative; z-index:1}\n.cta h2{font-size:clamp(36px,5vw,62px); font-weight:800; letter-spacing:-.035em}\n.cta h2 em{font-style:normal; color:var(--accent-deep)}\n.cta p{margin:20px auto 34px; color:var(--muted); font-size:18px; max-width:44ch}\n.wa-line{margin-top:28px; font-size:15.5px; color:var(--muted)}\n.wa-line b{color:var(--accent-deep)}\nfooter{border-top:1px solid var(--line); padding:30px 0 40px; font-size:13.5px; color:var(--muted)}\nfooter .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}\n\n/* ============ RESPONSIVE ============ */\n@media (max-width:980px){\n  .hero{min-height:0; padding-bottom:90px}\n  .hero-grid{grid-template-columns:1fr; gap:44px}\n  .leak-row{grid-template-columns:1fr 1fr}\n  .plans,.setup-grid,.vs-grid{grid-template-columns:1fr}\n  #leak-report .wrap > div[style*=\"grid\"]{grid-template-columns:1fr}\n  .plan.pop{order:-1}\n  /* demo becomes a tap-through carousel: full-size phone, no scroll steps */\n  .steps{display:none}\n  .story-grid{grid-template-columns:1fr; gap:0}\n  .phone-col{\n    position:static; height:auto; gap:12px; padding:0;\n  }\n  .phone-col .phone{width:min(300px, 88vw); height:min(560px, 72vh)}\n  .mob-title{display:block}\n  .arrow{display:inline-flex}\n  .phone-tip{max-width:min(330px, 88vw)}\n  .convo-b{max-width:82%}\n}\n@media (max-width:560px){\n  .nav-links{display:none}\n  .leak-row{grid-template-columns:1fr}\n}\n\n/* ============ MOTION SAFETY ============ */\n@media (prefers-reduced-motion: reduce){\n  *,*::before,*::after{animation-duration:.001s !important; transition-duration:.001s !important}\n  html{scroll-behavior:auto}\n  .leak,.plan,.panel,.step-card,.vs-step,.vs-result,.vs-close,.convo-close{opacity:1 !important; transform:none !important}\n  h2.reveal .wi{transform:none !important}\n  .convo-b{opacity:1 !important; transform:none !important}\n}\n<\u002Fstyle>\n<\u002Fhead>\n<body>\n\n<!-- ============ NAV ============ -->\n<nav class=\"nav\" id=\"nav\" aria-label=\"Main\">\n  <div class=\"nav-in\">\n    <a class=\"logo\" href=\"#top\" aria-label=\"Rebound home\">\n      <svg width=\"26\" height=\"26\" viewBox=\"0 0 26 26\" fill=\"none\" aria-hidden=\"true\">\n        <path d=\"M4 17c0-6.5 4.5-11 9.5-11S23 10.5 23 17\" stroke=\"var(--accent)\" stroke-width=\"3.4\" stroke-linecap=\"round\"><\u002Fpath>\n        <path d=\"M4 17l-2.6-4.2M4 17l4.6-1.8\" stroke=\"var(--accent)\" stroke-width=\"3.4\" stroke-linecap=\"round\"><\u002Fpath>\n      <\u002Fsvg>\n      Rebound\n    <\u002Fa>\n    <div class=\"nav-links\">\n      <a href=\"#leaks\">The leaks<\u002Fa>\n      <a href=\"#story\">See it work<\u002Fa>\n      <a href=\"#who\">With vs without<\u002Fa>\n      <a href=\"#pricing\">Pricing<\u002Fa>\n      <a href=\"#faq\">FAQ<\u002Fa>\n    <\u002Fdiv>\n    <button class=\"theme-btn\" id=\"themeBtn\" type=\"button\" aria-label=\"Switch between light and dark theme\">\n      <svg id=\"sunIcon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"4.5\"><\u002Fcircle><path d=\"M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3L19 19M19 5l-1.7 1.7M6.7 17.3L5 19\"><\u002Fpath><\u002Fsvg>\n      <svg id=\"moonIcon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"display:none\"><path d=\"M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z\"><\u002Fpath><\u002Fsvg>\n    <\u002Fbutton>\n    <a class=\"btn small\" href=\"#cta\">Get started<\u002Fa>\n  <\u002Fdiv>\n<\u002Fnav>\n\n<!-- ============ HERO ============ -->\n<header class=\"hero\" id=\"top\">\n  <i class=\"bub plain tl-l\" data-plx=\"-0.09\" style=\"width:200px;height:120px;bottom:70px;left:28px\" aria-hidden=\"true\"><\u002Fi>\n  <i class=\"bub plain tl-l\" data-plx=\"0.06\" style=\"width:150px;height:96px;top:24%;left:36%\" aria-hidden=\"true\"><\u002Fi>\n  <i class=\"bub green tl-r\" data-plx=\"-0.05\" style=\"width:130px;height:84px;bottom:10%;right:30%\" aria-hidden=\"true\"><\u002Fi>\n  <div class=\"wrap hero-grid\">\n    <div>\n      <span class=\"eyebrow\">Runs entirely on WhatsApp<\u002Fspan>\n      <h1 style=\"margin-top:18px\">\n        Your whole front desk<br>is <em>one WhatsApp chat.<\u002Fem>\n      <\u002Fh1>\n      <p class=\"hero-sub\">\n        Built for salons and spas. Text a booking the way you'd text a friend —\n        Rebound handles the reminders, the reviews and the repeat visits, and sends you\n        one message a month showing the money it saved you. No app. No dashboard. No training.\n      <\u002Fp>\n      <div class=\"hero-ctas\">\n        <a class=\"btn\" href=\"#cta\">Start rebounding<\u002Fa>\n        <a class=\"btn ghost\" href=\"#story\">Watch it work ↓<\u002Fa>\n      <\u002Fdiv>\n      <div class=\"hero-zero\">\n        <span><b>✓<\u002Fb> Zero apps<\u002Fspan>\n        <span><b>✓<\u002Fb> Zero dashboards<\u002Fspan>\n        <span><b>✓<\u002Fb> Zero training<\u002Fspan>\n      <\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"hero-phone-wrap\">\n      <div class=\"phone\" style=\"height:560px\" role=\"img\" aria-label=\"Phone showing the Rebound WhatsApp chat with a booking being confirmed\">\n        <div class=\"screen\">\n          <div class=\"wa-head\">\n            <div class=\"avatar\">\n              <svg viewBox=\"0 0 26 26\" fill=\"none\" aria-hidden=\"true\">\n                <path d=\"M4 17c0-6.5 4.5-11 9.5-11S23 10.5 23 17\" stroke=\"#06210f\" stroke-width=\"3.4\" stroke-linecap=\"round\"><\u002Fpath>\n                <path d=\"M4 17l-2.6-4.2M4 17l4.6-1.8\" stroke=\"#06210f\" stroke-width=\"3.4\" stroke-linecap=\"round\"><\u002Fpath>\n              <\u002Fsvg>\n            <\u002Fdiv>\n            <div class=\"wtitle\"><b>Rebound<\u002Fb><span>online<\u002Fspan><\u002Fdiv>\n            <div class=\"dots\" aria-hidden=\"true\">⋮<\u002Fdiv>\n          <\u002Fdiv>\n          <div class=\"chat\" id=\"heroChat\"><\u002Fdiv>\n          <div class=\"wa-input\" aria-hidden=\"true\">\n            <div class=\"wa-field\"><span class=\"ph\">Message<\u002Fspan><\u002Fdiv>\n            <div class=\"wa-send\">\n              <svg viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 15a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4zm6-4a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93V22h2v-3.07A8 8 0 0 0 20 11h-2z\"><\u002Fpath><\u002Fsvg>\n            <\u002Fdiv>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n      <p class=\"hero-note\">↑ That's the entire workflow — a chat you already know how to use.<\u002Fp>\n    <\u002Fdiv>\n  <\u002Fdiv>\n  <div class=\"scroll-cue\" aria-hidden=\"true\">Scroll<\u002Fdiv>\n<\u002Fheader>\n\n<!-- ============ LEAKS ============ -->\n<section class=\"leaks\" id=\"leaks\">\n  <i class=\"bub green tl-r\" data-plx=\"0.08\" style=\"width:180px;height:110px;top:50px;right:34px\" aria-hidden=\"true\"><\u002Fi>\n  <i class=\"bub plain tl-l\" data-plx=\"-0.06\" style=\"width:160px;height:98px;bottom:40px;left:30px\" aria-hidden=\"true\"><\u002Fi>\n  <div class=\"wrap\" style=\"position:relative;z-index:1\">\n    <span class=\"eyebrow\">Why your month feels lighter than your diary<\u002Fspan>\n    <h2 class=\"reveal\">Everything that leaks can rebound.<\u002Fh2>\n    <p class=\"sec-sub\">Four small leaks quietly drain every salon and spa — one empty chair, one silent customer, one missing review, one drifting regular at a time. Rebound turns each one around.<\u002Fp>\n    <div class=\"leak-row\" data-reveal=\"\">\n      <article class=\"leak\">\n        <span class=\"rb tl-l\">Rebound your <em>no-shows<\u002Fem><\u002Fspan>\n        <p>People book, then forget. The chair sits empty and the money walks out with it. Rebound reminds them at the right time — and if someone goes quiet, it warns you while there's still time to fill the gap.<\u002Fp>\n        <p class=\"cost num\">This one hole costs a typical shop ₹4,800 a week.<\u002Fp>\n      <\u002Farticle>\n      <article class=\"leak\">\n        <span class=\"rb tl-l\">Rebound your <em>reviews<\u002Fem><\u002Fspan>\n        <p>Happy customers smile and go home quiet. Unhappy ones tell Google. Rebound flips that: happy people get a friendly nudge to tell Google — unhappy ones reach <em>you<\u002Fem> first, so you can fix it with one phone call.<\u002Fp>\n        <p class=\"cost\">Your next customer reads your reviews before your price list.<\u002Fp>\n      <\u002Farticle>\n      <article class=\"leak\">\n        <span class=\"rb tl-l\">Rebound your <em>customers<\u002Fem><\u002Fspan>\n        <p>A haircut is due again in 3 weeks. Nobody calls, so nobody comes. Rebound remembers for you and invites each customer back exactly when they're due — before they drift.<\u002Fp>\n        <p class=\"cost\">Repeat visits are free money — no ads needed.<\u002Fp>\n      <\u002Farticle>\n      <article class=\"leak\">\n        <span class=\"rb tl-l\">Rebound your <em>lost regulars<\u002Fem><\u002Fspan>\n        <p>Some customers drift even after a nudge — life gets busy, they try somewhere else, they forget. Rebound waits for their personal gap to pass, then sends them services worth ₹200–500 free on their next visit. Not a voucher code. Not a campaign. Just the right offer at the right moment.<\u002Fp>\n        <p class=\"cost\">This is the only money you spend on a customer you’d already lost.<\u002Fp>\n      <\u002Farticle>\n    <\u002Fdiv>\n  <\u002Fdiv>\n<\u002Fsection>\n\n<!-- ============ CONVO (bubbles slide in/out as you scroll) ============ -->\n<section class=\"convo\" aria-label=\"What rebounds\">\n  <div class=\"convo-in\">\n    <div class=\"convo-b plain tl-l\" data-slidex=\"0.4\">She forgot her 4pm.<span class=\"meta num\">4:15 pm<\u002Fspan><\u002Fdiv>\n    <div class=\"convo-b green tl-r\" data-slidex=\"-0.4\">Reminded. She came. <em>That's a rebound.<\u002Fem><span class=\"meta num\">4:16 pm <span class=\"ticks\">✓✓<\u002Fspan><\u002Fspan><\u002Fdiv>\n    <div class=\"convo-gap\"><\u002Fdiv>\n    <div class=\"convo-b plain tl-l\" data-slidex=\"0.4\">Loved it. Told no one.<span class=\"meta num\">6:02 pm<\u002Fspan><\u002Fdiv>\n    <div class=\"convo-b green tl-r\" data-slidex=\"-0.4\">One nudge → 5★ on Google. <em>That's a rebound.<\u002Fem><span class=\"meta num\">6:04 pm <span class=\"ticks\">✓✓<\u002Fspan><\u002Fspan><\u002Fdiv>\n    <div class=\"convo-gap\"><\u002Fdiv>\n    <div class=\"convo-b plain tl-l\" data-slidex=\"0.4\">Never came back.<span class=\"meta num\">3 weeks later<\u002Fspan><\u002Fdiv>\n    <div class=\"convo-b green tl-r\" data-slidex=\"-0.4\">Invited on day 21 → rebooked. <em>That's a rebound.<\u002Fem><span class=\"meta num\">day 21 <span class=\"ticks\">✓✓<\u002Fspan><\u002Fspan><\u002Fdiv>\n    <div class=\"convo-gap\"><\u002Fdiv>\n    <div class=\"convo-b plain tl-l\" data-slidex=\"0.4\">Stopped coming in March.<span class=\"meta num\">7 weeks gone<\u002Fspan><\u002Fdiv>\n    <div class=\"convo-b green tl-r\" data-slidex=\"-0.4\">Services worth ₹400 free → she's back. <em>That's a rebound.<\u002Fem><span class=\"meta num\">week 7 <span class=\"ticks\">✓✓<\u002Fspan><\u002Fspan><\u002Fdiv>\n    <p class=\"convo-close\" data-reveal-solo=\"\">Bookings, reviews, regulars — everything bounces back.<br><b>That's why it's called Rebound.<\u002Fb><\u002Fp>\n  <\u002Fdiv>\n<\u002Fsection>\n\n<!-- ============ SCROLLYTELLING ============ -->\n<section class=\"story\" id=\"story\">\n  <div class=\"wrap\">\n    <span class=\"eyebrow\">Watch a real day, message by message<\u002Fspan>\n    <h2 class=\"reveal\" style=\"font-size:clamp(32px,4vw,50px); font-weight:800; letter-spacing:-.03em; margin:14px 0 8px\">You type. Rebound runs.<\u002Fh2>\n    <p class=\"sec-sub\">The phone below plays each moment of a salon owner's day, exactly as it happens. This is the whole product; there is nothing else to learn.<\u002Fp>\n  <\u002Fdiv>\n  <div class=\"wrap story-grid\">\n    <div class=\"steps\" id=\"steps\">\n\n      <div class=\"step\" data-ch=\"0\">\n        <div class=\"step-card\">\n          <span class=\"k\"><i>1<\u002Fi> Book in one text<\u002Fspan>\n          <h3>Type it like you'd tell a friend.<\u002Fh3>\n          <p class=\"body\">\"Priya 98200 12345 haircut kal 4pm\" — that's a complete booking. Rebound writes it down and says Got it. If something's unclear, it asks one question. It never guesses.<\u002Fp>\n          <div class=\"tipbox\">\n            <p class=\"t\">Also works<\u002Fp>\n            <p><b>Forward a customer's message, or send a 6-second voice note<\u002Fb> between clients. Your staff can book too — anyone at the counter.<\u002Fp>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <div class=\"step\" data-ch=\"1\">\n        <div class=\"step-card\">\n          <span class=\"k\"><i>2<\u002Fi> Reminders run themselves<\u002Fspan>\n          <h3>You do nothing. The chair gets saved.<\u002Fh3>\n          <p class=\"body\">Rebound reminds every customer at the right time, in your business name. And when someone goes quiet, you get a heads-up while there's still time to fill the spot — not after it's gone.<\u002Fp>\n          <div class=\"tipbox\">\n            <p class=\"t\">In your name<\u002Fp>\n            <p>Messages come from <b>\"Bloom Salon\", not a stranger's number.<\u002Fb> That's why customers actually reply.<\u002Fp>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <div class=\"step\" data-ch=\"2\">\n        <div class=\"step-card\">\n          <span class=\"k\"><i>3<\u002Fi> Close the day in one reply<\u002Fspan>\n          <h3>✅ or ❌ — that's your whole paperwork.<\u002Fh3>\n          <p class=\"body\">After each visit, one question: did they come? Tap once and you're done — no register, no spreadsheet. Missed a few? One 9pm message closes the whole day in a single reply.<\u002Fp>\n          <div class=\"tipbox\">\n            <p class=\"t\">Why it matters<\u002Fp>\n            <p>That one tap quietly powers everything else — <b>the reviews, the come-back nudges and your monthly money report.<\u002Fb><\u002Fp>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <div class=\"step\" data-ch=\"3\">\n        <div class=\"step-card\">\n          <span class=\"k\"><i>4<\u002Fi> Your day &amp; week, on demand<\u002Fspan>\n          <h3>Two magic words: TODAY and WEEK.<\u002Fh3>\n          <p class=\"body\">Type TODAY and today's list arrives in seconds. Type WEEK and you see your next seven days — who's coming, who hasn't said yes yet, where the free slots are.<\u002Fp>\n          <div class=\"tipbox\">\n            <p class=\"t\">How you do it<\u002Fp>\n            <p>Just type <b>TODAY<\u002Fb> or <b>WEEK<\u002Fb> in the same chat. That's the entire reporting system.<\u002Fp>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <div class=\"step\" data-ch=\"4\">\n        <div class=\"step-card\">\n          <span class=\"k\"><i>5<\u002Fi> Reviews, defended<\u002Fspan>\n          <h3>Upset customers reach you before they reach Google.<\u002Fh3>\n          <p class=\"body\">Everyone gets a quiet \"how was it?\" after their visit. Happy people are invited to tell Google. Upset ones reach you first — with their number — so one phone call can fix it. If a bad review still shows up, a polite reply sits ready and waiting.<\u002Fp>\n          <div class=\"tipbox\">\n            <p class=\"t\">How you do it<\u002Fp>\n            <p>You reply <b>APPROVE<\u002Fb>. One word — the reply is posted and your reputation stays answered.<\u002Fp>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <div class=\"step\" data-ch=\"5\">\n        <div class=\"step-card\">\n          <span class=\"k\"><i>6<\u002Fi> Proof, on the 1st<\u002Fspan>\n          <h3>One message. Real rupees. Every month.<\u002Fh3>\n          <p class=\"body\">On the 1st, one message lands: how many no-shows you dodged, how much money you kept, how many new reviews came in. Then the part no one else gives you: the one thing to fix next month.<\u002Fp>\n          <div class=\"tipbox\">\n            <p class=\"t\">Honest math<\u002Fp>\n            <p>Counted against <b>your own before-Rebound numbers<\u002Fb> — never inflated, never invented. Screenshot it, show it off.<\u002Fp>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n      <div class=\"step\" data-ch=\"6\">\n        <div class=\"step-card\">\n          <span class=\"k\"><i>7<\u002Fi> Type anything. It just works.<\u002Fspan>\n          <h3>Every command you'll ever need.<\u002Fh3>\n          <p class=\"body\">You never need to memorise syntax. But here's everything the chat understands — type any of these in plain text and Rebound handles it.<\u002Fp>\n          <div class=\"tipbox\">\n            <p class=\"t\">Also works<\u002Fp>\n            <p><b>aaj<\u002Fb> = today, <b>kal<\u002Fb> = tomorrow — Hinglish is first-class.<\u002Fp>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n\n    <\u002Fdiv>\n\n    <div class=\"phone-col\">\n      <p class=\"mob-title\" id=\"mobTitle\"><\u002Fp>\n      <div class=\"phone\" role=\"img\" aria-label=\"Phone showing the Rebound WhatsApp chat, playing each scene\">\n        <div class=\"screen\">\n          <div class=\"wa-head\">\n            <div class=\"avatar\">\n              <svg viewBox=\"0 0 26 26\" fill=\"none\" aria-hidden=\"true\">\n                <path d=\"M4 17c0-6.5 4.5-11 9.5-11S23 10.5 23 17\" stroke=\"#06210f\" stroke-width=\"3.4\" stroke-linecap=\"round\"><\u002Fpath>\n                <path d=\"M4 17l-2.6-4.2M4 17l4.6-1.8\" stroke=\"#06210f\" stroke-width=\"3.4\" stroke-linecap=\"round\"><\u002Fpath>\n              <\u002Fsvg>\n            <\u002Fdiv>\n            <div class=\"wtitle\"><b>Rebound<\u002Fb><span id=\"waStatus\">online<\u002Fspan><\u002Fdiv>\n            <div class=\"dots\" aria-hidden=\"true\">⋮<\u002Fdiv>\n          <\u002Fdiv>\n          <div class=\"chat\" id=\"chat\" aria-live=\"polite\"><\u002Fdiv>\n          <div class=\"wa-input\">\n            <div class=\"wa-field\" id=\"waField\"><span class=\"ph\" id=\"waPh\">Message<\u002Fspan><span class=\"txt\" id=\"waTxt\"><\u002Fspan><\u002Fdiv>\n            <div class=\"wa-send\" id=\"waSend\">\n              <svg id=\"micIcon\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 15a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4zm6-4a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93V22h2v-3.07A8 8 0 0 0 20 11h-2z\"><\u002Fpath><\u002Fsvg>\n              <svg id=\"sendIcon\" viewBox=\"0 0 24 24\" fill=\"currentColor\" style=\"display:none\"><path d=\"M3.4 20.4l17.4-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.2L4 11l9 1-9 1-2 6.2a1 1 0 0 0 1.4 1.2z\"><\u002Fpath><\u002Fsvg>\n            <\u002Fdiv>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n      <div class=\"phone-tip\" id=\"phoneTip\"><\u002Fdiv>\n      <div class=\"phone-ctl\">\n        <div class=\"dots-row\">\n          <button class=\"arrow\" id=\"prevBtn\" type=\"button\" aria-label=\"Previous scene\">‹<\u002Fbutton>\n          <div class=\"chapters\" id=\"chapDots\"><\u002Fdiv>\n          <button class=\"arrow\" id=\"nextBtn\" type=\"button\" aria-label=\"Next scene\">›<\u002Fbutton>\n        <\u002Fdiv>\n        <button class=\"replay\" id=\"replayBtn\" type=\"button\">↺ Replay this chat<\u002Fbutton>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fdiv>\n<\u002Fsection>\n\n<!-- ============ WITH vs WITHOUT ============ -->\n<section class=\"vs\" id=\"who\">\n  <i class=\"bub green tl-r\" data-plx=\"0.09\" style=\"width:190px;height:115px;top:70px;right:36px\" aria-hidden=\"true\"><\u002Fi>\n  <i class=\"bub plain tl-l\" data-plx=\"-0.07\" style=\"width:170px;height:104px;bottom:110px;left:32px\" aria-hidden=\"true\"><\u002Fi>\n  <div class=\"wrap\" style=\"position:relative;z-index:1\">\n    <div style=\"text-align:center\">\n      <span class=\"eyebrow\" style=\"justify-content:center\">Same customer, same haircut<\u002Fspan>\n      <h2 class=\"reveal\">Your week without Rebound. And with it.<\u002Fh2>\n      <p class=\"sec-sub\" style=\"margin:0 auto\">Priya books a haircut for tomorrow, 4pm. Watch what happens next.<\u002Fp>\n    <\u002Fdiv>\n    <div class=\"vs-grid\" id=\"vsGrid\">\n      <div class=\"vs-col bad\">\n        <h3>✗ Without Rebound<\u002Fh3>\n        <div class=\"vs-step\"><span class=\"ic\">📒<\u002Fspan><span class=\"tx\">You scribble it in the register between two clients.<br><span class=\"badge you\">You do it<\u002Fspan><\u002Fspan><\u002Fdiv>\n        <div class=\"vs-step\"><span class=\"ic\">📞<\u002Fspan><span class=\"tx\">You try to remind her yourself — if you remember.<br><span class=\"badge you\">You do it<\u002Fspan><\u002Fspan><\u002Fdiv>\n        <div class=\"vs-step\"><span class=\"ic\">🪑<\u002Fspan><span class=\"tx\">She forgets. The 4pm chair sits empty.<br><span class=\"badge bad\">Money gone<\u002Fspan><\u002Fspan><\u002Fdiv>\n        <div class=\"vs-step\"><span class=\"ic\">🤐<\u002Fspan><span class=\"tx\">She loved her last visit — but Google never finds out.<br><span class=\"badge bad\">Nobody asks<\u002Fspan><\u002Fspan><\u002Fdiv>\n        <div class=\"vs-step\"><span class=\"ic\">📆<\u002Fspan><span class=\"tx\">Three weeks pass. Nobody invites her back.<br><span class=\"badge bad\">Nobody remembers<\u002Fspan><\u002Fspan><\u002Fdiv>\n        <div class=\"vs-result\">Result: empty chairs, a silent Google page — and you doing all the remembering.<\u002Fdiv>\n      <\u002Fdiv>\n      <div class=\"vs-col good\">\n        <h3>✓ With Rebound<\u002Fh3>\n        <div class=\"vs-step\"><span class=\"ic\">💬<\u002Fspan><span class=\"tx\">You text: <span class=\"say tl-r\">Priya haircut kal 4pm<\u002Fspan><br><span class=\"badge you\">You · 5 seconds<\u002Fspan><\u002Fspan><\u002Fdiv>\n        <div class=\"vs-step\"><span class=\"ic\">⏰<\u002Fspan><span class=\"tx\">Priya gets reminded — from your salon's own name.<br><span class=\"badge auto\">Automatic<\u002Fspan><\u002Fspan><\u002Fdiv>\n        <div class=\"vs-step\"><span class=\"ic\">✅<\u002Fspan><span class=\"tx\">She shows up. You tap ✅.<br><span class=\"badge you\">You · one tap<\u002Fspan><\u002Fspan><\u002Fdiv>\n        <div class=\"vs-step\"><span class=\"ic\">⭐<\u002Fspan><span class=\"tx\">She's asked how it went — then invited to tell Google.<br><span class=\"badge auto\">Automatic<\u002Fspan><\u002Fspan><\u002Fdiv>\n        <div class=\"vs-step\"><span class=\"ic\">🔁<\u002Fspan><span class=\"tx\">Day 21: she's invited back. She books again.<br><span class=\"badge auto\">Automatic<\u002Fspan><\u002Fspan><\u002Fdiv>\n        <div class=\"vs-result\">Result: one text and one tap. Rebound did everything else.<\u002Fdiv>\n      <\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"vs-ctl\"><button class=\"replay\" id=\"vsReplay\" type=\"button\">↺ Replay<\u002Fbutton><\u002Fdiv>\n    <p class=\"vs-close\" id=\"vsClose\">You set Rebound up once. After that, your only jobs are <b>one text and one tap.<\u002Fb><\u002Fp>\n  <\u002Fdiv>\n<\u002Fsection>\n\n\n<!-- ============ LEAK REPORT ============ -->\n<section class=\"sec\" id=\"leak-report\" style=\"padding-top:0\">\n  <div class=\"wrap\">\n    <span class=\"eyebrow\">The Leak Report<\u002Fspan>\n    <h2 class=\"reveal\">Everyone else tells you what happened.<br>We tell you what to fix.<\u002Fh2>\n    <p class=\"sec-sub\">On the 1st you get your numbers — no-shows dodged, money kept, reviews gained. Then one more line most tools will never give you.<\u002Fp>\n    <div style=\"display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:52px; align-items:center\">\n      <div>\n        <p style=\"font-size:17px; color:var(--muted); line-height:1.65; margin-bottom:28px\">We read your private ratings, your Google reviews and your rebooking patterns together — and find the one thing quietly costing you customers that month.<\u002Fp>\n        <div style=\"background:var(--accent-soft); border-left:3px solid var(--accent); border-radius:0 14px 14px 0; padding:18px 22px; margin-bottom:20px\">\n          <p style=\"font-size:11px; font-weight:800; letter-spacing:.13em; text-transform:uppercase; color:var(--accent-deep); margin-bottom:6px\">Included with Growth — not an add-on<\u002Fp>\n          <p style=\"font-size:14.5px; color:var(--muted); line-height:1.6\">The Leak Report is part of your monthly Proof on Growth and Pro. The one line no competitor will give you.<\u002Fp>\n        <\u002Fdiv>\n      <\u002Fdiv>\n      <div style=\"display:flex; flex-direction:column; align-items:flex-end; gap:12px\">\n        <div class=\"tl-r\" style=\"background:var(--bubble-out); border-radius:18px 18px 6px 18px; padding:18px 20px 14px; box-shadow:var(--shadow); max-width:400px; width:100%\">\n          <p style=\"font-size:13.5px; color:var(--bubble-ink); line-height:1.6; margin-bottom:14px\">📈 <b>Your Rebound Proof — June<\u002Fb><br><br>No-shows dodged: <b class=\"num\">9<\u002Fb><br>Money kept: <b class=\"num\">₹6,300<\u002Fb><br>New Google reviews: <b class=\"num\">+9<\u002Fb><br>Your rating: <b class=\"num\">4.1★ → 4.3★<\u002Fb><\u002Fp>\n          <div style=\"padding-top:14px; border-top:1px solid rgba(19,42,34,.14)\">\n            <p style=\"font-size:13px; font-weight:800; color:var(--bubble-ink); margin-bottom:5px\">What to fix<\u002Fp>\n            <p style=\"font-size:13px; color:var(--bubble-ink); line-height:1.55; font-style:italic\">3 of your 8 unhappy replies this month mention Saturday waiting. Try 15-minute gaps after 4pm.<\u002Fp>\n          <\u002Fdiv>\n          <div style=\"display:flex; justify-content:flex-end; margin-top:8px; gap:4px; align-items:center\"><span style=\"font-size:10px; color:color-mix(in srgb, var(--bubble-ink) 50%, transparent)\">1 Jun · 9:00 am<\u002Fspan><span style=\"font-size:10px; color:#34B7F1; font-weight:700; letter-spacing:-.12em\">✓✓<\u002Fspan><\u002Fdiv>\n        <\u002Fdiv>\n        <p style=\"font-size:13px; color:var(--muted); padding-right:4px\">↑ A WhatsApp message — not a PDF.<\u002Fp>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fdiv>\n<\u002Fsection>\n\n<!-- ============ PRICING ============ -->\n<section class=\"sec\" id=\"pricing\" style=\"padding-top:0\">\n  <i class=\"bub plain tl-l\" data-plx=\"0.06\" style=\"width:165px;height:100px;top:30%;left:26px\" aria-hidden=\"true\"><\u002Fi>\n  <i class=\"bub green tl-r\" data-plx=\"-0.08\" style=\"width:185px;height:112px;bottom:8%;right:30px\" aria-hidden=\"true\"><\u002Fi>\n  <div class=\"wrap\">\n    <span class=\"eyebrow\">Pricing<\u002Fspan>\n    <h2 class=\"reveal\">Simple plans. Real payback.<\u002Fh2>\n    <p class=\"sec-sub\">Done-for-you from day one. Nothing to install, nothing to learn.<\u002Fp>\n    <div class=\"plans\" data-reveal=\"\">\n      <article class=\"plan\">\n        <h3>Starter<\u002Fh3>\n        <p class=\"price num\">₹4,999<small>/mo<\u002Fsmall><\u002Fp>\n        <p class=\"fine num\">+ ₹9,999 one-time setup · up to 150 appointments<\u002Fp>\n        <ul>\n          <li><b>WhatsApp bookings<\u002Fb> by text or voice note<\u002Fli>\n          <li>Reminders before every appointment<\u002Fli>\n          <li>Easy reschedules, empty-slot warnings<\u002Fli>\n          <li>Come-back nudges, timed per service<\u002Fli>\n          <li>Monthly message showing money saved<\u002Fli>\n        <\u002Ful>\n        <a class=\"btn ghost\" href=\"#cta\">Choose Starter<\u002Fa>\n      <\u002Farticle>\n      <article class=\"plan pop\">\n        <span class=\"flag\">Most popular<\u002Fspan>\n        <h3>Growth<\u002Fh3>\n        <p class=\"price num\">₹7,999<small>/mo<\u002Fsmall><\u002Fp>\n        <p class=\"fine num\">+ ₹9,999 one-time setup · up to 400 appointments<\u002Fp>\n        <ul>\n          <li>Everything in Starter<\u002Fli>\n          <li>Win-back offers for customers who’ve drifted — timed to their own rhythm<\u002Fli>\n          <li><b>Private \"how was it?\"<\u002Fb> after every visit<\u002Fli>\n          <li>Unhappy customers caught before they reach Google<\u002Fli>\n          <li>Google review invitations<\u002Fli>\n          <li>Bad review? We write the reply — you just say APPROVE<\u002Fli>\n          <li>Competitor rating watch<\u002Fli>\n          <li><b>Monthly report tells you what to fix, not just what happened<\u002Fb><\u002Fli>\n        <\u002Ful>\n        <a class=\"btn\" href=\"#cta\">Choose Growth<\u002Fa>\n      <\u002Farticle>\n      <article class=\"plan\">\n        <h3>Pro<\u002Fh3>\n        <p class=\"price num\">₹14,999<small>/mo<\u002Fsmall><\u002Fp>\n        <p class=\"fine num\">+ ₹14,999 one-time setup · unlimited appointments<\u002Fp>\n        <ul>\n          <li>Everything in Growth<\u002Fli>\n          <li><b>Up to 3 branches<\u002Fb>, one merged Proof<\u002Fli>\n          <li>Per-branch breakdown<\u002Fli>\n          <li>Quarterly strategy call<\u002Fli>\n        <\u002Ful>\n        <a class=\"btn ghost\" href=\"#cta\">Choose Pro<\u002Fa>\n      <\u002Farticle>\n    <\u002Fdiv>\n    <p class=\"plan-note\">Annual plan: <b>2 months free<\u002Fb> · No lock-in — cancel anytime and we hand you back all your reviews and your customer list. It's your data.<\u002Fp>\n  <\u002Fdiv>\n<\u002Fsection>\n\n<!-- ============ SETUP ============ -->\n<section class=\"sec\" id=\"setup\" style=\"padding-top:0\">\n  <div class=\"wrap\">\n    <span class=\"eyebrow\">The one-time setup<\u002Fspan>\n    <h2>Why <span class=\"num\">₹9,999<\u002Fspan>?<\u002Fh2>\n    <p class=\"sec-sub\">Because it's real, done-for-you work — and it usually pays for itself in about a month.<\u002Fp>\n    <div class=\"setup-grid\" data-reveal=\"\">\n      <div class=\"panel\">\n        <h3>What the setup buys you<\u002Fh3>\n        <ul>\n          <li><span><b>Your own WhatsApp Business line<\u002Fb> — official, in your business name. Customers reply to \"Bloom Salon\"; they ignore unknown numbers.<\u002Fspan><\u002Fli>\n          <li><span><b>Your Google reviews connected the official way<\u002Fb> — you tap \"Allow\" once on your phone. Takes a minute.<\u002Fspan><\u002Fli>\n          <li><span><b>Your menu, prices and message style<\u002Fb> set up to sound like you.<\u002Fspan><\u002Fli>\n          <li><span><b>This week's diary moved over live on the call<\u002Fb> — reminders working from hour one.<\u002Fspan><\u002Fli>\n          <li><span><b>Your staff's numbers added<\u002Fb> — anyone at the counter can text a booking.<\u002Fspan><\u002Fli>\n          <li><span><b>Your first real bookings watched live with you<\u002Fb>, so nothing surprises you.<\u002Fspan><\u002Fli>\n        <\u002Ful>\n      <\u002Fdiv>\n      <div class=\"panel\">\n        <h3>The payback math<\u002Fh3>\n        <div class=\"math\">\n          <div class=\"row\"><span class=\"lbl\">A typical salon or spa loses 8 no-shows a week × ₹600<\u002Fspan><span class=\"val num\">₹4,800<small style=\"font-size:12px;font-weight:600\"> /wk<\u002Fsmall><\u002Fspan><\u002Fdiv>\n          <div class=\"row\"><span class=\"lbl\">Reminders and follow-ups typically save 40–60% of that<\u002Fspan><span class=\"val num\">₹2,000–2,900<small style=\"font-size:12px;font-weight:600\"> /wk<\u002Fsmall><\u002Fspan><\u002Fdiv>\n          <div class=\"row\"><span class=\"lbl\">Setup fee usually earned back in<\u002Fspan><span class=\"val plain num\">~4–5 weeks<\u002Fspan><\u002Fdiv>\n        <\u002Fdiv>\n        <p class=\"payoff\">After that it's yours for good: the number, the messages, the review connection and the habit. <b>The setup is paid once — the leak was weekly.<\u002Fb><\u002Fp>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fdiv>\n<\u002Fsection>\n\n<!-- ============ FAQ ============ -->\n<section class=\"sec\" id=\"faq\" style=\"padding-top:0\">\n  <div class=\"wrap\">\n    <div style=\"text-align:center\">\n      <span class=\"eyebrow\" style=\"justify-content:center\">FAQ<\u002Fspan>\n      <h2 class=\"reveal\">Questions? Answers.<\u002Fh2>\n    <\u002Fdiv>\n    <div class=\"faq\">\n      <details>\n        <summary>Do I need to install an app or learn a dashboard?<\u002Fsummary>\n        <p class=\"a\">No. Rebound has no app, no login and no dashboard. Everything — bookings in, reminders out, review alerts, your monthly report — happens inside one WhatsApp chat. If you can use WhatsApp, you already know how to use Rebound.<\u002Fp>\n      <\u002Fdetails>\n      <details>\n        <summary>How do I add a booking?<\u002Fsummary>\n        <p class=\"a\">Forward it, type it, or send a voice note — in plain, everyday language, English or Hinglish. \"Priya 98200 12345 haircut kal 4pm\" is enough. Rebound writes it down and confirms back within seconds. If anything is unclear, it asks — it never guesses.<\u002Fp>\n      <\u002Fdetails>\n      <details>\n        <summary>Which number do my customers see messages from?<\u002Fsummary>\n        <p class=\"a\">Your own. During setup we create an official WhatsApp Business account in your business name. You'll need one mobile number dedicated to your business WhatsApp — if you don't have one, we help you arrange it on the setup call. A message from \"Bloom Salon\" gets answered; a message from an unknown number gets ignored.<\u002Fp>\n      <\u002Fdetails>\n      <details>\n        <summary>What happens when someone leaves a bad review?<\u002Fsummary>\n        <p class=\"a\">First, every customer gets a private \"how was your visit?\" message. If someone wasn't happy, you're told immediately so you can call and make it right. The Google invite still goes to everyone — we never pick and choose, because that's against Google's rules and can get a listing removed. If a poor review does appear, you get a polite, ready-made reply — say APPROVE and it's posted.<\u002Fp>\n      <\u002Fdetails>\n      <details>\n        <summary>What do I need to get started?<\u002Fsummary>\n        <p class=\"a\">Three things: your appointment diary (any format — even photos of a register work), your Google business listing login, and a mobile number dedicated to your business WhatsApp. We handle everything else on one setup call.<\u002Fp>\n      <\u002Fdetails>\n      <details>\n        <summary>Is this only for salons?<\u002Fsummary>\n        <p class=\"a\">Salons and spas, yes — that's deliberate. Both run the same way: one diary, walk-in-adjacent bookings, and a service menu where people return every few weeks. Come-back gaps are set per service, so a haircut nudges at 3 weeks and a facial at 6. Clinics, gyms and physios are on the roadmap, not live — we'd rather do two things properly than five badly.<\u002Fp>\n      <\u002Fdetails>\n      <details>\n        <summary>Won’t people just wait for the free offer instead of booking normally?<\u002Fsummary>\n        <p class=\"a\">It doesn’t work on a schedule, so there’s nothing to wait for. It only goes out after someone’s personal gap has passed and they’re already overdue — someone who books regularly will never see one. There’s a long wait before anyone can receive a second one, and it stops entirely if two are ignored. And honestly: someone who comes back every four months for a ₹400 offer is still coming to you four times a year instead of going elsewhere.<\u002Fp>\n      <\u002Fdetails>\n      <details>\n        <summary>What happens if I go over my plan’s appointment limit?<\u002Fsummary>\n        <p class=\"a\">Nothing stops. Every reminder still goes out — we will never switch off your customer messages over a billing question. You'll get a friendly heads-up at around 80%, and we'll talk about moving you up a plan when it suits you.<\u002Fp>\n      <\u002Fdetails>\n      <details>\n        <summary>How do I know it's actually working?<\u002Fsummary>\n        <p class=\"a\">On the 1st of every month, one message lands in your chat: no-shows dodged, money kept, reviews gained, and how your rating moved against the shop you asked us to watch. Counted against your own numbers from before Rebound — one honest number, not a dashboard.<\u002Fp>\n      <\u002Fdetails>\n      <details>\n        <summary>What if I want to leave?<\u002Fsummary>\n        <p class=\"a\">Cancel anytime. We hand you back all your reviews and your customer list — it's your data, and it leaves with you.<\u002Fp>\n      <\u002Fdetails>\n    <\u002Fdiv>\n  <\u002Fdiv>\n<\u002Fsection>\n\n<!-- ============ CTA ============ -->\n<section class=\"cta\" id=\"cta\">\n  <i class=\"bub green tl-r\" data-plx=\"0.08\" style=\"width:200px;height:120px;top:40px;left:34px\" aria-hidden=\"true\"><\u002Fi>\n  <i class=\"bub plain tl-l\" data-plx=\"-0.06\" style=\"width:180px;height:108px;bottom:70px;right:34px\" aria-hidden=\"true\"><\u002Fi>\n  <i class=\"bub plain tl-l\" data-plx=\"0.05\" style=\"width:130px;height:82px;top:20%;right:18%\" aria-hidden=\"true\"><\u002Fi>\n  <i class=\"bub green tl-r\" data-plx=\"-0.04\" style=\"width:120px;height:76px;bottom:14%;left:16%\" aria-hidden=\"true\"><\u002Fi>\n  <div class=\"wrap\">\n    <h2>Stop leaking.<br><em>Start rebounding.<\u002Fem><\u002Fh2>\n    <p>Set up in one call. Working the same day. Pays for itself in weeks.<\u002Fp>\n    <a class=\"btn\" style=\"font-size:17px; padding:16px 32px\" href=\"https://wa.me/?text=Hi%20Rebound%2C%20I%27d%20like%20to%20get%20started\">Get started on WhatsApp<\u002Fa>\n    <p class=\"wa-line\">If you can use WhatsApp, you already know how to use Rebound. <b>Nothing new to learn.<\u002Fb><\u002Fp>\n  <\u002Fdiv>\n<\u002Fsection>\n\n<footer>\n  <div class=\"wrap\">\n    <span>© 2026 Rebound. All rights reserved.<\u002Fspan>\n    <a href=\"mailto:snehalp@gmail.com\" style=\"color:var(--muted)\">snehalp@gmail.com<\u002Fa>\n  <\u002Fdiv>\n<\u002Ffooter>\n\n<script>\n(function(){\n  \"use strict\";\n  var reduced = matchMedia(\"(prefers-reduced-motion: reduce)\").matches;\n  var mobileMQ = matchMedia(\"(max-width: 980px)\");\n  var root = document.documentElement;\n\n  /* ---- theme toggle ---- */\n  var themeBtn = document.getElementById(\"themeBtn\");\n  var sunIcon = document.getElementById(\"sunIcon\");\n  var moonIcon = document.getElementById(\"moonIcon\");\n  function currentTheme(){\n    return root.dataset.theme || (matchMedia(\"(prefers-color-scheme: dark)\").matches ? \"dark\" : \"light\");\n  }\n  function syncThemeIcon(){\n    var dark = currentTheme() === \"dark\";\n    sunIcon.style.display = dark ? \"\" : \"none\";\n    moonIcon.style.display = dark ? \"none\" : \"\";\n  }\n  try{\n    var saved = localStorage.getItem(\"rb-theme\");\n    if(saved === \"light\" || saved === \"dark\") root.dataset.theme = saved;\n  }catch(e){}\n  syncThemeIcon();\n  themeBtn.addEventListener(\"click\", function(){\n    var next = currentTheme() === \"dark\" ? \"light\" : \"dark\";\n    root.dataset.theme = next;\n    try{ localStorage.setItem(\"rb-theme\", next); }catch(e){}\n    syncThemeIcon();\n  });\n\n  /* ---- nav shadow ---- */\n  var nav = document.getElementById(\"nav\");\n  addEventListener(\"scroll\", function(){ nav.classList.toggle(\"scrolled\", scrollY > 8); }, {passive:true});\n\n  /* ---- heading word-reveal ---- */\n  document.querySelectorAll(\"h2.reveal\").forEach(function(h){\n    if(reduced) return;\n    var words = h.textContent.trim().split(/\\s+/);\n    h.textContent = \"\";\n    words.forEach(function(w, i){\n      var o = document.createElement(\"span\"); o.className = \"w\";\n      var s = document.createElement(\"span\"); s.className = \"wi\";\n      s.textContent = w;\n      s.style.transitionDelay = (i * 70) + \"ms\";\n      o.appendChild(s); h.appendChild(o);\n      h.appendChild(document.createTextNode(\" \"));\n    });\n  });\n  var revealTxtIO = new IntersectionObserver(function(es){\n    es.forEach(function(e){\n      if(e.isIntersecting){ e.target.classList.add(\"on\"); revealTxtIO.unobserve(e.target); }\n    });\n  }, {threshold:.6});\n  document.querySelectorAll(\"h2.reveal\").forEach(function(h){ revealTxtIO.observe(h); });\n\n  /* ---- group reveal ---- */\n  var revealIO = new IntersectionObserver(function(es){\n    es.forEach(function(e){\n      if(e.isIntersecting){\n        var kids = e.target.children;\n        for(var i=0;i<kids.length;i++){\n          (function(el,i){ setTimeout(function(){ el.classList.add(\"on\"); }, reduced?0:i*130); })(kids[i],i);\n        }\n        revealIO.unobserve(e.target);\n      }\n    });\n  }, {threshold:.15});\n  document.querySelectorAll(\"[data-reveal]\").forEach(function(el){ revealIO.observe(el); });\n\n  /* ---- solo reveal ---- */\n  var soloIO = new IntersectionObserver(function(es){\n    es.forEach(function(e){\n      if(e.isIntersecting){ e.target.classList.add(\"on\"); soloIO.unobserve(e.target); }\n    });\n  }, {threshold:.4});\n  document.querySelectorAll(\"[data-reveal-solo]\").forEach(function(el){ soloIO.observe(el); });\n\n  /* ---- parallax drift + convo slide-in/out ---- */\n  var plxEls = [].slice.call(document.querySelectorAll(\"[data-plx]\"));\n  var slideEls = [].slice.call(document.querySelectorAll(\"[data-slidex]\"));\n  var motionOn = !reduced;\n  function frame(){\n    if(!motionOn) return;\n    var vh = innerHeight, vh2 = vh/2;\n    if(!mobileMQ.matches){\n      plxEls.forEach(function(el){\n        var r = el.getBoundingClientRect();\n        if(r.bottom < -200 || r.top > vh + 200) return;\n        var off = (r.top + r.height/2 - vh2) * parseFloat(el.dataset.plx);\n        el.style.transform = \"translateY(\" + off.toFixed(1) + \"px)\";\n      });\n    }\n    slideEls.forEach(function(el){\n      var r = el.getBoundingClientRect();\n      if(r.bottom < -300 || r.top > vh + 300) return;\n      var off = r.top + r.height/2 - vh2;           /* px from viewport centre */\n      var tx = off * parseFloat(el.dataset.slidex);  /* slide toward the sides */\n      var fade = Math.max(0, Math.min(1, 1.25 - Math.abs(off)/(vh*.62)));\n      el.style.transform = \"translateX(\" + tx.toFixed(1) + \"px)\";\n      el.style.opacity = fade.toFixed(2);\n    });\n  }\n  var ticking = false;\n  addEventListener(\"scroll\", function(){\n    if(!ticking){ ticking = true; requestAnimationFrame(function(){ frame(); ticking = false; }); }\n  }, {passive:true});\n  addEventListener(\"resize\", frame);\n  frame();\n\n  /* ---- with-vs-without animation ---- */\n  var vsGrid = document.getElementById(\"vsGrid\");\n  var vsClose = document.getElementById(\"vsClose\");\n  var badRows = vsGrid.querySelectorAll(\".bad .vs-step, .bad .vs-result\");\n  var goodRows = vsGrid.querySelectorAll(\".good .vs-step, .good .vs-result\");\n  var vsTimers = [];\n  function runVs(){\n    vsTimers.forEach(clearTimeout); vsTimers = [];\n    [].concat([].slice.call(badRows), [].slice.call(goodRows)).forEach(function(r){ r.classList.remove(\"on\"); });\n    vsClose.classList.remove(\"on\");\n    void vsGrid.offsetWidth;\n    var step = reduced ? 0 : 750;\n    for(var i=0; i<badRows.length; i++){\n      (function(i){\n        vsTimers.push(setTimeout(function(){\n          badRows[i].classList.add(\"on\");\n          if(goodRows[i]) goodRows[i].classList.add(\"on\");\n        }, (i+1)*step));\n      })(i);\n    }\n    vsTimers.push(setTimeout(function(){ vsClose.classList.add(\"on\"); }, (badRows.length+1)*step + 250));\n  }\n  var vsIO = new IntersectionObserver(function(es){\n    es.forEach(function(e){\n      if(e.isIntersecting){ runVs(); vsIO.unobserve(e.target); }\n    });\n  }, {threshold:.25});\n  vsIO.observe(vsGrid);\n  document.getElementById(\"vsReplay\").addEventListener(\"click\", runVs);\n\n  /* ---- shared bubble helpers ---- */\n  function T(t){ return '<span class=\"meta num\">'+t+'<\u002Fspan>'; }\n  function TK(t){ return '<span class=\"meta num\">'+t+' <span class=\"ticks\">✓✓<\u002Fspan><\u002Fspan>'; }\n  function BTN(btns){ return '<div class=\"wa-btns\">'+btns.map(function(b){ return '<span class=\"wa-btn\">'+b+'<\u002Fspan>'; }).join('')+'<\u002Fdiv>'; }\n  function cmdCard(){\n    var rows = [\n      [\"aaj / kal\",\"Today's / tomorrow's appointment list\"],\n      [\"week\",\"Next 7 days at a glance\"],\n      [\"done\",\"End-of-day summary (✅ ❌ 🔁 counts)\"],\n      [\"DEL 2\",\"Cancel slot 2 — confirms customer name first\"],\n      [\"find Priya\",\"All upcoming bookings for Priya\"],\n      [\"find 2345\",\"Look up customer by last 4 digits\"],\n      [\"APPROVE\",\"Post the drafted review reply\"],\n      [\"STOP\",\"Opt a customer out of all messages\"],\n    ];\n    var cust = [\n      [\"YES / NO\",\"Confirm or reschedule reminder\"],\n      [\"1 to 5\",\"Rating (4–5 triggers Google invite)\"],\n    ];\n    var s = '<div style=\"font-size:10.5px;padding:2px 0;width:100%\">';\n    s += '<div style=\"font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:7px\">You type<\u002Fdiv>';\n    rows.forEach(function(r){\n      s += '<div style=\"display:flex;gap:6px;padding:4px 0;border-bottom:1px solid rgba(19,42,34,.08)\">';\n      s += '<span style=\"font-weight:800;color:var(--ink);min-width:72px;flex:none;font-size:10.5px\">'+r[0]+'<\u002Fspan>';\n      s += '<span style=\"color:var(--muted);font-size:10px;line-height:1.35\">'+r[1]+'<\u002Fspan><\u002Fdiv>';\n    });\n    s += '<div style=\"font-size:9px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-deep);margin:10px 0 6px\">Customers reply<\u002Fdiv>';\n    cust.forEach(function(r){\n      s += '<div style=\"display:flex;gap:6px;padding:4px 0;border-bottom:1px solid rgba(19,42,34,.08)\">';\n      s += '<span style=\"font-weight:800;color:var(--ink);min-width:72px;flex:none;font-size:10.5px\">'+r[0]+'<\u002Fspan>';\n      s += '<span style=\"color:var(--muted);font-size:10px;line-height:1.35\">'+r[1]+'<\u002Fspan><\u002Fdiv>';\n    });\n    s += '<\u002Fdiv>';\n    return s;\n  }\n\n  /* ---- hero mini-conversation ---- */\n  var heroChat = document.getElementById(\"heroChat\");\n  var heroMsgs = [\n    {c:\"daychip\", h:\"Monday\"},\n    {c:\"bubble out\", h:'Priya 98200 12345 haircut kal 4pm'+TK(\"9:41\")},\n    {c:\"bubble in\",  h:'Got it ✔ <b>Priya · Haircut · Tue 4:00 pm<\u002Fb> — reminders are on.'+T(\"9:41\")},\n    {c:\"bubble in\",  h:'I\\'ll invite her back in 21 days too 🔁'+T(\"9:42\")}\n  ];\n  heroMsgs.forEach(function(m, i){\n    setTimeout(function(){\n      var d = document.createElement(\"div\");\n      d.className = m.c; d.innerHTML = m.h;\n      heroChat.appendChild(d);\n    }, reduced ? 0 : 500 + i*900);\n  });\n\n  /* ================= DEMO PHONE ENGINE ================= */\n  var chat    = document.getElementById(\"chat\");\n  var tipEl   = document.getElementById(\"phoneTip\");\n  var dotsEl  = document.getElementById(\"chapDots\");\n  var mobTitle= document.getElementById(\"mobTitle\");\n  var waTxt   = document.getElementById(\"waTxt\");\n  var waPh    = document.getElementById(\"waPh\");\n  var waField = document.getElementById(\"waField\");\n  var waSend  = document.getElementById(\"waSend\");\n  var micIcon = document.getElementById(\"micIcon\");\n  var sendIcon= document.getElementById(\"sendIcon\");\n  var waStatus= document.getElementById(\"waStatus\");\n\n  var CH = [\n    { title:\"Book in one text\",\n      tip:'<span class=\"t\">Tip<\u002Fspan>Any language works — <b>English, Hindi, Hinglish, typos and all.<\u002Fb> Rebound repeats every booking back so you know it got it right.',\n      ops:[\n        {t:\"day\", x:\"Monday\"},\n        {t:\"wait\", ms:500},\n        {t:\"type\", x:\"Priya 98200 12345 haircut kal 4pm\"},\n        {t:\"send\", time:\"9:41\"},\n        {t:\"in\", ms:1300, x:'Got it ✔ <b>Priya 📱2345 · Haircut · Tue, 4:00 PM<\u002Fb> — reminders are on. Reply EDIT or CANCEL to change.'+T(\"9:41\")}\n      ]},\n    { title:\"Reminders run themselves\",\n      tip:'<span class=\"t\">Tip<\u002Fspan><b>You typed nothing in this scene.<\u002Fb> Rebound sent the reminder automatically, in your business name — that\\'s why customers actually reply.',\n      ops:[\n        {t:\"day\", x:\"Tuesday · 10:00 am\"},\n        {t:\"wait\", ms:700},\n        {t:\"in\", ms:1200, x:'Hi Priya! Your haircut at <b>Bloom Salon<\u002Fb> is tomorrow at 4:00 PM. Reply YES to confirm or NO to reschedule.'+BTN([\"YES\",\"NO\"])+T(\"10:00\")},\n        {t:\"wait\", ms:1100},\n        {t:\"in\", ms:1100, x:'Priya replied ✅ — she\\'s coming at 4pm.'+T(\"10:04\")},\n        {t:\"wait\", ms:900},\n        {t:\"in\", ms:1400, x:'⚠️ <b>Meera hasn\\'t confirmed her 6pm.<\u002Fb> I\\'ve sent her a reminder — want to call her? 98211 44556'+T(\"2:04\")}\n      ]},\n    { title:\"Close the day in one tap\",\n      tip:'<span class=\"t\">Tip<\u002Fspan>One tap logs the visit. Forget a few? <b>The 9pm check closes the whole day in one reply<\u002Fb> — no register, no spreadsheet.',\n      ops:[\n        {t:\"day\", x:\"Tuesday · 4:30 pm\"},\n        {t:\"in\", ms:1000, x:'Did Priya come for her haircut?'+BTN([\"✅ Done\",\"❌ No-show\",\"🔁 Rescheduled\"])+T(\"4:32\")},\n        {t:\"type\", x:\"✅\"},\n        {t:\"send\", time:\"4:33\"},\n        {t:\"in\", ms:900, x:'Logged 👍 Review invite on its way to Priya. <span class=\"badge auto\" style=\"margin-left:2px;vertical-align:middle\">Growth<\u002Fspan>'+T(\"4:33\")},\n        {t:\"day\", x:\"9:00 pm\"},\n        {t:\"in\", ms:1400, x:'Quick check before close 🌙<br>1. Aisha · Facial · 5:30 PM<br>2. Rohan · Beard trim · 7:00 PM<br>Reply like: 1✅ 2❌'+T(\"9:00\")},\n        {t:\"type\", x:\"1✅ 2❌\"},\n        {t:\"send\", time:\"9:04\"},\n        {t:\"in\", ms:900, x:'Day closed ✔ Sleep well.'+T(\"9:04\")}\n      ]},\n    { title:\"TODAY & WEEK reports\",\n      tip:'<span class=\"t\">Tip<\u002Fspan>Your reports come <b>to<\u002Fb> you. <b>aaj<\u002Fb> or TODAY = today\\'s list. <b>WEEK<\u002Fb> = next 7 days. Nothing to open, ever.',\n      ops:[\n        {t:\"day\", x:\"Wednesday\"},\n        {t:\"type\", x:\"TODAY\"},\n        {t:\"send\", time:\"8:55\"},\n        {t:\"in\", ms:1300, x:'📋 <b>Today — Wednesday<\u002Fb><br>10:00 AM · Kavya · Colour · ✅ confirmed<br>1:00 PM · Arjun · Haircut · ⏳ no reply yet<br>4:00 PM · Sana · Facial · ✅ confirmed'+T(\"8:55\")},\n        {t:\"wait\", ms:800},\n        {t:\"type\", x:\"WEEK\"},\n        {t:\"send\", time:\"8:56\"},\n        {t:\"in\", ms:1300, x:'🗓 <b>This week — 23 bookings<\u002Fb><br>Wed: 3 · Thu: 2 · Fri: 5 · Sat: 9 · Sun: 4<br>2 haven\\'t confirmed yet'+T(\"8:56\")}\n      ]},\n    { title:\"Reviews, defended\",\n      tip:'<span class=\"t\">Tip<\u002Fspan>Upset customers reach <b>you<\u002Fb> first, privately — not Google. One word posts a polite reply if a bad review sneaks through.',\n      ops:[\n        {t:\"day\", x:\"Thursday\"},\n        {t:\"in\", ms:1100, x:'Priya loved her visit 💚 Google review invite sent ⭐'+T(\"11:02\")},\n        {t:\"wait\", ms:900},\n        {t:\"in\", ms:1500, x:'⚠️ New 2★ review from Rohan: \"waited 40 minutes…\"<br>I\\'ve drafted a reply — send APPROVE to post it.'+BTN([\"APPROVE\"])+T(\"11:05\")},\n        {t:\"type\", x:\"APPROVE\"},\n        {t:\"send\", time:\"11:07\"},\n        {t:\"in\", ms:1100, x:'Posted ✔ His number is 98211 44556 if you want to call.'+T(\"11:07\")}\n      ]},\n    { title:\"Proof on the 1st\",\n      tip:'<span class=\"t\">Tip<\u002Fspan>Counted against <b>your own before-Rebound numbers<\u002Fb> — honest math, ready to screenshot and share.',\n      ops:[\n        {t:\"day\", x:\"1st of the month\"},\n        {t:\"wait\", ms:600},\n        {t:\"in\", ms:1700, x:'📈 <b>Your Rebound Proof — June<\u002Fb><br><br>No-shows dodged: <b class=\"num\">9<\u002Fb><br>Money kept: <b class=\"num\">~₹6,300<\u002Fb> (est.)<br>New Google reviews: <b class=\"num\">+9<\u002Fb><br>Your rating: <b class=\"num\">4.1★ → 4.3★<\u002Fb><br><br><b>What to fix next month:<\u002Fb><br><span style=\"font-style:italic\">3 of your 8 unhappy replies mention Saturday waiting. Try 15-min gaps after 4pm.<\u002Fspan>'+T(\"9:00\")},\n        {t:\"type\", x:\"🙏 sending this to my accountant\"},\n        {t:\"send\", time:\"9:03\"}\n      ]},\n    { title:\"Type anything. It just works.\",\n      tip:'<span class=\"t\">Reference<\u002Fspan>Everything you can type, in one place. There\\'s nothing else to learn.',\n      ops:[\n        {t:\"static\", html:cmdCard()}\n      ]}\n  ];\n\n  CH.forEach(function(ch, i){\n    var b = document.createElement(\"button\");\n    b.type = \"button\";\n    b.setAttribute(\"aria-label\", \"Scene \" + (i+1) + \": \" + ch.title);\n    b.addEventListener(\"click\", function(){ userNav(i); });\n    dotsEl.appendChild(b);\n  });\n  var dots = dotsEl.children;\n\n  var runId = 0, current = -1, autoT = null, storyVis = false;\n  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }\n  function setField(txt){\n    waTxt.textContent = txt;\n    waPh.style.display = txt ? \"none\" : \"\";\n    micIcon.style.display = txt ? \"none\" : \"\";\n    sendIcon.style.display = txt ? \"\" : \"none\";\n    var caret = waField.querySelector(\".caret\");\n    if(txt && !caret){ caret = document.createElement(\"span\"); caret.className = \"caret\"; waField.appendChild(caret); }\n    if(!txt && caret){ caret.remove(); }\n  }\n  function addEl(cls, html){\n    var d = document.createElement(\"div\");\n    d.className = cls; d.innerHTML = html;\n    chat.appendChild(d);\n    while(chat.children.length > 14) chat.removeChild(chat.firstChild);\n    return d;\n  }\n  function nextTime(ops,k){ var n = ops[k+1]; return (n && n.t===\"send\" && n.time) ? n.time : \"\"; }\n\n  function maybeAuto(id){\n    if(id !== runId) return;\n    if(!mobileMQ.matches || !storyVis) return;\n    clearTimeout(autoT);\n    autoT = setTimeout(function(){\n      if(storyVis) show((current + 1) % CH.length);\n    }, 2100);\n  }\n\n  async function play(i){\n    var id = ++runId;\n    clearTimeout(autoT);\n    chat.innerHTML = \"\"; setField(\"\");\n    waStatus.textContent = \"online\";\n    var ch = CH[i];\n    mobTitle.textContent = (i+1) + \" / \" + CH.length + \" — \" + ch.title;\n    tipEl.classList.remove(\"on\");\n    tipEl.innerHTML = ch.tip;\n    setTimeout(function(){ if(id===runId) tipEl.classList.add(\"on\"); }, reduced?0:500);\n\n    for(var k=0; k<ch.ops.length; k++){\n      if(id !== runId) return;\n      var op = ch.ops[k];\n\n      if(reduced){\n        if(op.t===\"day\") addEl(\"daychip\", op.x);\n        else if(op.t===\"in\") addEl(\"bubble in\", op.x);\n        else if(op.t===\"static\") addEl(\"bubble in\", op.html);\n        else if(op.t===\"type\"){ addEl(\"bubble out\", op.x + TK(nextTime(ch.ops,k))); k++; }\n        continue;\n      }\n\n      switch(op.t){\n        case \"static\":\n          addEl(\"bubble in\", op.html);\n          await sleep(400);\n          break;\n        case \"day\":\n          addEl(\"daychip\", op.x);\n          await sleep(600);\n          break;\n        case \"wait\":\n          await sleep(op.ms || 600);\n          break;\n        case \"type\":\n          setField(\"\");\n          await sleep(350);\n          for(var c=1; c<=op.x.length; c++){\n            if(id !== runId) return;\n            setField(op.x.slice(0,c));\n            await sleep(op.x.length > 20 ? 26 : 46);\n          }\n          await sleep(320);\n          break;\n        case \"send\":\n          if(id !== runId) return;\n          waSend.classList.add(\"pulse\");\n          setTimeout(function(){ waSend.classList.remove(\"pulse\"); }, 240);\n          addEl(\"bubble out\", waTxt.textContent + TK(op.time || \"\"));\n          setField(\"\");\n          await sleep(650);\n          break;\n        case \"in\":\n          waStatus.textContent = \"typing…\";\n          var tb = addEl(\"bubble in\", '<span class=\"typing-b\"><i><\u002Fi><i><\u002Fi><i><\u002Fi><\u002Fspan>');\n          await sleep(op.ms || 1100);\n          if(id !== runId) return;\n          tb.remove();\n          waStatus.textContent = \"online\";\n          addEl(\"bubble in\", op.x);\n          await sleep(700);\n          break;\n      }\n    }\n    maybeAuto(id);\n  }\n\n  function show(i){\n    if(i === current) return;\n    current = i;\n    play(i);\n    for(var k=0;k<dots.length;k++) dots[k].classList.toggle(\"on\", k===i);\n  }\n  function userNav(i){\n    clearTimeout(autoT);\n    if(i === current){ current = -1; }\n    show(((i % CH.length) + CH.length) % CH.length);\n  }\n  document.getElementById(\"prevBtn\").addEventListener(\"click\", function(){ userNav(current - 1); });\n  document.getElementById(\"nextBtn\").addEventListener(\"click\", function(){ userNav(current + 1); });\n  document.getElementById(\"replayBtn\").addEventListener(\"click\", function(){ userNav(current); });\n\n  /* desktop: scroll drives the chapters */\n  var steps = document.querySelectorAll(\".step\");\n  var stepIO = new IntersectionObserver(function(es){\n    es.forEach(function(e){\n      var i = +e.target.dataset.ch;\n      if(e.isIntersecting){ e.target.classList.add(\"active\"); show(i); }\n      else { e.target.classList.remove(\"active\"); }\n    });\n  }, {rootMargin:\"-40% 0px -40% 0px\"});\n  steps.forEach(function(s){ stepIO.observe(s); });\n\n  /* mobile: auto-advance while the demo is on screen */\n  var storyIO = new IntersectionObserver(function(es){\n    es.forEach(function(e){\n      storyVis = e.isIntersecting;\n      if(storyVis && mobileMQ.matches){ maybeAuto(runId); }\n      else if(!storyVis){ clearTimeout(autoT); }\n    });\n  }, {threshold:.2});\n  storyIO.observe(document.querySelector(\".phone-col\"));\n\n  show(0);\n  steps[0].classList.add(\"active\");\n})();\n<\u002Fscript>\n\n\n<\u002Fbody><\u002Fhtml>"
-  </script>
-</body>
-</html>
+  var CH = [
+    { title:"Book in one text",
+      tip:'<span class="t">Tip</span>Any language works, <b>English, Hindi, Hinglish, typos and all.</b> Rebound repeats every booking back so you know it got it right.',
+      ops:[
+        {t:"day", x:"Monday"},
+        {t:"wait", ms:500},
+        {t:"type", x:"Priya 98200 12345 haircut kal 4pm"},
+        {t:"send", time:"9:41"},
+        {t:"in", ms:1300, x:'Got it ✔ <b>Priya 📱2345 · Haircut · Tue, 4:00 PM</b>, reminders are on. Reply EDIT or CANCEL to change.'+T("9:41")}
+      ]},
+    { title:"Reminders run themselves",
+      tip:'<span class="t">Tip</span><b>You typed nothing in this scene.</b> Rebound sent the reminder automatically, in your business name, that\'s why customers actually reply.',
+      ops:[
+        {t:"day", x:"Tuesday · 10:00 am"},
+        {t:"wait", ms:700},
+        {t:"in", ms:1200, x:'Hi Priya! Your haircut at <b>Bloom Salon</b> is tomorrow at 4:00 PM. Reply YES to confirm or NO to reschedule.'+BTN(["YES","NO"])+T("10:00")},
+        {t:"wait", ms:1100},
+        {t:"in", ms:1100, x:'Priya replied ✅, she\'s coming at 4pm.'+T("10:04")},
+        {t:"wait", ms:900},
+        {t:"in", ms:1400, x:'⚠️ <b>Meera hasn\'t confirmed her 6pm.</b> I\'ve sent her a reminder, want to call her? 98211 44556'+T("2:04")}
+      ]},
+    { title:"Close the day in one tap",
+      tip:'<span class="t">Tip</span>One tap logs the visit. Forget a few? <b>The 9pm check closes the whole day in one reply</b>, no register, no spreadsheet.',
+      ops:[
+        {t:"day", x:"Tuesday · 4:30 pm"},
+        {t:"in", ms:1000, x:'Did Priya come for her haircut?'+BTN(["✅ Done","❌ No-show","🔁 Rescheduled"])+T("4:32")},
+        {t:"type", x:"✅"},
+        {t:"send", time:"4:33"},
+        {t:"in", ms:900, x:'Logged 👍 Review invite on its way to Priya. <span class="badge auto" style="margin-left:2px;vertical-align:middle">Growth</span>'+T("4:33")},
+        {t:"day", x:"9:00 pm"},
+        {t:"in", ms:1400, x:'Quick check before close 🌙<br>1. Aisha · Facial · 5:30 PM<br>2. Rohan · Beard trim · 7:00 PM<br>Reply like: 1✅ 2❌'+T("9:00")},
+        {t:"type", x:"1✅ 2❌"},
+        {t:"send", time:"9:04"},
+        {t:"in", ms:900, x:'Day closed ✔ Sleep well.'+T("9:04")}
+      ]},
+    { title:"TODAY & WEEK reports",
+      tip:'<span class="t">Tip</span>Your reports come <b>to</b> you. <b>aaj</b> or TODAY = today\'s list. <b>WEEK</b> = next 7 days. Nothing to open, ever.',
+      ops:[
+        {t:"day", x:"Wednesday"},
+        {t:"type", x:"TODAY"},
+        {t:"send", time:"8:55"},
+        {t:"in", ms:1300, x:'📋 <b>Today. Wednesday</b><br>10:00 AM · Kavya · Colour · ✅ confirmed<br>1:00 PM · Arjun · Haircut · ⏳ no reply yet<br>4:00 PM · Sana · Facial · ✅ confirmed'+T("8:55")},
+        {t:"wait", ms:800},
+        {t:"type", x:"WEEK"},
+        {t:"send", time:"8:56"},
+        {t:"in", ms:1300, x:'🗓 <b>This week, 23 bookings</b><br>Wed: 3 · Thu: 2 · Fri: 5 · Sat: 9 · Sun: 4<br>2 haven\'t confirmed yet'+T("8:56")}
+      ]},
+    { title:"Reviews, defended",
+      tip:'<span class="t">Tip</span>Upset customers reach <b>you</b> first, privately, not Google. One word posts a polite reply if a bad review sneaks through.',
+      ops:[
+        {t:"day", x:"Thursday"},
+        {t:"in", ms:1100, x:'Priya loved her visit 💚 Google review invite sent ⭐'+T("11:02")},
+        {t:"wait", ms:900},
+        {t:"in", ms:1500, x:'⚠️ New 2★ review from Rohan: "waited 40 minutes…"<br>I\'ve drafted a reply, send APPROVE to post it.'+BTN(["APPROVE"])+T("11:05")},
+        {t:"type", x:"APPROVE"},
+        {t:"send", time:"11:07"},
+        {t:"in", ms:1100, x:'Posted ✔ His number is 98211 44556 if you want to call.'+T("11:07")}
+      ]},
+    { title:"Proof on the 1st",
+      tip:'<span class="t">Tip</span>Counted against <b>your own before-Rebound numbers</b>, honest math, ready to screenshot and share.',
+      ops:[
+        {t:"day", x:"1st of the month"},
+        {t:"wait", ms:600},
+        {t:"in", ms:1700, x:'📈 <b>Your Rebound Proof. June</b><br><br>No-shows dodged: <b class="num">9</b><br>Money kept: <b class="num">~₹6,300</b> (est.)<br>New Google reviews: <b class="num">+9</b><br>Your rating: <b class="num">4.1★ → 4.3★</b><br><br><b>What to fix next month:</b><br><span style="font-style:italic">3 of your 8 unhappy replies mention Saturday waiting. Try 15-min gaps after 4pm.</span>'+T("9:00")},
+        {t:"type", x:"🙏 sending this to my accountant"},
+        {t:"send", time:"9:03"}
+      ]},
+    { title:"Type anything. It just works.",
+      tip:'<span class="t">Reference</span>Everything you can type, in one place. There\'s nothing else to learn.',
+      ops:[
+        {t:"static", html:cmdCard()}
+      ]}
+  ];
+
+  CH.forEach(function(ch, i){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("aria-label", "Scene " + (i+1) + ": " + ch.title);
+    b.addEventListener("click", function(){ userNav(i); });
+    dotsEl.appendChild(b);
+  });
+  var dots = dotsEl.children;
+
+  var runId = 0, current = -1, autoT = null, storyVis = false;
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+  function setField(txt){
+    waTxt.textContent = txt;
+    waPh.style.display = txt ? "none" : "";
+    micIcon.style.display = txt ? "none" : "";
+    sendIcon.style.display = txt ? "" : "none";
+    var caret = waField.querySelector(".caret");
+    if(txt && !caret){ caret = document.createElement("span"); caret.className = "caret"; waField.appendChild(caret); }
+    if(!txt && caret){ caret.remove(); }
+  }
+  function addEl(cls, html){
+    var d = document.createElement("div");
+    d.className = cls; d.innerHTML = html;
+    chat.appendChild(d);
+    while(chat.children.length > 14) chat.removeChild(chat.firstChild);
+    return d;
+  }
+  function nextTime(ops,k){ var n = ops[k+1]; return (n && n.t==="send" && n.time) ? n.time : ""; }
+
+  function maybeAuto(id){
+    if(id !== runId) return;
+    if(!mobileMQ.matches || !storyVis) return;
+    clearTimeout(autoT);
+    autoT = setTimeout(function(){
+      if(storyVis) show((current + 1) % CH.length);
+    }, 2100);
+  }
+
+  async function play(i){
+    var id = ++runId;
+    clearTimeout(autoT);
+    chat.innerHTML = ""; setField("");
+    waStatus.textContent = "online";
+    var ch = CH[i];
+    mobTitle.textContent = (i+1) + " / " + CH.length + ", " + ch.title;
+    tipEl.classList.remove("on");
+    tipEl.innerHTML = ch.tip;
+    setTimeout(function(){ if(id===runId) tipEl.classList.add("on"); }, reduced?0:500);
+
+    for(var k=0; k<ch.ops.length; k++){
+      if(id !== runId) return;
+      var op = ch.ops[k];
+
+      if(reduced){
+        if(op.t==="day") addEl("daychip", op.x);
+        else if(op.t==="in") addEl("bubble in", op.x);
+        else if(op.t==="static") addEl("bubble in", op.html);
+        else if(op.t==="type"){ addEl("bubble out", op.x + TK(nextTime(ch.ops,k))); k++; }
+        continue;
+      }
+
+      switch(op.t){
+        case "static":
+          addEl("bubble in", op.html);
+          await sleep(400);
+          break;
+        case "day":
+          addEl("daychip", op.x);
+          await sleep(600);
+          break;
+        case "wait":
+          await sleep(op.ms || 600);
+          break;
+        case "type":
+          setField("");
+          await sleep(350);
+          for(var c=1; c<=op.x.length; c++){
+            if(id !== runId) return;
+            setField(op.x.slice(0,c));
+            await sleep(op.x.length > 20 ? 26 : 46);
+          }
+          await sleep(320);
+          break;
+        case "send":
+          if(id !== runId) return;
+          waSend.classList.add("pulse");
+          setTimeout(function(){ waSend.classList.remove("pulse"); }, 240);
+          addEl("bubble out", waTxt.textContent + TK(op.time || ""));
+          setField("");
+          await sleep(650);
+          break;
+        case "in":
+          waStatus.textContent = "typing…";
+          var tb = addEl("bubble in", '<span class="typing-b"><i></i><i></i><i></i></span>');
+          await sleep(op.ms || 1100);
+          if(id !== runId) return;
+          tb.remove();
+          waStatus.textContent = "online";
+          addEl("bubble in", op.x);
+          await sleep(700);
+          break;
+      }
+    }
+    maybeAuto(id);
+  }
+
+  function show(i){
+    if(i === current) return;
+    current = i;
+    play(i);
+    for(var k=0;k<dots.length;k++) dots[k].classList.toggle("on", k===i);
+  }
+  function userNav(i){
+    clearTimeout(autoT);
+    if(i === current){ current = -1; }
+    show(((i % CH.length) + CH.length) % CH.length);
+  }
+  document.getElementById("prevBtn").addEventListener("click", function(){ userNav(current - 1); });
+  document.getElementById("nextBtn").addEventListener("click", function(){ userNav(current + 1); });
+  document.getElementById("replayBtn").addEventListener("click", function(){ userNav(current); });
+
+  /* desktop: scroll drives the chapters */
+  var steps = document.querySelectorAll(".step");
+  var stepIO = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      var i = +e.target.dataset.ch;
+      if(e.isIntersecting){ e.target.classList.add("active"); show(i); }
+      else { e.target.classList.remove("active"); }
+    });
+  }, {rootMargin:"-40% 0px -40% 0px"});
+  steps.forEach(function(s){ stepIO.observe(s); });
+
+  /* mobile: auto-advance while the demo is on screen */
+  var storyIO = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      storyVis = e.isIntersecting;
+      if(storyVis && mobileMQ.matches){ maybeAuto(runId); }
+      else if(!storyVis){ clearTimeout(autoT); }
+    });
+  }, {threshold:.2});
+  storyIO.observe(document.querySelector(".phone-col"));
+
+  show(0);
+  steps[0].classList.add("active");
+})();
+</script>
+
+
+</body></html>

@@ -850,7 +850,7 @@ footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wr
       </div>
       <div style="display:flex; flex-direction:column; align-items:flex-end; gap:12px">
         <div class="tl-r" style="background:var(--bubble-out); border-radius:18px 18px 6px 18px; padding:18px 20px 14px; box-shadow:var(--shadow); max-width:400px; width:100%">
-          <p style="font-size:13.5px; color:var(--bubble-ink); line-height:1.6; margin-bottom:14px">📈 <b>Your Rebound Proof. June</b><br><br>No-shows dodged: <b class="num">9</b><br>Money kept: <b class="num">₹6,300</b><br>New Google reviews: <b class="num">+9</b><br>Your rating: <b class="num">4.1★ → 4.3★</b></p>
+          <p style="font-size:13.5px; color:var(--bubble-ink); line-height:1.6; margin-bottom:14px">📈 <b>Your Rebound Proof. June</b><br><br>No-shows dodged: <b class="num">9</b><br>Money kept: <b class="num">₹6,300</b><br>New Google reviews: <b class="num">+9</b><br>Your rating: <b class="num">4.1★ → 4.3★</b><br>Regulars won back: <b class="num">3</b><br>Watching: <b class="num">Glamour Studio 4.1★</b></p>
           <div style="padding-top:14px; border-top:1px solid rgba(19,42,34,.14)">
             <p style="font-size:13px; font-weight:800; color:var(--bubble-ink); margin-bottom:5px">What to fix</p>
             <p style="font-size:13px; color:var(--bubble-ink); line-height:1.55; font-style:italic">3 of your 8 unhappy replies this month mention Saturday waiting. Try 15-minute gaps after 4pm.</p>
@@ -1245,8 +1245,6 @@ footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wr
         {t:"wait", ms:700},
         {t:"in", ms:1200, x:'Hi Priya! Your haircut at <b>Bloom Salon</b> is tomorrow at 4:00 PM. Reply YES to confirm or NO to reschedule.'+BTN(["YES","NO"])+T("10:00")},
         {t:"wait", ms:1100},
-        {t:"in", ms:1100, x:'Priya replied ✅, she\'s coming at 4pm.'+T("10:04")},
-        {t:"wait", ms:900},
         {t:"in", ms:1400, x:'⚠️ <b>Meera hasn\'t confirmed her 6pm.</b> I\'ve sent her a reminder, want to call her? 98211 44556'+T("2:04")}
       ]},
     { title:"Close the day in one tap",
@@ -1284,14 +1282,14 @@ footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wr
         {t:"in", ms:1500, x:'⚠️ New 2★ review from Rohan: "waited 40 minutes…"<br>I\'ve drafted a reply, send APPROVE to post it.'+BTN(["APPROVE"])+T("11:05")},
         {t:"type", x:"APPROVE"},
         {t:"send", time:"11:07"},
-        {t:"in", ms:1100, x:'Posted ✔ His number is 98211 44556 if you want to call.'+T("11:07")}
+        {t:"in", ms:1100, x:'Posted ✔'+T("11:07")}
       ]},
     { title:"Proof on the 1st",
       tip:'<span class="t">Tip</span>Counted against <b>your own before-Rebound numbers</b>, honest math, ready to screenshot and share.',
       ops:[
         {t:"day", x:"1st of the month"},
         {t:"wait", ms:600},
-        {t:"in", ms:1700, x:'📈 <b>Your Rebound Proof. June</b><br><br>No-shows dodged: <b class="num">9</b><br>Money kept: <b class="num">~₹6,300</b> (est.)<br>New Google reviews: <b class="num">+9</b><br>Your rating: <b class="num">4.1★ → 4.3★</b><br><br><b>What to fix next month:</b><br><span style="font-style:italic">3 of your 8 unhappy replies mention Saturday waiting. Try 15-min gaps after 4pm.</span>'+T("9:00")},
+        {t:"in", ms:1700, x:'📈 <b>Your Rebound Proof. June</b><br><br>No-shows dodged: <b class="num">9</b><br>Money kept: <b class="num">~₹6,300</b> (est.)<br>New Google reviews: <b class="num">+9</b><br>Your rating: <b class="num">4.1★ → 4.3★</b><br>Regulars won back: <b class="num">3</b><br>Watching: <b class="num">Glamour Studio 4.1★</b><br><br><b>What to fix next month:</b><br><span style="font-style:italic">3 of your 8 unhappy replies mention Saturday waiting. Try 15-min gaps after 4pm.</span>'+T("9:00")},
         {t:"type", x:"🙏 sending this to my accountant"},
         {t:"send", time:"9:03"}
       ]},

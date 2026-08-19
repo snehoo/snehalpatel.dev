@@ -739,7 +739,7 @@ footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wr
         <div class="step-card">
           <span class="k"><i>6</i> Proof, on the 1st</span>
           <h3>One message. Real rupees. Every month.</h3>
-          <p class="body">On the 1st, one message lands: how many no-shows you dodged, how much money you kept, how many new reviews came in, and how many drifting customers came back on a win-back voucher. Then the part no one else gives you: the one thing to fix next month.</p>
+          <p class="body">On the 1st, one message lands: how many no-shows you dodged, how much money you kept, how many new reviews came in, and how many drifting customers came back on a win-back offer. Then the part no one else gives you: the one thing to fix next month.</p>
           <div class="tipbox">
             <p class="t">Honest math</p>
             <p>Counted against <b>your own before-Rebound numbers</b>, never inflated, never invented. Screenshot it, show it off.</p>
@@ -749,12 +749,12 @@ footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wr
 
       <div class="step" data-ch="6">
         <div class="step-card">
-          <span class="k"><i>7</i> Type anything. It just works.</span>
-          <h3>Every command you'll ever need.</h3>
-          <p class="body">You never need to memorise syntax. But here's everything the chat understands, type any of these in plain text and Rebound handles it. Type <b>COUPON</b> to switch win-back vouchers on/off, change amounts, or adjust the wait time.</p>
+          <span class="k"><i>7</i> She stopped coming.</span>
+          <h3>Rebound brings her back.</h3>
+          <p class="body">When a customer goes quiet, Rebound notices — and sends a warm, personal win-back offer automatically. You set the amounts and timing once; Rebound handles the rest.</p>
           <div class="tipbox">
-            <p class="t">Also works</p>
-            <p><b>aaj</b> = today, <b>kal</b> = tomorrow. Hinglish is first-class.</p>
+            <p class="t">How it works</p>
+            <p>New customers get a smaller offer. Loyal ones get more. <b>Rebound tells the difference</b> — you set it once, it adjusts for each person.</p>
           </div>
         </div>
       </div>
@@ -892,7 +892,7 @@ footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wr
         <p class="fine num">+ ₹9,999 one-time setup · up to 400 appointments</p>
         <ul>
           <li>Everything in Starter</li>
-          <li>Win-back vouchers for customers who've gone quiet</li>
+          <li>Win-back offers for customers who've gone quiet</li>
           <li><b>Private "how was it?"</b> after every visit</li>
           <li>Unhappy customers caught before they reach Google</li>
           <li>Google review invitations</li>
@@ -1293,10 +1293,12 @@ footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wr
         {t:"type", x:"🙏 sending this to my accountant"},
         {t:"send", time:"9:03"}
       ]},
-    { title:"Type anything. It just works.",
-      tip:'<span class="t">Reference</span>Everything you can type, in one place. There\'s nothing else to learn.',
+    { title:"She stopped coming. Rebound brings her back.",
+      tip:'<span class="t">Tip</span>Rebound watches visit gaps and sends the offer at the right moment. <b>You never have to remember who drifted</b> — it already knows.',
       ops:[
-        {t:"static", html:cmdCard()}
+        {t:"day", x:"7 weeks, no visit"},
+        {t:"wait", ms:600},
+        {t:"in", ms:1600, x:'Hi Priya! It\'s been a while and we miss you 😊 Here\'s a little something to bring you back — <b>services worth ₹200 free</b>. Valid 30 days. 🎁'+T("10:15")}
       ]}
   ];
 

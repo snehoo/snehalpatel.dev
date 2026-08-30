@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CareLoop — The Silence Audit</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  :root{
+    --paper:  #ECE9E4;
+    --paper2: #DCD7D0;
+    --teal:      #0076A8;
+    --teal-br:   #1A9ECC;
+    --teal-dark: #005070;
+    --text:  #101C24;
+    --muted: #64757F;
+    --red:   #B23A2E;
+    --red-dim: rgba(178,58,46,.08);
+  }
+
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background: var(--paper);
+    color: var(--text);
+    font-size:14px;
+    line-height:1.6;
+  }
+
+  /* ── HERO ── */
+  .hero{
+    background:#08161E;
+    padding:70px 24px 60px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:'';
+    position:absolute; inset:0;
+    background:radial-gradient(ellipse at 50% 0%, rgba(26,158,204,.20) 0%, transparent 65%);
+    pointer-events:none;
+  }
+  .hero-eyebrow{
+    display:inline-block;
+    font-size:11px; font-weight:700;
+    letter-spacing:.12em; text-transform:uppercase;
+    color:var(--teal-br);
+    border:1px solid rgba(26,158,204,.32);
+    background:rgba(26,158,204,.08);
+    padding:5px 14px; border-radius:999px;
+    margin-bottom:26px;
+  }
+  .hero h1{
+    font-size:clamp(30px,5vw,52px);
+    font-weight:900; line-height:1.12;
+    letter-spacing:-1.4px; color:#fff;
+    max-width:700px; margin:0 auto 18px;
+  }
+  .hero h1 em{ font-style:normal; color:var(--teal-br); }
+  .hero-sub{
+    font-size:16px; color:#9FBCC8;
+    max-width:480px; margin:0 auto 36px; line-height:1.65;
+  }
+  .hero-number-row{ display:flex; justify-content:center; gap:40px; flex-wrap:wrap; }
+  .hero-number{ text-align:center; }
+  .hero-number .hn-val{
+    font-size:32px; font-weight:900; color:#fff;
+    letter-spacing:-1px; line-height:1;
+  }
+  .hero-number .hn-val.red{ color:#FF7A6B; }
+  .hero-number .hn-label{
+    font-size:11px; color:#9FBCC8; margin-top:5px;
+    max-width:118px; line-height:1.35;
+  }
+
+  /* ── SECTIONS ── */
+  .section{ max-width:760px; margin:0 auto; padding:52px 24px; }
+  .section-narrow{ max-width:620px; margin:0 auto; padding:52px 24px; }
+  .divider{ height:1px; background:var(--paper2); max-width:760px; margin:0 auto; }
+
+  .eyebrow{
+    font-size:10.5px; font-weight:700; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--teal); margin-bottom:12px;
+  }
+  h2{
+    font-size:clamp(22px,3.5vw,31px); font-weight:800;
+    letter-spacing:-0.5px; line-height:1.22; margin-bottom:14px;
+  }
+  .lead{ font-size:15.5px; color:#3B4952; line-height:1.7; margin-bottom:30px; }
+
+  /* ── RELATE ── */
+  .relate-block{
+    background:#fff; border-radius:16px; padding:30px;
+    border-left:4px solid var(--teal-br);
+  }
+  .relate-block p{ font-size:15px; color:#3B4952; line-height:1.75; }
+  .relate-block p + p{ margin-top:13px; }
+  .relate-block p strong{ color:var(--text); font-weight:700; }
+
+  /* ── GAP CARDS ── */
+  .leaks{ display:flex; flex-direction:column; gap:16px; }
+  .leak{
+    background:#fff; border-radius:16px;
+    padding:24px 26px; border-left:4px solid var(--red);
+  }
+  .leak-number{
+    font-size:11px; font-weight:800; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--red); margin-bottom:7px;
+  }
+  .leak-title{
+    font-size:18px; font-weight:800; margin-bottom:14px; letter-spacing:-0.3px;
+  }
+  .leak-math{
+    display:flex; align-items:center; gap:16px;
+    background:var(--red-dim); border:1px solid rgba(178,58,46,.15);
+    border-radius:10px; padding:14px 16px;
+  }
+  .leak-math .lm-icon{ font-size:22px; flex-shrink:0; }
+  .leak-math .lm-text{ font-size:12.8px; color:#59180F; line-height:1.55; }
+  .leak-math .lm-text strong{
+    font-size:16px; font-weight:800; display:block;
+    color:var(--red); letter-spacing:-0.3px; margin-bottom:3px;
+  }
+
+  /* ── TOTAL ── */
+  .total-loss{
+    background:#08161E; border-radius:16px; padding:34px 32px;
+    text-align:center; position:relative; overflow:hidden;
+  }
+  .total-loss::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse at 50% 100%, rgba(178,58,46,.22), transparent 65%);
+    pointer-events:none;
+  }
+  .total-loss .tl-label{
+    font-size:11px; font-weight:700; letter-spacing:.1em;
+    text-transform:uppercase; color:#FF7A6B; margin-bottom:12px;
+  }
+  .total-loss .tl-number{
+    font-size:clamp(46px,8vw,70px); font-weight:900; color:#fff;
+    letter-spacing:-2px; line-height:1; margin-bottom:8px;
+  }
+  .total-loss .tl-sub{ font-size:14px; color:#9FBCC8; margin-bottom:18px; line-height:1.5; }
+  .total-loss .tl-note{
+    font-size:11.5px; color:#6C7F88; max-width:440px;
+    margin:0 auto; line-height:1.55;
+  }
+
+  /* ── FIT ── */
+  .fit-intro{ font-size:15.5px; color:#3B4952; line-height:1.7; margin-bottom:22px; }
+
+  @media(max-width:640px){ .fit-rows{ grid-template-columns:1fr 1fr; } }
+  .fit-rows{ display:flex; flex-direction:column; gap:11px; }
+  .fit-row{
+    display:grid; grid-template-columns:auto 1fr; gap:16px;
+    align-items:start; background:#fff; border-radius:12px; padding:17px 20px;
+  }
+  .fit-row .fr-leak{
+    font-size:12px; color:var(--red); font-weight:700;
+    background:var(--red-dim); border-radius:6px; padding:3px 9px;
+    white-space:nowrap; margin-top:2px;
+  }
+  .fit-row .fr-body{ font-size:13.5px; color:#3B4952; line-height:1.6; }
+  .fit-row .fr-body strong{
+    display:block; font-size:14px; font-weight:700;
+    color:var(--text); margin-bottom:3px;
+  }
+
+  /* ── PRICE ── */
+  .price-card{
+    background:#fff; border-radius:16px; padding:32px;
+    border:1px solid var(--paper2); text-align:center;
+  }
+  .price-tag{
+    font-size:44px; font-weight:900; letter-spacing:-1.5px;
+    color:var(--teal-dark); line-height:1;
+  }
+  .price-tag span{ font-size:16px; font-weight:600; color:var(--muted); letter-spacing:0; }
+  .price-setup{ font-size:13px; color:var(--muted); margin-top:10px; line-height:1.6; }
+  .price-setup b{ color:var(--text); font-weight:700; }
+  .price-list{
+    list-style:none; text-align:left; margin:22px auto 0; max-width:400px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .price-list li{
+    font-size:13.4px; color:#3B4952; line-height:1.5;
+    padding-left:24px; position:relative;
+  }
+  .price-list li::before{
+    content:'✓'; position:absolute; left:0; top:0;
+    color:var(--teal); font-weight:800; font-size:13px;
+  }
+  .price-foot{
+    margin-top:22px; padding-top:17px; border-top:1px solid var(--paper2);
+    font-size:12.5px; color:var(--muted); line-height:1.6;
+  }
+
+  /* ── CLOSE ── */
+  .close-block{ text-align:center; }
+  .close-block h2{ font-size:clamp(22px,3.5vw,29px); margin-bottom:12px; }
+  .close-lead{
+    font-size:15px; color:#3B4952; max-width:500px;
+    margin:0 auto 30px; line-height:1.7;
+  }
+  .close-tally{
+    display:flex; border:1px solid var(--paper2); border-radius:12px;
+    overflow:hidden; background:#fff; max-width:560px; margin:0 auto 30px;
+  }
+  .ct-item{ flex:1; padding:16px 12px; border-right:1px solid var(--paper2); text-align:center; }
+  .ct-item:last-child{ border-right:none; }
+  .ct-item .ct-val{ font-size:20px; font-weight:800; color:var(--red); letter-spacing:-0.5px; }
+  .ct-item .ct-label{ font-size:10.5px; color:var(--muted); margin-top:3px; line-height:1.35; }
+  .cta-line{ font-size:14px; color:var(--muted); margin-bottom:6px; }
+  .cta-contact{ font-size:18px; font-weight:800; color:var(--teal); text-decoration:none; }
+  .cta-contact:hover{ color:var(--teal-dark); }
+
+  /* ── FOOTER ── */
+  .footer{ background:#08161E; padding:30px 24px; text-align:center; }
+  .footer .brand{
+    font-size:20px; font-weight:800; color:#fff;
+    letter-spacing:-0.5px; margin-bottom:8px;
+  }
+  .footer .brand span{ color:var(--teal-br); }
+  .footer .belonging{
+    font-size:12.5px; color:#6C7F88; max-width:380px;
+    margin:0 auto; line-height:1.55;
+  }
+
+  .print-btn{
+    position:fixed; bottom:20px; right:20px;
+    background:var(--teal); color:#fff; border:none; border-radius:8px;
+    padding:10px 18px; font-size:13px; font-weight:600; cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,118,168,.3); font-family:inherit; z-index:100;
+  }
+  .print-btn:hover{ background:var(--teal-dark); }
+  @media print{
+    .print-btn{ display:none; }
+    .hero,.total-loss,.footer{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+  @media(max-width:600px){
+    .hero-number-row{ gap:24px; }
+    .fit-row{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-eyebrow">CareLoop — A Silence Audit for Hospitals</div>
+  <h1>Your patients have opinions about your hospital. <em>Nobody is collecting them.</em></h1>
+  <div class="hero-sub">The ones who speak up on their own are almost never the happy ones. That is what is building your public record right now. <strong style="color:#fff">CareLoop</strong> fixes that — through WhatsApp, automatically, after every discharge.</div>
+  <div class="hero-number-row">
+    <div class="hero-number">
+      <div class="hn-val red">8 in 10</div>
+      <div class="hn-label">patients you discharge without ever hearing back from</div>
+    </div>
+    <div class="hero-number">
+      <div class="hn-val red">1 in 3</div>
+      <div class="hn-label">unhappy patients post on Google instead of calling you</div>
+    </div>
+    <div class="hero-number">
+      <div class="hn-val red">18–36h</div>
+      <div class="hn-label">before a complaint reaches someone senior enough to act</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── RELATE ── -->
+<div class="section-narrow">
+  <div class="relate-block">
+    <p>A patient's relative posted about their experience in three housing society WhatsApp groups before your team heard about it. Your grievance officer found out from a staff member who saw the screenshot.</p>
+    <p>One phone call the same day would have finished it. Nobody knew to make that call.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── THE FOUR GAPS ── -->
+<div class="section">
+  <div class="eyebrow">The Silence Audit</div>
+  <h2>Four things quietly happening after every discharge.</h2>
+
+  <div class="leaks">
+
+    <div class="leak">
+      <div class="leak-number">Gap 01</div>
+      <div class="leak-title">Patient goes home. You hear nothing.</div>
+      <div class="leak-math">
+        <div class="lm-icon">🤐</div>
+        <div class="lm-text">
+          <strong>~400 patients a month, unheard</strong>
+          There is no system asking them how it went. If care was good, they tell a relative. If it was bad, they tell everyone. Either way, you find out by accident — or not at all.
+        </div>
+      </div>
+    </div>
+
+    <div class="leak">
+      <div class="leak-number">Gap 02</div>
+      <div class="leak-title">Your Google rating is written by your worst days.</div>
+      <div class="leak-math">
+        <div class="lm-icon">⭐</div>
+        <div class="lm-text">
+          <strong>8–12 families a month choosing elsewhere</strong>
+          Happy patients go home and recover. Unhappy ones open Google. The competitor sitting at 4.5 stars is not better — they just have more satisfied patients who were actually asked. At ₹6,000 a visit, that is ₹72,000 leaving every month.
+        </div>
+      </div>
+    </div>
+
+    <div class="leak">
+      <div class="leak-number">Gap 03</div>
+      <div class="leak-title">The complaint is already a WhatsApp forward by the time you see it.</div>
+      <div class="leak-math">
+        <div class="lm-icon">⚠️</div>
+        <div class="lm-text">
+          <strong>₹40,000 – ₹1,50,000 per case</strong>
+          in legal time, admin hours, and senior attention — for a complaint that a five-minute call on the day would have closed at zero cost. The problem was never the patient. It was the 24-hour gap before anyone knew.
+        </div>
+      </div>
+    </div>
+
+    <div class="leak">
+      <div class="leak-number">Gap 04</div>
+      <div class="leak-title">Ask how last month went. Watch the room go quiet.</div>
+      <div class="leak-math">
+        <div class="lm-icon">📊</div>
+        <div class="lm-text">
+          <strong>Every decision runs on feeling, not data</strong>
+          Which department needs attention? Whoever brought it up in the last meeting. What improved this quarter? Nobody knows. When the NABH auditor asks for grievance resolution rates — someone goes looking for a register.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── TOTAL ── -->
+<div class="section">
+  <div class="total-loss">
+    <div class="tl-label">What the silence costs</div>
+    <div class="tl-number">₹7,80,000</div>
+    <div class="tl-sub">a year, for a hospital discharging 400–600 patients a month</div>
+    <div class="tl-note">Families choosing a better-rated hospital, two complaints handled late instead of same-day, and records rebuilt from memory before every audit. Nothing dramatic — just the steady cost of not asking.</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── HOW IT FITS ── -->
+<div class="section">
+  <div class="eyebrow">How CareLoop works</div>
+  <h2>One message from your team. The rest is automatic.</h2>
+  <p class="fit-intro">Your discharge desk sends one WhatsApp when a patient leaves. Everything after runs on its own — from the hospital's own number.</p>
+
+  <div class="fit-rows">
+    <div class="fit-row">
+      <div class="fr-leak">Step 1</div>
+      <div class="fr-body">
+        <strong>Staff logs the discharge — 20 seconds</strong>
+        Patient name, phone, doctor, department. Stored internally. Never sent to the patient.
+      </div>
+    </div>
+    <div class="fit-row">
+      <div class="fr-leak">Step 2</div>
+      <div class="fr-body">
+        <strong>CareLoop asks the patient, privately, once they are home</strong>
+        A simple 1–5 on WhatsApp, 4 hours after discharge. One tap. Far more people reply than you'd expect.
+      </div>
+    </div>
+    <div class="fit-row">
+      <div class="fr-leak">Step 3</div>
+      <div class="fr-body">
+        <strong>Score routes automatically</strong>
+        4 or 5 — CareLoop sends a review link to Google or Practo. 1 or 2 — your grievance officer gets an instant alert with the patient's name, department, their words, their number. Your team calls that day.
+      </div>
+    </div>
+    <div class="fit-row">
+      <div class="fr-leak">Step 4</div>
+      <div class="fr-body">
+        <strong>Monthly report, first of every month</strong>
+        Patients reached, average score by department, complaints raised, how many resolved within 24 hours. Audit-ready without anyone compiling it.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── PRICING ── -->
+<div class="section-narrow">
+  <div class="eyebrow" style="text-align:center">What it costs</div>
+  <h2 style="text-align:center">₹40 per discharged patient. All in.</h2>
+  <div class="price-card">
+    <div class="price-tag">₹19,999<span> / month</span></div>
+    <div class="price-setup">
+      Plus <b>₹9,999</b> once — setup, approvals, training. Done before your first patient is contacted.
+    </div>
+    <ul class="price-list">
+      <li>Up to 800 discharges a month, no per-patient charge</li>
+      <li>CSAT on every consenting discharge</li>
+      <li>Review invites to Google and Practo</li>
+      <li>Same-day grievance alerts + 24-hour follow-up</li>
+      <li>Timestamped complaint log for NABH audit</li>
+      <li>Monthly report, department by department</li>
+    </ul>
+    <div class="price-foot">
+      One escalated complaint handled late costs more than six months of this.
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── CLOSE ── -->
+<div class="section-narrow">
+  <div class="close-block">
+    <div class="eyebrow">Every month without it</div>
+    <h2>The record is being written either way.</h2>
+    <div class="close-lead">Patients are forming an opinion today. The only question is whether it reaches your grievance officer on Tuesday — or a WhatsApp group on Friday.</div>
+
+    <div class="close-tally">
+      <div class="ct-item">
+        <div class="ct-val">~400</div>
+        <div class="ct-label">patients a month, unheard</div>
+      </div>
+      <div class="ct-item">
+        <div class="ct-val">~0</div>
+        <div class="ct-label">satisfied patients asked to leave a review</div>
+      </div>
+      <div class="ct-item">
+        <div class="ct-val">0</div>
+        <div class="ct-label">monthly reports on whether it is improving</div>
+      </div>
+    </div>
+
+    <div class="cta-line">If this sounds familiar, let's talk.</div>
+    <a class="cta-contact" href="mailto:snehalp@gmail.com">snehalp@gmail.com</a>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="footer">
+  <div class="brand">CareLoop <span>✦</span></div>
+  <div class="belonging">For hospitals that would rather hear it from the patient on the day than read it from a stranger a week later.</div>
+</div>
+
+<button class="print-btn" onclick="window.print()">Save as PDF</button>
+
+</body>
+</html>

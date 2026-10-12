@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://snehalpatel.dev/sitemap.xml

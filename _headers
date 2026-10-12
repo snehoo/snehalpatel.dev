@@ -1,0 +1,16 @@
+# Pitch decks, client proposals and old homepage versions: reachable by
+# direct link, kept out of search results.
+/careloop/*
+  X-Robots-Tag: noindex, nofollow
+/rebound/*
+  X-Robots-Tag: noindex, nofollow
+/voxtract/*
+  X-Robots-Tag: noindex, nofollow
+/index-old
+  X-Robots-Tag: noindex, nofollow
+/index-old.html
+  X-Robots-Tag: noindex, nofollow
+/index-v2
+  X-Robots-Tag: noindex, nofollow
+/index-v2.html
+  X-Robots-Tag: noindex, nofollow

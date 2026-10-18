@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Get started with ReviewSaathi</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="theme.css">
+<style>
+header{padding:16px 0;border-bottom:1px solid var(--line)}
+.wrap{max-width:680px}
+main{padding:26px 0 70px}
+.step{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;margin:18px 0}
+.step h2{font-size:26px;margin-bottom:6px}.step .n{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--bg);font:700 18px var(--f-display);margin-right:10px;vertical-align:middle}
+.radio{display:flex;gap:12px;flex-wrap:wrap}.radio label{flex:1 1 230px;border:2px solid var(--line);border-radius:12px;padding:14px;margin:0;font-weight:500;cursor:pointer}
+.radio input{width:auto;min-height:0;margin-right:8px;accent-color:var(--accent)}
+.radio label:has(input:checked){border-color:var(--accent);background:var(--good-bg)}
+.chk{display:flex;gap:12px;align-items:flex-start;margin:10px 0;font-weight:400}.chk input{width:24px;height:24px;min-height:0;flex:none;margin-top:3px;accent-color:var(--accent)}
+.how{background:var(--sunk);border-radius:12px;padding:14px 16px;margin-top:10px;font-size:16px}
+.how ol{margin:6px 0 0;padding-left:1.3em;display:grid;gap:4px}
+.err{background:var(--bad-bg);color:var(--bad);border-radius:10px;padding:12px 14px;margin:14px 0;font-weight:600}
+.done{text-align:center;padding:30px 10px}.done h2{margin-bottom:10px}
+.hp{position:absolute;left:-9999px;opacity:0}
+code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radius:6px;word-break:break-all}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="./"><i>★</i>ReviewSaathi</a></div></header>
+
+<main><div class="wrap">
+<div id="formbox">
+  <h1 style="font-size:clamp(30px,6vw,42px)">Let's get you started</h1>
+  <p style="margin-top:8px">Four short steps. About 15 minutes. You can stop us any time.</p>
+
+  <form id="f" autocomplete="on" novalidate>
+    <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <div class="step">
+      <h2><span class="n">1</span>Your Google page</h2>
+      <div class="field"><label for="shop">Business name</label><input id="shop" name="shop" required placeholder="As it shows on Google"></div>
+      <div class="field"><label for="maps_link">Link to your Google page</label><input id="maps_link" name="maps_link" required inputmode="url" placeholder="Paste the link here">
+        <div class="how"><b>How to get the link</b><ol><li>Open Google Maps on your phone</li><li>Search for your business</li><li>Tap <b>Share</b>, then <b>Copy link</b></li></ol></div></div>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">2</span>Your permission</h2>
+      <p class="small muted">We only do what you allow here, and you can stop us any time.</p>
+      <label class="chk"><input type="checkbox" id="permission_ok" name="permission_ok" value="yes"><span>I allow ReviewSaathi to read the reviews on my Google page, write replies, and post updates, in my business name.</span></label>
+      <label class="chk"><input type="checkbox" id="never" required><span>I understand ReviewSaathi never buys or writes fake reviews, never asks for my Google password, and never posts anything I have said no to.</span></label>
+      <div class="field" style="margin-top:14px"><label for="permission_name">Type your full name to sign</label><input id="permission_name" name="permission_name" required autocomplete="name"></div>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">3</span>Which plan?</h2>
+      <div class="radio">
+        <label><input type="radio" name="plan" value="lite"><b>Lite</b> &middot; Rs.999 a month<br><span class="small muted">We write, you post.</span></label>
+        <label><input type="radio" name="plan" value="standard" checked><b>Standard</b> &middot; Rs.2,999 a month<br><span class="small muted">We do it all. Most chosen.</span></label>
+      </div>
+      <p class="small muted" style="margin-top:8px">Prices are plus GST.</p>
+      <div class="how" id="managerbox">
+        <b>For Standard: add us on Google (2 minutes)</b>
+        <ol>
+          <li>Open your Google page and tap <b>Edit profile</b>, then <b>People and access</b> (or <b>Business Profile settings</b>)</li>
+          <li>Tap <b>Add</b>, and type this email: <code id="mgr">your-business-email@gmail.com</code></li>
+          <li>Choose the role <b>Manager</b> and send the invite</li>
+        </ol>
+        <p class="small muted" style="margin-top:6px">You stay the Owner. You can remove us in 2 taps. We never see your password.</p>
+        <label class="chk"><input type="checkbox" name="manager_added" value="yes">I have sent the invite</label>
+      </div>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">4</span>A few details</h2>
+      <div class="field"><label for="owner_name">Your name</label><input id="owner_name" name="owner_name" required autocomplete="name"></div>
+      <div class="field"><label for="owner_phone">Your WhatsApp number</label><input id="owner_phone" name="owner_phone" required inputmode="tel" autocomplete="tel" placeholder="98XXXXXXXX"></div>
+      <div class="field"><label for="owner_email">Your email</label><input id="owner_email" name="owner_email" required type="email" autocomplete="email"><p class="hint">Hard reviews are sent here for your OK.</p></div>
+      <div class="field"><label for="language">Language for replies</label>
+        <select id="language" name="language"><option>English</option><option>Hindi</option><option>Marathi</option><option>English and Hindi</option><option>English and Marathi</option></select></div>
+      <div class="field"><label for="tone">How should replies sound?</label>
+        <select id="tone" name="tone"><option value="friendly">Friendly and warm</option><option value="formal">Polite and formal</option><option value="casual">Short and casual</option></select></div>
+      <div class="field"><label for="services">What do you offer?</label><textarea id="services" name="services" placeholder="Example: root canal, braces, teeth cleaning, whitening"></textarea><p class="hint">We only write about what you list here.</p></div>
+      <div class="field"><label for="current_offer">Any offer or news right now? (optional)</label><input id="current_offer" name="current_offer" placeholder="Example: free check-up in November"></div>
+      <div class="field"><label for="approval_contact">Where should we send hard reviews for your OK? (optional)</label><input id="approval_contact" name="approval_contact" placeholder="Leave empty to use your email above"></div>
+      <div class="field"><label for="auto_reply_positive">Happy reviews (4 and 5 stars)</label>
+        <select id="auto_reply_positive" name="auto_reply_positive"><option value="yes">Reply for me, no need to ask</option><option value="no">Ask me before replying</option></select></div>
+    </div>
+
+    <div class="err" id="err" hidden></div>
+    <button class="btn go" id="go" type="submit" style="width:100%">Send</button>
+    <p class="small muted" style="margin-top:10px;text-align:center">ReviewSaathi, a service of Autonova Solutions.</p>
+  </form>
+</div>
+
+<div id="thanks" class="step done" hidden>
+  <h2>Thank you. We have your details.</h2>
+  <p>We will message you on WhatsApp shortly with what happens next.</p>
+  <p class="small muted" style="margin-top:12px">Your reference: <b id="ref"></b></p>
+</div>
+</div></main>
+
+<script>
+(function(){
+  var API = 'https://aiservices-snehoo.duckdns.org/webhook/reviewsaathi-onboard';
+  var MANAGER_EMAIL = 'your-business-email@gmail.com';   // set this to the Google account you use as Manager
+  document.getElementById('mgr').textContent = MANAGER_EMAIL;
+  var form = document.getElementById('f'), err = document.getElementById('err'), go = document.getElementById('go');
+  var q = new URLSearchParams(location.search).get('plan');
+  if (q === 'lite' || q === 'standard') form.querySelector('input[name=plan][value=' + q + ']').checked = true;
+  function plan(){ return form.querySelector('input[name=plan]:checked').value; }
+  function toggle(){ document.getElementById('managerbox').hidden = plan() !== 'standard'; }
+  form.addEventListener('change', toggle); toggle();
+  function show(m){ err.textContent = m; err.hidden = !m; if (m) err.scrollIntoView({behavior:'smooth', block:'center'}); }
+  form.addEventListener('submit', function(e){
+    e.preventDefault(); show('');
+    var need = ['shop','maps_link','permission_name','owner_name','owner_phone','owner_email'];
+    for (var i = 0; i < need.length; i++) { if (!form.elements[need[i]].value.trim()) { show('Please fill in all the boxes.'); form.elements[need[i]].focus(); return; } }
+    if (!form.elements.permission_ok.checked || !document.getElementById('never').checked) { show('Please tick both boxes in step 2.'); return; }
+    var body = new URLSearchParams(new FormData(form));
+    if (!form.elements.permission_ok.checked) body.delete('permission_ok');
+    go.disabled = true; go.textContent = 'Sending...';
+    fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() })
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if (j && j.ok) { document.getElementById('formbox').hidden = true; document.getElementById('thanks').hidden = false; document.getElementById('ref').textContent = j.id; window.scrollTo(0,0); }
+        else { show((j && j.error) || 'Something went wrong. Please try again.'); go.disabled = false; go.textContent = 'Send'; }
+      })
+      .catch(function(){ show('We could not send this. Please check your internet and try again.'); go.disabled = false; go.textContent = 'Send'; });
+  });
+})();
+</script>
+</body>
+</html>

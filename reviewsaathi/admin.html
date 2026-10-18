@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReviewSaathi Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="theme.css">
+<style>
+header{padding:14px 0;border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto}
+nav button{font:600 17px var(--f-body);color:var(--muted);background:none;border:0;border-bottom:4px solid transparent;padding:16px 14px 12px;cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+main{padding:26px 0 80px}
+.tab{display:grid;gap:20px}.tab>*,#costbox,#clientlist,#postlist{min-width:0;max-width:100%}
+.go{width:100%}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card b{display:block;font:800 30px/1.1 var(--f-display)}.card span{font-size:15px;color:var(--muted)}
+.bar{height:12px;background:var(--sunk);border-radius:6px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}.bar i.hot{background:var(--pin)}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1 1 200px}
+.sm{min-height:44px;padding:8px 14px;font-size:16px}
+.reply{background:var(--sunk);border-radius:10px;padding:12px 14px;margin:8px 0;font-size:17px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+.gate{max-width:420px;margin:60px auto}
+</style>
+</head>
+<body>
+
+<div id="gate" class="wrap gate" hidden>
+  <a class="logo" href="./"><i>★</i>ReviewSaathi</a>
+  <h1 style="font-size:30px;margin:24px 0 8px">Admin</h1>
+  <p>Type your key to continue. It stays on this phone only.</p>
+  <div class="field" style="margin-top:16px"><label for="key">Key</label><input id="key" type="password" autocomplete="current-password"></div>
+  <button class="btn go" id="keygo" type="button">Continue</button>
+</div>
+
+<div id="app" hidden>
+<header><div class="wrap"><a class="logo" href="./"><i>★</i>ReviewSaathi</a><button class="btn sm" id="logout" type="button">Lock</button></div></header>
+<nav aria-label="Sections"><div class="wrap" role="tablist">
+  <button role="tab" data-t="find">Find shops</button>
+  <button role="tab" data-t="post">To post</button>
+  <button role="tab" data-t="clients">Clients</button>
+  <button role="tab" data-t="costs">Costs</button>
+</div></nav>
+
+<main><div class="wrap">
+
+<section class="tab" id="find">
+  <div class="panel">
+    <h2 style="font-size:26px;margin-bottom:14px">Find shops that need replies</h2>
+    <div class="field"><label for="city">City</label><input id="city" value="Mumbai region" disabled></div>
+    <div class="field"><label for="type">What kind of shop?</label>
+      <select id="type"></select></div>
+    <div class="field" id="typeotherbox" hidden><label for="typeother">Type the kind of shop</label><input id="typeother" placeholder="Example: tailor"></div>
+    <div class="field"><label for="area">Which area?</label><select id="area"></select></div>
+    <div class="field" id="areaotherbox" hidden><label for="areaother">Type the area</label><input id="areaother" placeholder="Example: Mulund West"></div>
+    <div class="field"><label for="count">How many shops to check?</label>
+      <select id="count"><option value="10">10 shops (quick)</option><option value="20" selected>20 shops (normal)</option><option value="30">30 shops (wide)</option></select>
+      <p class="hint" id="estimate"></p></div>
+    <button class="btn go" id="findgo" type="button">Find shops</button>
+  </div>
+
+  <div class="panel">
+    <h2 style="font-size:24px;margin-bottom:6px">Already know a shop?</h2>
+    <p class="small muted" style="margin-bottom:14px">Make a free sample for it directly.</p>
+    <div class="field"><label for="s_name">Shop name</label><input id="s_name" placeholder="Example: Mahavir Dental Clinic"></div>
+    <div class="field"><label for="s_area">Area</label><input id="s_area" placeholder="Example: Dombivli East"></div>
+    <div class="field"><label for="s_phone">Their phone number (for WhatsApp)</label><input id="s_phone" inputmode="tel" placeholder="98XXXXXXXX"></div>
+    <button class="btn go" id="samplego" type="button">Make free sample</button>
+  </div>
+</section>
+
+<section class="tab" id="post" hidden>
+  <h2 style="font-size:26px">Replies to post</h2>
+  <p class="small muted">These are ready. Open the shop's Google page, paste the reply, then tap Done.</p>
+  <div id="postlist"><p class="muted">Loading...</p></div>
+</section>
+
+<section class="tab" id="clients" hidden>
+  <h2 style="font-size:26px">Clients</h2>
+  <div class="panel"><b>Onboarding link to send</b><p class="small muted" style="margin:4px 0 10px">https://snehalpatel.dev/reviewsaathi/onboard.html</p><button class="btn sm" id="copylink" type="button">Copy link</button></div>
+  <div id="clientlist"><p class="muted">Loading...</p></div>
+</section>
+
+<section class="tab" id="costs" hidden>
+  <h2 style="font-size:26px">What it is costing</h2>
+  <div id="costbox"><p class="muted">Loading...</p></div>
+</section>
+
+</div></main>
+</div>
+
+<script>
+(function(){
+  var API = 'https://aiservices-snehoo.duckdns.org/webhook/';
+  var TYPES = [['Dentist','dentist'],['Doctor or clinic','clinic'],['Skin clinic','skin clinic'],['Physiotherapist','physiotherapist'],['Eye clinic','eye clinic'],['Diagnostic lab','diagnostic lab'],['Salon or parlour','salon'],['Gym','gym'],['Coaching class','coaching class'],['Computer shop','computer shop'],['Mobile shop','mobile shop'],['Car garage','car garage'],['Restaurant','restaurant'],['Something else','__other']];
+  var AREAS = ['Dombivli East','Dombivli West','Kalyan East','Kalyan West','Ulhasnagar','Ambernath','Badlapur','Titwala','Thane West','Thane East','Mulund','Ghatkopar','Andheri','Borivali','Navi Mumbai','Something else'];
+  var $ = function(id){ return document.getElementById(id); };
+  var key = '';
+  try { key = localStorage.getItem('rs_key') || ''; } catch(e){}
+
+  function h(tag, attrs){ var el = document.createElement(tag); attrs = attrs || {};
+    Object.keys(attrs).forEach(function(k){ if (k === 'text') el.textContent = attrs[k]; else if (k === 'class') el.className = attrs[k]; else if (k.slice(0,2) === 'on') el.addEventListener(k.slice(2), attrs[k]); else el.setAttribute(k, attrs[k]); });
+    var add = function(c){ if (c == null) return; if (Array.isArray(c)) { c.forEach(add); return; } el.appendChild(typeof c === 'string' || typeof c === 'number' ? document.createTextNode(String(c)) : c); };
+    for (var i = 2; i < arguments.length; i++) add(arguments[i]);
+    return el; }
+  function rs(n){ return 'Rs.' + (Number(n) || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
+  function api(what, params){
+    var u = new URL(API + 'reviewsaathi-admin'); u.searchParams.set('key', key); u.searchParams.set('what', what);
+    Object.keys(params || {}).forEach(function(k){ u.searchParams.set(k, params[k]); });
+    return fetch(u.toString()).then(function(r){ if (r.status === 401) throw new Error('key'); return r.json(); });
+  }
+
+  /* ---------- gate ---------- */
+  function start(){ $('gate').hidden = true; $('app').hidden = false; show((location.hash || '#find').slice(1)); }
+  if (key) start(); else $('gate').hidden = false;
+  $('keygo').addEventListener('click', function(){ var v = $('key').value.trim(); if (!v) return; key = v; try { localStorage.setItem('rs_key', v); } catch(e){} $('gate').hidden = true; start(); });
+  $('logout').addEventListener('click', function(){ try { localStorage.removeItem('rs_key'); } catch(e){} location.reload(); });
+
+  /* ---------- tabs ---------- */
+  var tabs = [].slice.call(document.querySelectorAll('nav button'));
+  function show(id){
+    if (!document.getElementById(id) || !document.getElementById(id).classList.contains('tab')) id = 'find';
+    [].forEach.call(document.querySelectorAll('section.tab'), function(s){ s.hidden = s.id !== id; });
+    tabs.forEach(function(t){ t.setAttribute('aria-selected', t.getAttribute('data-t') === id ? 'true' : 'false'); });
+    history.replaceState(null, '', '#' + id);
+    if (id === 'costs') loadCosts(); if (id === 'clients') loadClients(); if (id === 'post') loadPost();
+  }
+  tabs.forEach(function(t){ t.addEventListener('click', function(){ show(t.getAttribute('data-t')); }); });
+
+  /* ---------- find shops ---------- */
+  TYPES.forEach(function(t){ $('type').appendChild(h('option', { value: t[1], text: t[0] })); });
+  AREAS.forEach(function(a){ $('area').appendChild(h('option', { value: a === 'Something else' ? '__other' : a, text: a })); });
+  function typeVal(){ return $('type').value === '__other' ? $('typeother').value.trim() : $('type').value; }
+  function areaVal(){ return $('area').value === '__other' ? $('areaother').value.trim() : $('area').value; }
+  function estimate(){ var n = Number($('count').value); var cost = (40 + n * 6) * 0.003 * 88; $('estimate').textContent = 'About ' + rs(cost) + ' at list price. The first 500 a month are free.'; }
+  $('type').addEventListener('change', function(){ $('typeotherbox').hidden = $('type').value !== '__other'; });
+  $('area').addEventListener('change', function(){ $('areaotherbox').hidden = $('area').value !== '__other'; });
+  $('count').addEventListener('change', estimate); estimate();
+  $('findgo').addEventListener('click', function(){
+    var c = typeVal(), a = areaVal(); if (!c || !a) { alert('Please choose the shop type and the area.'); return; }
+    var u = new URL(API + 'reviewsaathi-leads'); u.searchParams.set('key', key); u.searchParams.set('category', c); u.searchParams.set('area', a + ', Maharashtra'); u.searchParams.set('check', $('count').value);
+    window.open(u.toString(), '_blank');
+  });
+  $('samplego').addEventListener('click', function(){
+    var n = $('s_name').value.trim(), a = $('s_area').value.trim(); if (!n) { alert('Please type the shop name.'); return; }
+    var u = new URL(API + 'reviewsaathi-sample'); u.searchParams.set('key', key); u.searchParams.set('q', n + ' ' + a); u.searchParams.set('area', a);
+    u.searchParams.set('category', typeVal() || 'business'); u.searchParams.set('phone', $('s_phone').value.trim());
+    window.open(u.toString(), '_blank');
+  });
+
+  /* ---------- to post ---------- */
+  function copy(text, btn){ var o = btn.textContent; var done = function(){ btn.textContent = 'Copied'; setTimeout(function(){ btn.textContent = o; }, 1400); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function(){}); }
+  function loadPost(){
+    var box = $('postlist'); box.replaceChildren(h('p', { class: 'muted', text: 'Loading...' }));
+    api('replies').then(function(d){
+      var list = d.replies || []; box.replaceChildren();
+      if (!list.length) { box.appendChild(h('div', { class: 'panel' }, h('b', { text: 'Nothing to post.' }), h('p', { class: 'small muted', text: 'New replies appear here after each review check.' }))); return; }
+      list.forEach(function(r){
+        var done = h('button', { class: 'btn sm', type: 'button', text: 'Done' });
+        var cp = h('button', { class: 'btn sm go', type: 'button', text: 'Copy reply' });
+        var item = h('div', { class: 'item' },
+          h('b', { text: r.shop }), h('div', { class: 'small muted', text: (r.reviewer || 'Customer') + ' · ' + r.stars + ' stars' }),
+          h('p', { style: 'margin:8px 0', text: r.review_text || '' }),
+          h('div', { class: 'reply', text: r.reply }),
+          h('div', { class: 'row' }, cp, r.maps_link && /^https?:/.test(r.maps_link) ? h('a', { class: 'btn sm', href: r.maps_link, target: '_blank', rel: 'noopener', text: 'Open Google page' }) : null, done));
+        cp.addEventListener('click', function(){ copy(r.reply, cp); });
+        done.addEventListener('click', function(){ done.disabled = true; api('posted', { id: r.id }).then(function(){ item.remove(); }); });
+        box.appendChild(item);
+      });
+    }).catch(fail(box));
+  }
+
+  /* ---------- clients ---------- */
+  $('copylink').addEventListener('click', function(){ copy('https://snehalpatel.dev/reviewsaathi/onboard.html', $('copylink')); });
+  function loadClients(){
+    var box = $('clientlist'); box.replaceChildren(h('p', { class: 'muted', text: 'Loading...' }));
+    api('clients').then(function(d){
+      var list = d.clients || []; box.replaceChildren();
+      if (!list.length) { box.appendChild(h('div', { class: 'panel' }, h('b', { text: 'No clients yet.' }), h('p', { class: 'small muted', text: 'When someone fills the onboarding form, they show up here.' }))); return; }
+      list.forEach(function(c){
+        var sel = h('select', { class: 'sm' }); ['new','active','paused','test'].forEach(function(s){ var o = h('option', { value: s, text: s }); if (s === c.status) o.selected = true; sel.appendChild(o); });
+        sel.addEventListener('change', function(){ api('setstatus', { id: c.id, status: sel.value }); });
+        var mg = h('select', { class: 'sm' }); [['no','Manager not added'],['yes','Manager added']].forEach(function(s){ var o = h('option', { value: s[0], text: s[1] }); if ((c.manager_added ? 'yes' : 'no') === s[0]) o.selected = true; mg.appendChild(o); });
+        mg.addEventListener('change', function(){ api('setmanager', { id: c.id, v: mg.value }); });
+        box.appendChild(h('div', { class: 'item' },
+          h('b', { text: c.shop }), h('span', { class: 'pill p-mute', style: 'margin-left:8px', text: c.plan }),
+          h('div', { class: 'small muted', style: 'margin:6px 0', text: [c.owner_name, c.owner_phone, c.owner_email].filter(Boolean).join(' · ') }),
+          h('div', { class: 'small', text: 'Waiting for owner OK: ' + c.waiting + ' · Ready to post: ' + c.to_post + ' · Last check: ' + (c.last_checked ? new Date(c.last_checked).toLocaleString('en-IN') : 'never') }),
+          c.services ? h('div', { class: 'small muted', style: 'margin-top:6px', text: 'Offers: ' + c.services }) : null,
+          h('div', { class: 'row', style: 'margin-top:10px' }, sel, mg, /^https?:/.test(c.maps_link || '') ? h('a', { class: 'btn sm', href: c.maps_link, target: '_blank', rel: 'noopener', text: 'Google page' }) : null)));
+      });
+    }).catch(fail(box));
+  }
+
+  /* ---------- costs ---------- */
+  var KIND = { sample: 'Free sample', leads: 'Shop search', review_check: 'Review check' };
+  function loadCosts(){
+    var box = $('costbox'); box.replaceChildren(h('p', { class: 'muted', text: 'Loading...' }));
+    api('costs').then(function(d){
+      var m = d.month || {}; box.replaceChildren();
+      function meter(label, used, free){ var pct = Math.min(100, Math.round(used / free * 100)); return h('div', { class: 'card' }, h('b', { text: used + ' of ' + free }), h('span', { text: label + ' (free each month)' }), h('div', { class: 'bar' }, h('i', { class: pct > 85 ? 'hot' : '', style: 'width:' + pct + '%' }))); }
+      box.appendChild(h('div', { class: 'cards' },
+        h('div', { class: 'card' }, h('b', { text: rs(m.cost) }), h('span', { text: 'Spent this month, at list price' })),
+        h('div', { class: 'card' }, h('b', { text: String(m.samples || 0) }), h('span', { text: 'Free samples made' })),
+        h('div', { class: 'card' }, h('b', { text: String(m.leads || 0) }), h('span', { text: 'Shop searches' })),
+        meter('Shops looked up', m.places || 0, 500), meter('Reviews read', m.reviews || 0, 500)));
+      box.appendChild(h('p', { class: 'small muted', style: 'margin:10px 0 18px', text: 'Costs use Outscraper list price, Claude Haiku 5.5 and Jev rates, at Rs.88 to the dollar. The first 500 shops and 500 reviews each month are free at Outscraper, so the real bill is lower until you pass them.' }));
+
+      box.appendChild(h('h3', { text: 'Day by day', style: 'margin:6px 0 10px' }));
+      var days = d.days || [];
+      if (!days.length) box.appendChild(h('div', { class: 'panel' }, h('b', { text: 'No runs yet.' }), h('p', { class: 'small muted', text: 'Every sample, shop search and review check will be listed here, with what it cost.' })));
+      else {
+        var head = h('tr', null, h('th', { text: 'Date' }), h('th', { text: 'What' }), h('th', { class: 'num', text: 'Runs' }), h('th', { class: 'num', text: 'Outscraper' }), h('th', { class: 'num', text: 'AI words' }), h('th', { class: 'num', text: 'Outscraper Rs' }), h('th', { class: 'num', text: 'Claude Rs' }), h('th', { class: 'num', text: 'Jev Rs' }), h('th', { class: 'num', text: 'Total Rs' }));
+        var body = days.map(function(r){ var tot = (+r.c_out) + (+r.c_claude) + (+r.c_jev);
+          return h('tr', null, h('td', { text: r.day }), h('td', { text: KIND[r.kind] || r.kind }), h('td', { class: 'num', text: r.runs }),
+            h('td', { class: 'num', text: (r.places || 0) + ' shops, ' + (r.reviews || 0) + ' reviews' }), h('td', { class: 'num', text: ((r.claude_in || 0) + (r.claude_out || 0)).toLocaleString('en-IN') + ' tokens' }),
+            h('td', { class: 'num', text: r.c_out }), h('td', { class: 'num', text: r.c_claude }), h('td', { class: 'num', text: r.c_jev }), h('td', { class: 'num', text: tot.toFixed(2) })); });
+        box.appendChild(h('div', { class: 'tblwrap' }, h('table', null, h('thead', null, head), h('tbody', null, body))));
+      }
+      box.appendChild(h('h3', { text: 'By client, this month', style: 'margin:22px 0 10px' }));
+      var cl = d.clients || [];
+      if (!cl.length) box.appendChild(h('div', { class: 'panel' }, h('b', { text: 'No client costs yet.' }), h('p', { class: 'small muted', text: 'Once a client is active, what each one costs you appears here.' })));
+      else box.appendChild(h('div', { class: 'tblwrap' }, h('table', null, h('thead', null, h('tr', null, h('th', { text: 'Client' }), h('th', { class: 'num', text: 'Runs' }), h('th', { class: 'num', text: 'Cost Rs' }))),
+        h('tbody', null, cl.map(function(c){ return h('tr', null, h('td', { text: c.shop }), h('td', { class: 'num', text: c.runs }), h('td', { class: 'num', text: c.cost })); })))));
+    }).catch(fail(box));
+  }
+  function fail(box){ return function(e){ if (window.console) console.error(e); box.replaceChildren(h('div', { class: 'panel' }, h('b', { text: e && e.message === 'key' ? 'That key was not accepted.' : 'Could not load. Please try again.' }),
+    e && e.message === 'key' ? h('p', { class: 'small muted', text: 'Tap Lock, then type the key again.' }) : null)); }; }
+})();
+</script>
+</body>
+</html>

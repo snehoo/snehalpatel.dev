@@ -14,3 +14,7 @@
   X-Robots-Tag: noindex, nofollow
 /index-v2.html
   X-Robots-Tag: noindex, nofollow
+/reviewsaathi/admin*
+  X-Robots-Tag: noindex, nofollow
+/reviewsaathi/onboard*
+  X-Robots-Tag: noindex, nofollow

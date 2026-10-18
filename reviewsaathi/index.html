@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReviewSaathi</title>
+<meta name="description" content="ReviewSaathi replies to every Google review and keeps your Google page fresh, so you can get on with your work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="theme.css">
+<style>
+header{padding:18px 0;border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hero{padding:56px 0 44px}
+.hero p.lede{font-size:22px;max-width:34em;margin:18px 0 28px;color:var(--ink2)}
+.hero .row{display:flex;gap:12px;flex-wrap:wrap}
+section{padding:36px 0}
+.steps{display:grid;gap:14px;counter-reset:s;list-style:none;padding:0;margin:20px 0 0}
+.steps li{counter-increment:s;display:grid;grid-template-columns:48px 1fr;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.steps li::before{content:counter(s);font:700 24px/48px var(--f-display);text-align:center;width:48px;height:48px;border-radius:50%;background:var(--ink);color:var(--bg)}
+.steps b{display:block;font-size:20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;margin-top:20px}
+.stat{background:var(--good-bg);border-radius:14px;padding:18px 20px}.stat b{display:block;font:800 44px/1.1 var(--f-display);color:var(--good)}
+.plan h3{margin-bottom:4px}.plan .price{font:800 34px var(--f-display);margin:6px 0 2px}.plan .price small{font:500 16px var(--f-body);color:var(--muted)}
+.plan ul{margin:14px 0 0;padding-left:1.2em;display:grid;gap:6px;color:var(--ink2)}
+.plan.main{border:3px solid var(--accent)}
+.tag{display:inline-block;background:var(--accent);color:var(--accent-ink);font:600 13px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:4px 12px;margin-bottom:8px}
+.cta{background:var(--accent);color:var(--accent-ink);border-radius:20px;padding:36px 28px;text-align:center}
+.cta h2{color:var(--accent-ink);margin-bottom:10px}.cta p{color:var(--accent-ink);opacity:.92;margin-bottom:20px}
+.cta .btn{background:var(--accent-ink);color:var(--accent);border-color:var(--accent-ink)}
+footer{padding:28px 0 44px;border-top:1px solid var(--line);margin-top:20px}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <a class="logo" href="./"><i>★</i>ReviewSaathi</a>
+  <a class="btn go" href="onboard.html">Get started</a>
+</div></header>
+
+<main>
+<div class="wrap">
+
+  <div class="hero">
+    <h1>Every Google review answered. Your page always fresh.</h1>
+    <p class="lede">ReviewSaathi writes the replies and the updates for your Google page. You get your time back, and the people who find you see a business that cares.</p>
+    <div class="row">
+      <a class="btn go" href="onboard.html?plan=standard">Start with Standard</a>
+      <a class="btn" href="onboard.html?plan=lite">Try Lite</a>
+    </div>
+  </div>
+
+  <section>
+    <h2>Why it matters</h2>
+    <p style="margin-top:10px;max-width:40em">People look at your Google page before they call or visit. Reviews with no reply look like nobody is listening. A page with no news looks like nobody is home.</p>
+    <div class="stats">
+      <div class="stat"><b>97%</b><span>of people read online reviews when choosing a local business</span></div>
+      <div class="stat"><b>80%</b><span>are more likely to choose a business that replies to all its reviews</span></div>
+    </div>
+    <p class="small muted" style="margin-top:10px">Source: BrightLocal Local Consumer Review Survey 2026, 1,002 US adults.</p>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li><div><b>You send us your Google link</b><span>Open Google Maps, find your shop, tap Share, copy the link. That is all we need to begin.</span></div></li>
+      <li><div><b>We write the replies and the updates</b><span>Short, friendly, in your language. Replies sound like a person, because they are written to match each review.</span></div></li>
+      <li><div><b>Unhappy reviews wait for you</b><span>On Standard, a hard review is never answered until you tap Post. You stay in control.</span></div></li>
+      <li><div><b>You see what we did</b><span>Standard clients get a monthly report: before and after, and how you compare with shops near you.</span></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Two plans</h2>
+    <p style="margin:10px 0 18px">Start small with Lite. Move to Standard when you want it all taken off your plate.</p>
+    <div class="grid2">
+      <div class="panel plan">
+        <h3>Lite</h3><p class="small muted">You post it, we write it.</p>
+        <div class="price">Rs.999 <small>a month, plus GST</small></div>
+        <ul>
+          <li>Every week, the new reviews with a ready reply for each one</li>
+          <li>4 ready-to-post updates a month</li>
+          <li>You copy and paste them. It takes minutes.</li>
+          <li>Hard reviews come with a draft. You decide what to do.</li>
+        </ul>
+      </div>
+      <div class="panel plan main">
+        <span class="tag">Most chosen</span>
+        <h3>Standard</h3><p class="small muted">We do it all for you.</p>
+        <div class="price">Rs.2,999 <small>a month, plus GST</small></div>
+        <ul>
+          <li>We post a reply to every new review, usually within a day</li>
+          <li>Hard reviews wait for your OK before any reply goes up</li>
+          <li>8 updates a month, posted on your Google page</li>
+          <li>Replies to your 100 latest unanswered reviews, once, at the start</li>
+          <li>A monthly report: before and after, shops near you, and where you are heading</li>
+          <li>If we miss a review in your first month, you pay nothing</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="cta">
+      <h2>Make every review count.</h2>
+      <p>It takes about 15 minutes to get started.</p>
+      <a class="btn" href="onboard.html">Get started</a>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<footer><div class="wrap small muted">
+  ReviewSaathi, a service of Autonova Solutions. Mumbai, India.
+</div></footer>
+
+</body>
+</html>

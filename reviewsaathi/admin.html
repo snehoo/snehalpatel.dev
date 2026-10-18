@@ -61,7 +61,7 @@ main{padding:26px 0 80px}
     <div class="field"><label for="area">Which area?</label><select id="area"></select></div>
     <div class="field" id="areaotherbox" hidden><label for="areaother">Type the area</label><input id="areaother" placeholder="Example: Mulund West"></div>
     <div class="field"><label for="count">How many shops to check?</label>
-      <select id="count"><option value="10">10 shops (quick)</option><option value="20" selected>20 shops (normal)</option><option value="30">30 shops (wide)</option></select>
+      <select id="count"><option value="10" selected>10 shops (quick)</option><option value="20">20 shops (normal)</option><option value="30">30 shops (wide)</option></select>
       <p class="hint" id="estimate"></p></div>
     <button class="btn go" id="findgo" type="button">Find shops</button>
   </div>
@@ -119,7 +119,6 @@ main{padding:26px 0 80px}
 
   /* ---------- gate ---------- */
   function start(){ $('gate').hidden = true; $('app').hidden = false; show((location.hash || '#find').slice(1)); }
-  if (key) start(); else $('gate').hidden = false;
   $('keygo').addEventListener('click', function(){ var v = $('key').value.trim(); if (!v) return; key = v; try { localStorage.setItem('rs_key', v); } catch(e){} $('gate').hidden = true; start(); });
   $('logout').addEventListener('click', function(){ try { localStorage.removeItem('rs_key'); } catch(e){} location.reload(); });
 
@@ -232,6 +231,8 @@ main{padding:26px 0 80px}
         h('tbody', null, cl.map(function(c){ return h('tr', null, h('td', { text: c.shop }), h('td', { class: 'num', text: c.runs }), h('td', { class: 'num', text: c.cost })); })))));
     }).catch(fail(box));
   }
+  /* ---------- start (runs last, after everything above is set up) ---------- */
+  if (key) start(); else $('gate').hidden = false;
   function fail(box){ return function(e){ if (window.console) console.error(e); box.replaceChildren(h('div', { class: 'panel' }, h('b', { text: e && e.message === 'key' ? 'That key was not accepted.' : 'Could not load. Please try again.' }),
     e && e.message === 'key' ? h('p', { class: 'small muted', text: 'Tap Lock, then type the key again.' }) : null)); }; }
 })();

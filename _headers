@@ -18,3 +18,5 @@
   X-Robots-Tag: noindex, nofollow
 /reviewsaathi/onboard*
   X-Robots-Tag: noindex, nofollow
+/reviewsaathi/send*
+  X-Robots-Tag: noindex, nofollow

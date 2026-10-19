@@ -149,7 +149,7 @@
 
   /* Monthly report: open it, or send it to the owner on WhatsApp */
   function monthlyMessage(r) {
-    var url = SITE + 'm/' + encodeURIComponent(r.id);
+    var url = SITE + 'm/' + encodeURIComponent(r.id) + (r.has_pdf ? '.pdf' : '');
     var month = ''; try { month = new Date(r.period_to).toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata', month: 'long', year: 'numeric' }); } catch (e) {}
     var greet = r.owner_name ? 'Hello ' + r.owner_name + ',' : 'Hello ' + r.shop + ' team,';
     return { url: url, text: greet + '\n\nYour ReviewSaathi report for ' + r.shop + (month ? ' (' + month + ')' : '') + ' is ready:\n' + url
@@ -158,7 +158,7 @@
   function mountMonthly(el, r) {
     addStyles(); el.className = 'rsk compact'; el.textContent = '';
     var m = monthlyMessage(r), ph = phoneInfo(r.owner_phone);
-    var open = document.createElement('a'); open.textContent = 'Open report'; open.href = m.url; open.target = '_blank'; open.rel = 'noopener'; el.appendChild(open);
+    var open = document.createElement('a'); open.textContent = 'Open report'; open.href = SITE + 'm/' + encodeURIComponent(r.id); open.target = '_blank'; open.rel = 'noopener'; el.appendChild(open);
     if (ph.mobile) { var wa = document.createElement('button'); wa.type = 'button'; wa.className = 'main'; wa.textContent = 'Open WhatsApp'; wa.addEventListener('click', function () { openWhatsApp(ph.num, m.text); }); el.appendChild(wa); }
     else if (r.owner_phone) { var c = document.createElement('a'); c.className = 'main'; c.textContent = 'Call ' + r.owner_phone; c.href = 'tel:' + String(r.owner_phone).replace(/\s+/g, ''); el.appendChild(c); }
   }

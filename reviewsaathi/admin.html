@@ -194,7 +194,7 @@ main{padding:26px 0 80px}
       if (!list.length) { box.appendChild(h('div', { class: 'panel' }, h('b', { text: 'No monthly reports yet.' }), h('p', { class: 'small muted', text: 'Open the Clients tab and tap Make report now for a Standard client.' }))); return; }
       list.forEach(function(r){
         var kit = h('div', {});
-        box.appendChild(h('div', { class: 'item' }, h('b', { text: r.shop }), h('div', { class: 'small', style: 'margin:4px 0', text: 'Made ' + when(r.created_at) }), kit));
+        box.appendChild(h('div', { class: 'item' }, h('b', { text: r.shop }), h('div', { class: 'small', style: 'margin:4px 0', text: 'Made ' + when(r.created_at) + (r.has_pdf ? ' \u00b7 PDF saved' : ' \u00b7 Open the report once to save its PDF') }), kit));
         if (window.RSKit) window.RSKit.mountMonthly(kit, r);
       });
     }).catch(fail(box));

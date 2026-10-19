@@ -28,10 +28,10 @@ details{margin-top:8px}summary{cursor:pointer;font-weight:700;padding:8px 0}
 <header><div class="wrap"><a class="logo" href="./"><i>★</i>ReviewSaathi</a></div></header>
 <main><div class="wrap" id="root"><p class="muted">Loading...</p></div></main>
 
+<script src="sendkit.js"></script>
 <script>
 (function(){
   var API = 'https://aiservices-snehoo.duckdns.org/webhook/reviewsaathi-admin';
-  var SITE = 'https://snehalpatel.dev/reviewsaathi/';
   var root = document.getElementById('root');
   var key = ''; try { key = localStorage.getItem('rs_key') || ''; } catch(e){}
   var id = new URLSearchParams(location.search).get('id') || '';
@@ -44,57 +44,16 @@ details{margin-top:8px}summary{cursor:pointer;font-weight:700;padding:8px 0}
   if (!key) return fail('Open the admin page on this phone first and type your key. Then come back to this page.');
   if (!id) return fail('This link has no report in it.');
 
-  // Same fixed wording as the report page: only the nouns and numbers change with the kind of business.
-  var kindOf = function(c){ return /dent|clinic|doctor|physio|skin|eye|ortho|hospital|pharm|vet/.test(c) ? 'clinic'
-    : /lab|diagnos/.test(c) ? 'lab' : /salon|parlour|parlor|spa|beauty/.test(c) ? 'salon' : /gym|fitness|yoga/.test(c) ? 'gym'
-    : /coach|tuition|class|academy|institute|school|training/.test(c) ? 'class' : /garage|workshop|mechanic|tyre|service cent/.test(c) ? 'garage'
-    : /restaurant|cafe|bakery|dhaba|hotel|sweet|kitchen/.test(c) ? 'restaurant' : /shop|store|mart|computer|mobile|electronic|retail|furniture|cloth|hardware/.test(c) ? 'shop' : 'business'; };
-  var NOUNS = { clinic: ['clinic','patients'], lab: ['lab','patients'], salon: ['salon','clients'], gym: ['gym','members'], 'class': ['class','students and parents'],
-    garage: ['garage','customers'], restaurant: ['restaurant','guests'], shop: ['shop','customers'], business: ['business','customers'] };
-
   var u = new URL(API); u.searchParams.set('key', key); u.searchParams.set('what', 'report'); u.searchParams.set('id', id);
   fetch(u.toString()).then(function(r){ if (r.status === 401) throw new Error('key'); return r.json(); }).then(function(d){
     var r = d.report; if (!r) return fail('That report was not found. It may have been deleted.');
-    var url = SITE + 'r/' + encodeURIComponent(r.id) + '.pdf';
-    var T = NOUNS[kindOf(String(r.category || '').toLowerCase())], place = T[0], people = T[1];
-    var People = people.charAt(0).toUpperCase() + people.slice(1);
-    var n = Number(r.unanswered || 0), tot = Number(r.checked || 0);
-    var line = n === tot ? (tot === 1 ? 'Your latest Google review is still awaiting a reply.' : 'All ' + tot + ' of your latest Google reviews are still awaiting a reply.') : n + ' of your latest ' + tot + ' Google reviews are still awaiting a reply.';
-    var m1 = 'Hello ' + r.shop + ' team,\n\nI came across your Google page and prepared a short sample report for you.\n\n' + People + ' often read reviews before choosing a ' + place + '. Fresh updates and replies also help build trust.\n\nRight now, ' + line.charAt(0).toLowerCase() + line.slice(1) + '\n\nI have written a few sample replies and one Google update for your ' + place + '. You can see how they could look here: ' + url + '\n\nIf you like them, reply YES and I\'ll send the complete set, along with simple steps to publish them.\n\nReviewSaathi\nMake every review count.';
-    var m2 = 'Hi again from ReviewSaathi. Did you get a chance to look at the sample report for ' + r.shop + '? ' + url + '\n\nIf you like the replies, reply YES and I\'ll send the complete set, along with simple steps to publish them.';
-
-    var raw = String(r.phone || '').replace(/\D/g, ''), num = raw.indexOf('91') === 0 && raw.length === 12 ? raw.slice(2) : raw, mobile = /^[6-9]\d{9}$/.test(num);
     var stamp = ''; try { stamp = new Date(r.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' }); } catch(e){}
-
-    function copy(text, btn){ var o = btn.textContent; var done = function(){ btn.textContent = 'Copied'; setTimeout(function(){ btn.textContent = o; }, 1400); };
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function(){}); }
-
-    var share = h('button', { class: 'big alt', type: 'button', hidden: 'hidden', text: 'Share PDF (Save to Files)' });
-    var wa = h('button', { class: 'big', type: 'button', text: 'Open WhatsApp chat' });
-    var c1 = h('button', { class: 'big alt', type: 'button', text: 'Copy message' }), c2 = h('button', { class: 'big alt', type: 'button', text: 'Copy follow-up' });
-    c1.addEventListener('click', function(){ copy(m1, c1); }); c2.addEventListener('click', function(){ copy(m2, c2); });
-    wa.addEventListener('click', function(){
-      var web = 'https://api.whatsapp.com/send?phone=91' + num + '&text=' + encodeURIComponent(m1), app = 'whatsapp://send?phone=91' + num + '&text=' + encodeURIComponent(m1);
-      var t = setTimeout(function(){ window.location.href = web; }, 1200); document.addEventListener('visibilitychange', function(){ if (document.hidden) clearTimeout(t); }); window.location.href = app; });
-
+    var kit = h('div', {});
     root.replaceChildren(
       h('h1', { style: 'font-size:28px', text: 'Send to ' + r.shop }),
       h('p', { class: 'muted', style: 'margin-top:4px', text: 'Report made ' + stamp + '. It is saved, so you do not need to make it again.' }),
-      h('div', { class: 'step' }, h('b', { text: '1. The report' }), h('a', { class: 'big alt', href: url, target: '_blank', rel: 'noopener', text: 'Open the PDF' }), share,
-        h('a', { class: 'big alt', href: url + '?dl=1', text: 'Download PDF' })),
-      h('div', { class: 'step' }, h('b', { text: mobile ? '2. Send on WhatsApp' : '2. Call them' }),
-        mobile ? wa : h('p', { class: 'note', text: 'This number looks like a landline, so it has no WhatsApp. Call them and say you are sending the report.' }),
-        !mobile && r.phone ? h('a', { class: 'big', href: 'tel:' + String(r.phone).replace(/\s+/g, ''), text: 'Call ' + r.phone }) : null,
-        mobile ? h('p', { class: 'note', text: 'The message and the report link are already typed. Just press send.' }) : null),
-      h('div', { class: 'step' }, h('b', { text: '3. The message' }), h('div', { class: 'msg', text: m1 }), c1,
-        h('details', null, h('summary', { text: 'No reply after 2 days? Show the follow-up' }), h('div', { class: 'msg', text: m2 }), c2))
-    );
-
-    // Prepare the PDF as a file now so Share works in one tap on iPhone (this shares the PDF itself, not a link).
-    fetch(url).then(function(x){ return x.blob(); }).then(function(b){
-      var f = new File([b], (r.name || 'ReviewSaathi.pdf'), { type: 'application/pdf' });
-      if (navigator.canShare && navigator.canShare({ files: [f] })) { share.hidden = false; share.addEventListener('click', function(){ navigator.share({ files: [f] }).catch(function(){}); }); }
-    }).catch(function(){});
+      kit);
+    window.RSKit.mount(kit, r, { showMessages: true });
   }).catch(function(e){ fail(e && e.message === 'key' ? 'That key was not accepted. Open the admin page and type your key again.' : 'Could not load this report. Please try again.'); });
 })();
 </script>

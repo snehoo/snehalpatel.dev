@@ -104,6 +104,7 @@ main{padding:26px 0 80px}
 </div></main>
 </div>
 
+<script src="sendkit.js"></script>
 <script>
 (function(){
   var API = 'https://aiservices-snehoo.duckdns.org/webhook/';
@@ -171,14 +172,14 @@ main{padding:26px 0 80px}
     if (!REPORTS.length) { box.appendChild(h('div', { class: 'panel' }, h('b', { text: 'No reports yet.' }), h('p', { class: 'small muted', text: 'Make a free sample from Find shops and it will be saved here.' }))); return; }
     if (!list.length) { box.appendChild(h('p', { class: 'muted', text: 'Nothing matches that search.' })); return; }
     list.forEach(function(r){
-      var del = h('button', { class: 'btn sm', type: 'button', text: 'Delete' });
+      var del = h('button', { class: 'btn sm', type: 'button', text: 'Delete', style: 'margin-top:10px;width:auto' });
+      var kit = h('div', {});
       var item = h('div', { class: 'item' },
         h('b', { text: r.shop || r.name }),
         h('div', { class: 'small muted', style: 'margin:4px 0', text: [r.category, r.area].filter(Boolean).join(' \u00b7 ') }),
         h('div', { class: 'small', text: 'Made ' + when(r.created_at) + (r.unanswered != null && r.checked ? ' \u00b7 ' + r.unanswered + ' of ' + r.checked + ' reviews had no reply' : '') }),
-        h('div', { class: 'row', style: 'margin-top:10px' },
-          h('a', { class: 'btn sm go', href: SITE + 'send?id=' + encodeURIComponent(r.id), target: '_blank', rel: 'noopener', text: 'Send' }),
-          h('a', { class: 'btn sm', href: SITE + 'r/' + encodeURIComponent(r.id) + '.pdf', target: '_blank', rel: 'noopener', text: 'Open PDF' }), del));
+        kit, del);
+      if (window.RSKit) window.RSKit.mount(kit, r, { compact: true });
       del.addEventListener('click', function(){ if (del.getAttribute('data-sure') !== '1') { del.setAttribute('data-sure', '1'); del.textContent = 'Tap again to delete'; return; } del.disabled = true; api('deletereport', { id: r.id }).then(function(){ REPORTS = REPORTS.filter(function(x){ return x.id !== r.id; }); drawReports(); }); });
       box.appendChild(item);
     });

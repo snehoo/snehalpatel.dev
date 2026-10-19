@@ -62,14 +62,16 @@
   }
 
   /* ---------- styles (self-contained so every page looks the same) ---------- */
-  var css = '.rsk{display:grid;gap:10px;margin-top:10px}'
-    + '.rsk button,.rsk a{display:flex;align-items:center;justify-content:center;width:100%;min-height:54px;border-radius:12px;font:700 18px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;text-decoration:none;cursor:pointer;border:2px solid #1a56c4;background:#fff;color:#1a56c4;padding:10px 16px}'
-    + '.rsk button.main,.rsk a.main{background:#1a56c4;color:#fff}'
-    + '.rsk button:disabled{opacity:.55}.rsk .n{font:400 14px/1.4 system-ui,-apple-system,sans-serif;color:#5f6b66;margin:-4px 0 2px}'
-    + '.rsk.compact{gap:8px}.rsk.compact .n{display:none}.rsk.compact button,.rsk.compact a{min-height:48px;font-size:17px}'
-    + '.rsk details{border:1px solid #cfd5cc;border-radius:12px;padding:4px 14px;background:#fff;color:#16201c}.rsk summary{cursor:pointer;font:700 16px system-ui,sans-serif;padding:10px 0}'
-    + '.rsk .msg{white-space:pre-wrap;background:#eceee8;border-radius:10px;padding:12px;font:400 15px/1.5 system-ui,sans-serif;margin:4px 0 8px;color:#16201c}'
-    + '.rsk details button{margin:0 0 10px}';
+  var css = '.rsk{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}'
+    + '.rsk button,.rsk a{flex:1 1 150px;display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:10px;font:600 16px/1.2 var(--f-body,system-ui,-apple-system,Segoe UI,sans-serif);text-decoration:none;cursor:pointer;border:2px solid var(--ink,#16201c);background:var(--surface,#fff);color:var(--ink,#16201c);padding:8px 14px}'
+    + '.rsk button.main,.rsk a.main{background:var(--ink,#16201c);color:var(--bg,#fff)}'
+    + '.rsk button:disabled{opacity:.55}.rsk button:focus-visible,.rsk a:focus-visible{outline:3px solid var(--accent,#17703f);outline-offset:2px}'
+    + '.rsk .n{flex:1 1 100%;font:400 14px/1.4 var(--f-body,system-ui,sans-serif);color:var(--muted,#66736c);margin:-2px 0 4px}'
+    + '.rsk.compact .n{display:none}'
+    + '.rsk details{flex:1 1 100%;border:1px solid var(--line,#d5dad3);border-radius:10px;padding:2px 14px;background:var(--surface,#fff);color:var(--ink,#16201c)}'
+    + '.rsk summary{cursor:pointer;font:600 15px var(--f-body,system-ui,sans-serif);padding:10px 0}'
+    + '.rsk .msg{white-space:pre-wrap;background:var(--sunk,#eceee8);border-radius:8px;padding:12px;font:400 15px/1.5 var(--f-body,system-ui,sans-serif);margin:2px 0 8px;color:var(--ink,#16201c)}'
+    + '.rsk details button{flex:none;width:100%;margin:0 0 10px}';
   var styled = false;
   function addStyles() { if (styled) return; var s = document.createElement('style'); s.textContent = css; document.head.appendChild(s); styled = true; }
 

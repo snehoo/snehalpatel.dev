@@ -133,5 +133,35 @@
     return { prefetch: getFile };
   }
 
-  window.RSKit = { messages: messages, mount: mount, pdfUrl: pdfUrl, SITE: SITE };
+  /* Save PDF for a page that makes its own PDF (the monthly report) */
+  function savePdf(el, makeBlob, filename) {
+    addStyles(); el.className = 'rsk compact'; el.textContent = '';
+    var btn = document.createElement('button'); btn.type = 'button'; btn.textContent = 'Preparing PDF...'; btn.disabled = true; el.appendChild(btn);
+    var file = null;
+    makeBlob().then(function (b) { file = new File([b], filename, { type: 'application/pdf' }); btn.disabled = false; btn.textContent = 'Save PDF'; })
+      .catch(function () { btn.textContent = 'Could not make the PDF'; });
+    btn.addEventListener('click', function () {
+      if (!file) return;
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file] }).catch(function () {}); return; }
+      var u = URL.createObjectURL(file), a = document.createElement('a'); a.href = u; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    });
+  }
+
+  /* Monthly report: open it, or send it to the owner on WhatsApp */
+  function monthlyMessage(r) {
+    var url = SITE + 'm/' + encodeURIComponent(r.id);
+    var month = ''; try { month = new Date(r.period_to).toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata', month: 'long', year: 'numeric' }); } catch (e) {}
+    var greet = r.owner_name ? 'Hello ' + r.owner_name + ',' : 'Hello ' + r.shop + ' team,';
+    return { url: url, text: greet + '\n\nYour ReviewSaathi report for ' + r.shop + (month ? ' (' + month + ')' : '') + ' is ready:\n' + url
+      + '\n\nIt shows what changed on your Google page and what we did. Reply here if you have any question.\n\nReviewSaathi' };
+  }
+  function mountMonthly(el, r) {
+    addStyles(); el.className = 'rsk compact'; el.textContent = '';
+    var m = monthlyMessage(r), ph = phoneInfo(r.owner_phone);
+    var open = document.createElement('a'); open.textContent = 'Open report'; open.href = m.url; open.target = '_blank'; open.rel = 'noopener'; el.appendChild(open);
+    if (ph.mobile) { var wa = document.createElement('button'); wa.type = 'button'; wa.className = 'main'; wa.textContent = 'Open WhatsApp'; wa.addEventListener('click', function () { openWhatsApp(ph.num, m.text); }); el.appendChild(wa); }
+    else if (r.owner_phone) { var c = document.createElement('a'); c.className = 'main'; c.textContent = 'Call ' + r.owner_phone; c.href = 'tel:' + String(r.owner_phone).replace(/\s+/g, ''); el.appendChild(c); }
+  }
+
+  window.RSKit = { messages: messages, mount: mount, pdfUrl: pdfUrl, savePdf: savePdf, mountMonthly: mountMonthly, SITE: SITE };
 })();

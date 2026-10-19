@@ -82,6 +82,9 @@ main{padding:26px 0 80px}
   <p class="small muted">Every sample report is saved here. Open or send it again, you never need to make it twice.</p>
   <div class="field" style="margin:0"><label for="rsearch">Search</label><input id="rsearch" placeholder="Shop, kind of shop or area"></div>
   <div id="reportlist"><p class="muted">Loading...</p></div>
+  <h2 style="font-size:22px;margin-top:10px">Monthly reports</h2>
+  <p class="small muted">Made on the 1st of each month for Standard clients, or from the Clients tab.</p>
+  <div id="mreportlist"><p class="muted">Loading...</p></div>
 </section>
 
 <section class="tab" id="post" hidden>
@@ -184,7 +187,19 @@ main{padding:26px 0 80px}
       box.appendChild(item);
     });
   }
-  function loadReports(){ $('reportlist').replaceChildren(h('p', { class: 'muted', text: 'Loading...' })); api('reports').then(function(d){ REPORTS = d.reports || []; drawReports(); }).catch(fail($('reportlist'))); }
+  function loadMonthly(){
+    var box = $('mreportlist'); box.replaceChildren();
+    api('mreports').then(function(d){
+      var list = d.mreports || [];
+      if (!list.length) { box.appendChild(h('div', { class: 'panel' }, h('b', { text: 'No monthly reports yet.' }), h('p', { class: 'small muted', text: 'Open the Clients tab and tap Make report now for a Standard client.' }))); return; }
+      list.forEach(function(r){
+        var kit = h('div', {});
+        box.appendChild(h('div', { class: 'item' }, h('b', { text: r.shop }), h('div', { class: 'small', style: 'margin:4px 0', text: 'Made ' + when(r.created_at) }), kit));
+        if (window.RSKit) window.RSKit.mountMonthly(kit, r);
+      });
+    }).catch(fail(box));
+  }
+  function loadReports(){ loadMonthly(); $('reportlist').replaceChildren(h('p', { class: 'muted', text: 'Loading...' })); api('reports').then(function(d){ REPORTS = d.reports || []; drawReports(); }).catch(fail($('reportlist'))); }
   $('rsearch').addEventListener('input', drawReports);
 
   /* ---------- to post ---------- */
@@ -212,6 +227,7 @@ main{padding:26px 0 80px}
 
   /* ---------- clients ---------- */
   $('copylink').addEventListener('click', function(){ copy('https://snehalpatel.dev/reviewsaathi/onboard.html', $('copylink')); });
+  function reportUrl(id, send){ var u = new URL(API + 'reviewsaathi-report'); u.searchParams.set('key', key); u.searchParams.set('client', id); if (send) u.searchParams.set('send', '1'); return u.toString(); }
   function loadClients(){
     var box = $('clientlist'); box.replaceChildren(h('p', { class: 'muted', text: 'Loading...' }));
     api('clients').then(function(d){
@@ -227,7 +243,8 @@ main{padding:26px 0 80px}
           h('div', { class: 'small muted', style: 'margin:6px 0', text: [c.owner_name, c.owner_phone, c.owner_email].filter(Boolean).join(' · ') }),
           h('div', { class: 'small', text: 'Waiting for owner OK: ' + c.waiting + ' · Ready to post: ' + c.to_post + ' · Last check: ' + (c.last_checked ? new Date(c.last_checked).toLocaleString('en-IN') : 'never') }),
           c.services ? h('div', { class: 'small muted', style: 'margin-top:6px', text: 'Offers: ' + c.services }) : null,
-          h('div', { class: 'row', style: 'margin-top:10px' }, sel, mg, /^https?:/.test(c.maps_link || '') ? h('a', { class: 'btn sm', href: c.maps_link, target: '_blank', rel: 'noopener', text: 'Google page' }) : null)));
+          h('div', { class: 'row', style: 'margin-top:10px' }, sel, mg, /^https?:/.test(c.maps_link || '') ? h('a', { class: 'btn sm', href: c.maps_link, target: '_blank', rel: 'noopener', text: 'Google page' }) : null),
+          c.plan === 'standard' ? h('div', { class: 'row', style: 'margin-top:8px' }, h('a', { class: 'btn sm go', href: reportUrl(c.id, false), target: '_blank', rel: 'noopener', text: 'Make report now' }), h('a', { class: 'btn sm', href: reportUrl(c.id, true), target: '_blank', rel: 'noopener', text: 'Make and email owner' })) : null));
       });
     }).catch(fail(box));
   }

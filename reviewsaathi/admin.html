@@ -216,6 +216,7 @@ svg.chart text{font:11px var(--f-body);fill:var(--muted)}
       else it.push({ c: 'green', t: 'Outscraper credit ' + usd(usage.balance), s: 'Free monthly records left: ' + usage.free_reviews_left + ' reviews, ' + usage.free_places_left + ' places.' }); }
     var warns = (ov.events || []).filter(function(e){ return e.level === 'warn' && (Date.now() - new Date(e.ts).getTime()) < 864e5; });
     if (warns.length) it.push({ c: 'amber', t: warns[0].message, s: warns[0].source + ' · ' + ago(warns[0].ts) });
+    if (ov.followups_due > 0) it.push({ c: 'amber', t: ov.followups_due + ' follow-up' + (ov.followups_due > 1 ? 's are' : ' is') + ' due', s: 'Samples sent 2 or more days ago with no reply. Open Reports, tap Send follow-up, then call.' });
     if (ov.waiting_owner > 0) it.push({ c: ov.oldest_waiting_days > 3 ? 'amber' : 'grey', t: ov.waiting_owner + ' waiting for an owner to tap OK', s: 'Oldest has waited ' + ov.oldest_waiting_days + ' days. Owners get one reminder.' });
     if (ov.to_post > 0) it.push({ c: 'grey', t: ov.to_post + ' approved item' + (ov.to_post > 1 ? 's are' : ' is') + ' waiting to be posted', s: 'Posting starts when Google approves our access.' });
     return it;
@@ -343,11 +344,14 @@ svg.chart text{font:11px var(--f-body);fill:var(--muted)}
     list.forEach(function(r){
       var del = h('button', { class: 'btn sm', type: 'button', text: 'Delete', style: 'margin-top:10px;width:auto' });
       var kit = h('div', {});
+      var LS = { sample_made: 'Sample made', sent: 'Sent', followed_up: 'Follow-up sent', replied: 'Replied', won: 'Won', not_interested: 'Not interested', no_answer: 'No answer' };
+      var st = h('select', { class: 'sm', style: 'margin-top:8px' }); Object.keys(LS).forEach(function(s){ var o = h('option', { value: s, text: LS[s] }); if (s === (r.lead_status || 'sample_made')) o.selected = true; st.appendChild(o); });
+      st.addEventListener('change', function(){ if (r.place_id) { r.lead_status = st.value; api('leadstatus', { pid: r.place_id, status: st.value, force: '1' }); } });
       var item = h('div', { class: 'item' },
-        h('b', { text: r.shop || r.name }),
+        h('b', { text: r.shop || r.name }), r.followup_due ? h('span', { class: 'chip warn', style: 'margin-left:8px', text: 'Follow-up due' }) : null,
         h('div', { class: 'small muted', style: 'margin:4px 0', text: [r.category, r.area].filter(Boolean).join(' \u00b7 ') }),
         h('div', { class: 'small', text: 'Made ' + when(r.created_at) + (r.unanswered != null && r.checked ? ' \u00b7 ' + r.unanswered + ' of ' + r.checked + ' reviews had no reply' : '') }),
-        kit, del);
+        r.place_id ? st : null, kit, del);
       if (window.RSKit) window.RSKit.mount(kit, r, { compact: true });
       del.addEventListener('click', function(){ if (del.getAttribute('data-sure') !== '1') { del.setAttribute('data-sure', '1'); del.textContent = 'Tap again to delete'; return; } del.disabled = true; api('deletereport', { id: r.id }).then(function(){ REPORTS = REPORTS.filter(function(x){ return x.id !== r.id; }); drawReports(); }); });
       box.appendChild(item);

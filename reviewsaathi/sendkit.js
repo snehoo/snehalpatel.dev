@@ -76,6 +76,16 @@
   function addStyles() { if (styled) return; var s = document.createElement('style'); s.textContent = css; document.head.appendChild(s); styled = true; }
 
   /* ---------- the three buttons ---------- */
+  // Records "sent" / "follow-up sent" for this business, so the dashboard can say when a follow-up is due.
+  function track(r, status) {
+    try {
+      if (!r || !r.place_id) return;
+      var key = ''; try { key = localStorage.getItem('rs_key') || ''; } catch (e) {}
+      if (!key) key = new URLSearchParams(location.search).get('key') || '';
+      if (!key) return;
+      fetch('https://aiservices-snehoo.duckdns.org/webhook/reviewsaathi-admin?what=leadstatus&key=' + encodeURIComponent(key) + '&pid=' + encodeURIComponent(r.place_id) + '&status=' + status, { mode: 'no-cors', keepalive: true }).catch(function () {});
+    } catch (e) {}
+  }
   function mount(el, r, opts) {
     opts = opts || {}; addStyles();
     var msgs = messages(r), ph = phoneInfo(r.phone), url = pdfUrl(r);
@@ -108,12 +118,12 @@
     // 2. Open WhatsApp, with the message typed
     if (ph.mobile) {
       var wa = mk('button', 'main', 'Open WhatsApp'); wa.type = 'button';
-      wa.addEventListener('click', function () { openWhatsApp(ph.num, msgs.m1); });
+      wa.addEventListener('click', function () { track(r, 'sent'); openWhatsApp(ph.num, msgs.m1); });
       el.appendChild(wa);
       if (!opts.compact) el.appendChild(mk('div', 'n', 'The message is typed. Attach the saved PDF, then send.'));
       // 3. Follow-up, with its message typed
       var fu = mk('button', '', 'Send follow-up'); fu.type = 'button';
-      fu.addEventListener('click', function () { openWhatsApp(ph.num, msgs.m2); });
+      fu.addEventListener('click', function () { track(r, 'followed_up'); openWhatsApp(ph.num, msgs.m2); });
       el.appendChild(fu);
       if (!opts.compact) el.appendChild(mk('div', 'n', 'For two days later, if there is no reply.'));
     } else if (r.phone) {

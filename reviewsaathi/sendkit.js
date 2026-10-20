@@ -26,17 +26,30 @@
     var T = NOUNS[kindOf(String(r.category || '').toLowerCase())], place = T[0], people = T[1];
     var People = people.charAt(0).toUpperCase() + people.slice(1);
     var n = Number(r.unanswered || 0), tot = Number(r.checked || 0);
+    var full = r.kind === 'fullset' || /:full$/.test(String(r.place_id || ''));
+    var shop = String(r.shop || '').replace(/\s*\(full set\)\s*$/i, '');
+    if (full) {
+      // sent after the owner says yes to the full set: the work first, then the plan and the price
+      var f1 = 'Hello ' + shop + ' team,\n\n'
+        + 'Here is the full set for your ' + place + ': replies to your latest ' + n + ' Google reviews with no reply, and four updates for your page. The PDF is attached.\n\n'
+        + 'They are yours to use. The ones marked "Check before posting" touch a sensitive topic, so look at those first.\n\n'
+        + 'If you like them, we can do this for you every month. Standard is Rs.3,499 plus GST a month: we write your replies and updates, keep your page fresh and send a monthly report. Sensitive reviews wait for your OK.\n\n'
+        + 'Shall I set you up?\n\nReviewSaathi';
+      var f2 = 'Hi, did you get a chance to look at the full set for ' + shop + '? Shall I set you up to have this done every month?\n\nReviewSaathi';
+      var f3 = 'No problem if this is not a priority. The replies and updates are yours to use.\n\nIf you would like us to take care of your Google reviews every month, just reply YES any time.\n\nReviewSaathi';
+      return { m1: f1, m2: f2, m3: f3, place: place, people: people, full: true };
+    }
     var line = n === tot
       ? (tot === 1 ? 'Your latest Google review has no reply.' : 'All ' + tot + ' of your latest Google reviews have no reply.')
       : n + ' of your latest ' + tot + ' Google reviews have no reply.';
     var m1 = 'Hello ' + r.shop + ' team,\n\n'
       + line + ' ' + People + ' read reviews before choosing a ' + place + '.\n\n'
       + 'I wrote three sample replies and a Google update for you. The PDF is attached.\n\n'
-      + 'Want us to do this every month? Reply YES and I will explain.\n\n'
+      + 'Would you like the full set of replies and updates for your ' + place + '?\n\n'
       + 'ReviewSaathi';
-    var m2 = 'Hi, did you get a chance to see the sample replies I sent for ' + r.shop + '? '
-      + 'If you want this taken care of every month, reply YES and I will explain.\n\nReviewSaathi';
-    return { m1: m1, m2: m2, place: place, people: people };
+    var m2 = 'Hi, did you get a chance to see the sample replies for ' + r.shop + '? Would you like the full set of replies and updates for your ' + place + '?\n\nReviewSaathi';
+    var m3 = 'No problem if this is not a priority. The sample replies are yours to use.\n\nIf you would like us to take care of your Google reviews and updates every month, just reply YES any time.\n\nReviewSaathi';
+    return { m1: m1, m2: m2, m3: m3, place: place, people: people };
   }
 
   /* ---------- helpers ---------- */
@@ -80,6 +93,7 @@
   function track(r, status) {
     try {
       if (!r || !r.place_id) return;
+      r = { place_id: String(r.place_id).replace(/:full$/, '') };
       var key = ''; try { key = localStorage.getItem('rs_key') || ''; } catch (e) {}
       if (!key) key = new URLSearchParams(location.search).get('key') || '';
       if (!key) return;
@@ -126,6 +140,10 @@
       fu.addEventListener('click', function () { track(r, 'followed_up'); openWhatsApp(ph.num, msgs.m2); });
       el.appendChild(fu);
       if (!opts.compact) el.appendChild(mk('div', 'n', 'For two days later, if there is no reply.'));
+      var lm = mk('button', '', 'Send last message'); lm.type = 'button';
+      lm.addEventListener('click', function () { track(r, 'followed_up'); openWhatsApp(ph.num, msgs.m3); });
+      el.appendChild(lm);
+      if (!opts.compact) el.appendChild(mk('div', 'n', 'For about six days after the first message. After this, stop.'));
     } else if (r.phone) {
       var call = mk('a', 'main', 'Call ' + r.phone); call.href = 'tel:' + String(r.phone).replace(/\s+/g, '');
       el.appendChild(call);
@@ -134,7 +152,7 @@
 
     // the wording, with copy buttons
     if (opts.showMessages) {
-      [['The message', msgs.m1, 'Copy message'], ['The follow-up', msgs.m2, 'Copy follow-up']].forEach(function (x) {
+      [['The message', msgs.m1, 'Copy message'], ['The follow-up', msgs.m2, 'Copy follow-up'], ['The last message', msgs.m3, 'Copy last message']].forEach(function (x) {
         var d = mk('details'), s = mk('summary', '', x[0]), m = mk('div', 'msg', x[1]), c = mk('button', '', x[2]); c.type = 'button';
         c.addEventListener('click', function () { copyText(x[1], c); });
         d.appendChild(s); d.appendChild(m); d.appendChild(c); el.appendChild(d);

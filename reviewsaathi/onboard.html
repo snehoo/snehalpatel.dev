@@ -25,6 +25,8 @@ main{padding:26px 0 70px}
 .done{text-align:center;padding:30px 10px}.done h2{margin-bottom:10px}
 .hp{position:absolute;left:-9999px;opacity:0}
 code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radius:6px;word-break:break-all}
+
+.sitefoot{padding:28px 0 44px;border-top:1px solid var(--line);margin-top:20px}.sitefoot nav{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:10px}.sitefoot p{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -49,17 +51,18 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
       <h2><span class="n">2</span>Your permission</h2>
       <p class="small muted">We only do what you allow here, and you can stop us any time.</p>
       <label class="chk"><input type="checkbox" id="permission_ok" name="permission_ok" value="yes"><span>I allow ReviewSaathi to read the reviews on my Google page, write replies, and post updates, in my business name.</span></label>
-      <label class="chk"><input type="checkbox" id="never" required><span>I understand ReviewSaathi never buys or writes fake reviews, never asks for my Google password, and never posts anything I have said no to.</span></label>
+      <label class="chk"><input type="checkbox" id="never" required><span>I understand ReviewSaathi never buys or writes fake reviews, never asks for my Google password, and never posts anything I have said no to. I have read the <a href="terms" target="_blank">Terms</a> and <a href="privacy" target="_blank">Privacy Policy</a>.</span></label>
       <div class="field" style="margin-top:14px"><label for="permission_name">Type your full name to sign</label><input id="permission_name" name="permission_name" required autocomplete="name"></div>
     </div>
 
     <div class="step">
-      <h2><span class="n">3</span>Which plan?</h2>
+      <h2><span class="n">3</span>Standard plan</h2>
+      <input type="hidden" name="plan" value="standard" id="planfix">
       <div class="radio">
-        <label><input type="radio" name="plan" value="lite"><b>Lite</b> &middot; Rs.999 a month<br><span class="small muted">We write, you post.</span></label>
-        <label><input type="radio" name="plan" value="standard" checked><b>Standard</b> &middot; Rs.2,999 a month<br><span class="small muted">We do it all. Most chosen.</span></label>
+        <label><input type="radio" name="billing" value="monthly" checked><b>Monthly</b> &middot; Rs.3,499 a month<br><span class="small muted">Stop any time.</span></label>
+        <label><input type="radio" name="billing" value="yearly"><b>Yearly</b> &middot; Rs.34,999 a year<br><span class="small muted">Two months cheaper.</span></label>
       </div>
-      <p class="small muted" style="margin-top:8px">Prices are plus GST.</p>
+      <p class="small muted" style="margin-top:8px">Prices are plus GST. We will send you the payment link after we set you up. Nothing is charged on this form.</p>
       <div class="how" id="managerbox">
         <b>For Standard: add us on Google (2 minutes)</b>
         <ol>
@@ -90,7 +93,7 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
 
     <div class="err" id="err" hidden></div>
     <button class="btn go" id="go" type="submit" style="width:100%">Send</button>
-    <p class="small muted" style="margin-top:10px;text-align:center">ReviewSaathi, a service of Autonova Solutions.</p>
+    
   </form>
 </div>
 
@@ -100,6 +103,10 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
   <p class="small muted" style="margin-top:12px">Your reference: <b id="ref"></b></p>
 </div>
 </div></main>
+<footer class="sitefoot"><div class="wrap small muted">
+  <nav aria-label="Legal"><a href="./">Home</a> <a href="privacy">Privacy</a> <a href="terms">Terms</a> <a href="cancellation">Cancellation and refunds</a> <a href="contact">Contact</a></nav>
+  <p>ReviewSaathi, made with &#10084;&#65039; by Autonova Solutions. Mumbai, India.</p>
+</div></footer>
 
 <script>
 (function(){
@@ -107,9 +114,7 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
   var MANAGER_EMAIL = 'thebluefox292@gmail.com';   // temporary; switch to a proper business address later
   document.getElementById('mgr').textContent = MANAGER_EMAIL;
   var form = document.getElementById('f'), err = document.getElementById('err'), go = document.getElementById('go');
-  var q = new URLSearchParams(location.search).get('plan');
-  if (q === 'lite' || q === 'standard') form.querySelector('input[name=plan][value=' + q + ']').checked = true;
-  function plan(){ return form.querySelector('input[name=plan]:checked').value; }
+  function plan(){ return 'standard'; }
   function toggle(){ document.getElementById('managerbox').hidden = plan() !== 'standard'; }
   form.addEventListener('change', toggle); toggle();
   function show(m){ err.textContent = m; err.hidden = !m; if (m) err.scrollIntoView({behavior:'smooth', block:'center'}); }

@@ -29,7 +29,7 @@ section{padding:36px 0}
 .cta{background:var(--accent);color:var(--accent-ink);border-radius:20px;padding:36px 28px;text-align:center}
 .cta h2{color:var(--accent-ink);margin-bottom:10px}.cta p{color:var(--accent-ink);opacity:.92;margin-bottom:20px}
 .cta .btn{background:var(--accent-ink);color:var(--accent);border-color:var(--accent-ink)}
-footer{padding:28px 0 44px;border-top:1px solid var(--line);margin-top:20px}
+.sitefoot{padding:28px 0 44px;border-top:1px solid var(--line);margin-top:20px}.sitefoot nav{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:10px}.sitefoot p{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -46,8 +46,7 @@ footer{padding:28px 0 44px;border-top:1px solid var(--line);margin-top:20px}
     <h1>Every Google review answered. Your page always fresh.</h1>
     <p class="lede">ReviewSaathi writes the replies and the updates for your Google page. You get your time back, and the people who find you see a business that cares.</p>
     <div class="row">
-      <a class="btn go" href="onboard.html?plan=standard">Start with Standard</a>
-      <a class="btn" href="onboard.html?plan=lite">Try Lite</a>
+      <a class="btn go" href="onboard.html">Get started</a>
     </div>
   </div>
 
@@ -66,39 +65,38 @@ footer{padding:28px 0 44px;border-top:1px solid var(--line);margin-top:20px}
     <ol class="steps">
       <li><div><b>You send us your Google link</b><span>Open Google Maps, find your shop, tap Share, copy the link. That is all we need to begin.</span></div></li>
       <li><div><b>We write the replies and the updates</b><span>Short, friendly, in your language. Replies sound like a person, because they are written to match each review.</span></div></li>
-      <li><div><b>Unhappy reviews wait for you</b><span>On Standard, a hard review is never answered until you tap Post. You stay in control.</span></div></li>
-      <li><div><b>You see what we did</b><span>Standard clients get a monthly report: before and after, and how you compare with shops near you.</span></div></li>
+      <li><div><b>Unhappy reviews wait for you</b><span>A hard or sensitive review is never answered until you tap Post. You stay in control.</span></div></li>
+      <li><div><b>You see what we did</b><span>You get a monthly report: before and after, and how you compare with shops near you.</span></div></li>
     </ol>
   </section>
 
   <section>
-    <h2>Two plans</h2>
-    <p style="margin:10px 0 18px">Start small with Lite. Move to Standard when you want it all taken off your plate.</p>
+    <h2>One plan. One price.</h2>
+    <p style="margin:10px 0 18px">The same for every business. No set-up fee, no contract, stop any time.</p>
     <div class="grid2">
-      <div class="panel plan">
-        <h3>Lite</h3><p class="small muted">You post it, we write it.</p>
-        <div class="price">Rs.999 <small>a month, plus GST</small></div>
-        <ul>
-          <li>Every week, the new reviews with a ready reply for each one</li>
-          <li>4 ready-to-post updates a month</li>
-          <li>You copy and paste them. It takes minutes.</li>
-          <li>Hard reviews come with a draft. You decide what to do.</li>
-        </ul>
-      </div>
       <div class="panel plan main">
-        <span class="tag">Most chosen</span>
         <h3>Standard</h3><p class="small muted">We do it all for you.</p>
-        <div class="price">Rs.2,999 <small>a month, plus GST</small></div>
+        <div class="price">Rs.3,499 <small>a month, plus GST</small></div>
         <ul>
-          <li>We post a reply to every new review, usually within a day</li>
-          <li>Hard reviews wait for your OK before any reply goes up</li>
-          <li>8 updates a month, posted on your Google page</li>
-          <li>Replies to your 100 latest unanswered reviews, once, at the start</li>
+          <li>A reply to every new review, usually within a day</li>
+          <li>Hard or sensitive reviews wait for your OK before any reply goes up</li>
+          <li>Replies are checked so they never share private details, make promises or sound like a robot</li>
+          <li>Fresh updates for your Google page every month, which you approve first</li>
           <li>A monthly report: before and after, how nearby businesses compare, and how your reviews have grown</li>
           <li>If we miss a review in your first month, you pay nothing</li>
         </ul>
       </div>
+      <div class="panel plan">
+        <h3>Standard, yearly</h3><p class="small muted">The same, paid once a year.</p>
+        <div class="price">Rs.34,999 <small>a year, plus GST</small></div>
+        <ul>
+          <li>Everything in Standard</li>
+          <li>Two months cheaper than paying monthly</li>
+        </ul>
+        <p class="small muted" style="margin-top:14px">Lite, a cheaper plan where you post the replies yourself, is coming soon.</p>
+      </div>
     </div>
+    <p class="small muted" style="margin-top:14px">We are taking early sign-ups now. Replies and updates go up on your Google page as soon as Google gives us posting access.</p>
   </section>
 
   <section>
@@ -112,8 +110,9 @@ footer{padding:28px 0 44px;border-top:1px solid var(--line);margin-top:20px}
 </div>
 </main>
 
-<footer><div class="wrap small muted">
-  ReviewSaathi, a service of Autonova Solutions. Mumbai, India.
+<footer class="sitefoot"><div class="wrap small muted">
+  <nav aria-label="Legal"><a href="./">Home</a> <a href="privacy">Privacy</a> <a href="terms">Terms</a> <a href="cancellation">Cancellation and refunds</a> <a href="contact">Contact</a></nav>
+  <p>ReviewSaathi, made with &#10084;&#65039; by Autonova Solutions. Mumbai, India.</p>
 </div></footer>
 
 </body>

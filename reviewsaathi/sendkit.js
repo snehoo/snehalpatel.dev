@@ -7,13 +7,13 @@
 
   /* ---------- wording: fixed templates, only nouns and numbers change ---------- */
   var kindOf = function (c) {
-    return /dent|clinic|doctor|physio|skin|eye|ortho|hospital|pharm|vet/.test(c) ? 'clinic'
-      : /lab|diagnos/.test(c) ? 'lab'
-      : /salon|parlour|parlor|spa|beauty/.test(c) ? 'salon'
-      : /gym|fitness|yoga/.test(c) ? 'gym'
-      : /coach|tuition|class|academy|institute|school|training/.test(c) ? 'class'
-      : /garage|workshop|mechanic|tyre|service cent/.test(c) ? 'garage'
-      : /restaurant|cafe|bakery|dhaba|hotel|sweet|kitchen/.test(c) ? 'restaurant'
+    return /dent|clinic|doctor|physio|skin|derma|eye|ortho|hospital|pharm|vet|paediatric|pediatric|gynae|gyneco|physician|surgeon|ayurved|homeo|chiropract|psycholog|psychiat|dietit|nutrition|therap/.test(c) ? 'clinic'
+      : /lab|diagnos|patholog|imaging|x-?ray/.test(c) ? 'lab'
+      : /salon|parlour|parlor|spa|beauty|barber|hair|makeup|mehndi|nail|grooming/.test(c) ? 'salon'
+      : /gym|fitness|yoga|crossfit|zumba|pilates|martial|karate/.test(c) ? 'gym'
+      : /coach|tuition|class|academy|institute|school|training|preschool|play ?school|kindergarten|daycare|dance|music|learning/.test(c) ? 'class'
+      : /garage|workshop|mechanic|tyre|service cent|car (repair|care|wash|service)|auto|detailing|denting|bike|two.?wheeler/.test(c) ? 'garage'
+      : /restaurant|cafe|bakery|dhaba|hotel|sweet|kitchen|food|tiffin|catering|pizza|biryani|snack/.test(c) ? 'restaurant'
       : /shop|store|mart|computer|mobile|electronic|retail|furniture|cloth|hardware/.test(c) ? 'shop' : 'business';
   };
   var NOUNS = {

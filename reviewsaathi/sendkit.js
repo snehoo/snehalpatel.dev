@@ -45,7 +45,9 @@
   function phoneInfo(phone) {
     var raw = String(phone || '').replace(/\D/g, '');
     var num = raw.indexOf('91') === 0 && raw.length === 12 ? raw.slice(2) : raw;
-    return { num: num, mobile: /^[6-9]\d{9}$/.test(num) };
+    // a number grouped 2-4-4 (for example +91 80 4806 1498) is a city landline even though it has 10 digits
+    var landline = /^\s*(?:\+?91[\s-]+)?\d{2}[\s-]+\d{4}[\s-]+\d{4}\s*$/.test(String(phone || ''));
+    return { num: num, mobile: /^[6-9]\d{9}$/.test(num) && !landline };
   }
   function openWhatsApp(num, text) {
     var web = 'https://api.whatsapp.com/send?phone=91' + num + '&text=' + encodeURIComponent(text);

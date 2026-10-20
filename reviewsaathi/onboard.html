@@ -88,6 +88,11 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
       <div class="field"><label for="tone">How should replies sound?</label>
         <select id="tone" name="tone"><option value="friendly">Friendly and warm</option><option value="formal">Polite and formal</option><option value="casual">Short and casual</option></select></div>
       <div class="field"><label for="services">What do you offer?</label><textarea id="services" name="services" placeholder="List your main products or services, one per line"></textarea><p class="hint">We only write about what you list here.</p></div>
+      <div class="field"><label for="address_as">How should replies address customers?</label>
+        <select id="address_as" name="address_as"><option value="name">By first name</option><option value="sir">As Sir or Ma'am</option><option value="none">Without a name</option></select></div>
+      <div class="field"><label for="invite_call">When a customer is unhappy, may we invite them to call or visit?</label>
+        <select id="invite_call" name="invite_call"><option value="yes">Yes</option><option value="no">No</option></select></div>
+      <div class="field"><label for="avoid">Anything we must never say or mention? (optional)</label><textarea id="avoid" name="avoid" placeholder="For example: no prices, no staff names, no medical advice" maxlength="400"></textarea><p class="hint">Include any rules from your profession or your own preferences. We already never promise refunds, discounts or results.</p></div>
       <div class="field"><label for="current_offer">Any offer or news right now? (optional)</label><input id="current_offer" name="current_offer" placeholder="For example: a festival discount, new timings, a new service"></div>
       <div class="field"><label for="approval_contact">Where should we send hard reviews for your OK? (optional)</label><input id="approval_contact" name="approval_contact" placeholder="Leave empty to use your email above"></div>
       <div class="field"><label for="auto_reply_positive">Happy reviews (4 and 5 stars)</label>
@@ -95,6 +100,7 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
     </div>
 
     <div class="err" id="err" hidden></div>
+    <p class="small muted" style="margin:0 0 12px">You stay the owner of your Google page and of every reply we write. You can stop at any time, and the replies stay yours. See <a href="cancellation" target="_blank">Cancellation and refunds</a>.</p>
     <button class="btn go" id="go" type="submit" style="width:100%">Send</button>
     
   </form>

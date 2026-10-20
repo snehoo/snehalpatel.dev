@@ -55,7 +55,7 @@ main{padding:26px 0 80px}
 .attn .a div{color:var(--ink);line-height:1.35}.attn .a small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap;background:none}
 .tbl td{padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top}.tbl tr:last-child td{border-bottom:0}.tbl .rp{max-width:340px;color:var(--ink2)}
-.score{font:800 56px/1 var(--f-display)}.hl{display:grid;gap:8px;margin-top:14px}.hl .c{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;font-size:15px}.hl .c:hover{background:var(--sunk)}.hl .c .nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hl .c .small{flex:0 0 auto;white-space:nowrap}.tbl td:last-child{white-space:nowrap}
+.score{font:800 56px/1 var(--f-display)}.hl{display:grid;gap:8px;margin-top:14px}.hl .c{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;font-size:15px}.hl .c:hover{background:var(--sunk)}.hl .c .nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hl .c .small{flex:0 0 auto;white-space:nowrap}
 .hl .c .dot.green{color:var(--good)}.hl .c .dot.amber{color:var(--warn)}.hl .c .dot.red{color:var(--bad)}.hl .c .dot.grey{color:var(--muted)}
 .grad{background:linear-gradient(150deg,#1f9d57,#0e4f2b 70%);color:#fff;border:0}.grad h3,.grad .sub{color:rgba(255,255,255,.78)}.grad .big{color:#fff}.grad .chip{background:rgba(255,255,255,.18);color:#fff}
 .grad.off{background:var(--surface);color:var(--ink);border:1px solid var(--line)}.grad.off h3,.grad.off .sub{color:var(--muted)}.grad.off .big{color:var(--muted)}.grad.off .chip{background:var(--bad-bg);color:var(--bad)}
@@ -260,9 +260,9 @@ svg.chart text{font:11px var(--f-body);fill:var(--muted)}
       var attn = h('div', { class: 'attn' }); items.forEach(function(i){ attn.appendChild(h('div', { class: 'a ' + i.c }, h('i', { class: 'dot' }), h('div', {}, i.t, i.s ? h('small', { text: i.s }) : null))); });
       box.appendChild(h('div', { class: 'd2' }, mrrCard, h('div', { class: 'dcard' }, h('h3', {}, 'Needs attention', h('span', { class: 'chip ' + (st === 'green' ? '' : st === 'amber' ? 'warn' : 'bad'), text: LABEL[st] })), attn)));
       // recent replies, client health, credit
-      var tb = h('table', { class: 'tbl' }, h('thead', {}, h('tr', {}, h('th', { text: 'When' }), h('th', { text: 'Client' }), h('th', { text: 'Reply' }), h('th', { text: 'Status' }))));
-      var body = h('tbody', {}); (ov.recent || []).forEach(function(r){ body.appendChild(h('tr', {}, h('td', { text: ist(r.posted_at || r.created_at, true), style: 'white-space:nowrap' }), h('td', { text: r.shop }), h('td', { class: 'rp', text: r.reply }), h('td', {}, stChip(r.status)))); });
-      if (!(ov.recent || []).length) body.appendChild(h('tr', {}, h('td', { colspan: 4, class: 'muted', text: 'No replies yet.' })));
+      var tb = h('table', { class: 'tbl' }, h('thead', {}, h('tr', {}, h('th', { text: 'Client' }), h('th', { text: 'This month' }), h('th', { text: 'Posted' }), h('th', { text: 'Ready' }), h('th', { text: 'Waiting for OK' }))));
+      var body = h('tbody', {}); (ov.by_client || []).forEach(function(r){ body.appendChild(h('tr', { style: 'cursor:pointer', onclick: function(){ show('client=' + r.id); } }, h('td', { text: r.shop }), h('td', { text: String(r.month) }), h('td', { text: String(r.posted) }), h('td', { text: String(r.ready) }), h('td', { text: String(r.waiting) }))); });
+      if (!(ov.by_client || []).length) body.appendChild(h('tr', {}, h('td', { colspan: 5, class: 'muted', text: 'No active clients yet.' })));
       tb.appendChild(body);
       var act = clients.filter(function(c){ return c.status === 'active' || c.status === 'test'; }), good = 0;
       var hl = h('div', { class: 'hl' });
@@ -272,7 +272,7 @@ svg.chart text{font:11px var(--f-body);fill:var(--muted)}
       var cred = h('div', { class: 'dcard grad' + (usage ? '' : ' off') }, h('h3', {}, 'Outscraper credit', h('span', { class: 'chip', text: usage ? 'live' : 'cannot read' })), h('div', { class: 'big', text: usage ? usd(usage.balance) : 'n/a' }),
         h('div', { class: 'sub', text: usage ? 'Spent this period ' + usd(usage.spent) + ' · about ' + Math.floor(usage.balance / 0.15) + ' samples left' : 'Check that the Usage workflow is published, then Refresh.' }));
       if (usage) { var fp = Math.min(100, Math.round(usage.reviews_used / 500 * 100)); cred.appendChild(h('div', { class: 'bar', style: 'margin-top:14px' }, h('i', { style: 'width:' + fp + '%' }))); cred.appendChild(h('div', { class: 'sub', text: Math.min(500, usage.reviews_used) + ' of 500 free reviews used this month' })); }
-      box.appendChild(h('div', { class: 'd3' }, h('div', { class: 'dcard' }, h('h3', {}, 'Recent replies'), h('div', { style: 'overflow-x:auto' }, tb)),
+      box.appendChild(h('div', { class: 'd3' }, h('div', { class: 'dcard' }, h('h3', {}, 'Replies by client', h('span', { class: 'small muted', text: 'Tap a client for the details' })), h('div', { style: 'overflow-x:auto' }, tb)),
         h('div', { class: 'dcard' }, h('h3', {}, 'Client health'), h('div', { class: 'score', text: pct === null ? '-' : pct + '%' }), h('div', { class: 'sub', text: act.length ? good + ' of ' + act.length + ' active clients running well' : 'No active clients' }), hl), cred));
     }).catch(function(e){ box.replaceChildren(h('div', { class: 'panel' }, h('b', { text: e.message === 'key' ? 'The key was not accepted.' : 'Could not load the overview.' }))); });
   }

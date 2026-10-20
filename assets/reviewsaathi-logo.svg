@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ReviewSaathi">
   <title>ReviewSaathi</title>
   <rect width="512" height="512" rx="112" fill="#17703f"/>
-  <path fill="#ffffff" fill-rule="evenodd" d="M84 80 H252 C326 80 372 124 372 188 C372 236 344 272 302 286 L352 432 H262 L222 300 H172 V432 H84 Z M172 152 H244 C272 152 286 166 286 188 C286 210 272 224 244 224 H172 Z"/>
-  <path fill="#fbbc04" stroke="#fbbc04" stroke-width="10" stroke-linejoin="round" d="M414.0,296.0 L432.8,348.1 L488.2,349.9 L444.4,383.9 L459.8,437.1 L414.0,406.0 L368.2,437.1 L383.6,383.9 L339.8,349.9 L395.2,348.1 Z"/>
+  <path fill="#ffffff" fill-rule="evenodd" transform="translate(-10 0)" d="M84 80 H252 C326 80 372 124 372 188 C372 236 344 272 302 286 L352 432 H262 L222 300 H172 V432 H84 Z M172 152 H244 C272 152 286 166 286 188 C286 210 272 224 244 224 H172 Z"/>
+  <path fill="#fbbc04" stroke="#fbbc04" stroke-width="10" stroke-linejoin="round" d="M410.0,267.8 L431.2,326.7 L493.7,328.6 L444.2,366.9 L461.7,427.0 L410.0,391.8 L358.3,427.0 L375.8,366.9 L326.3,328.6 L388.8,326.7 Z"/>
 </svg>

@@ -347,14 +347,11 @@ svg.chart text{font:11px var(--f-body);fill:var(--muted)}
       var LS = { sample_made: 'Sample made', sent: 'Sent', followed_up: 'Follow-up sent', replied: 'Replied', won: 'Won', not_interested: 'Not interested', no_answer: 'No answer' };
       var st = h('select', { class: 'sm', style: 'margin-top:8px' }); Object.keys(LS).forEach(function(s){ var o = h('option', { value: s, text: LS[s] }); if (s === (r.lead_status || 'sample_made')) o.selected = true; st.appendChild(o); });
       st.addEventListener('change', function(){ if (r.place_id) { r.lead_status = st.value; api('leadstatus', { pid: r.place_id, status: st.value, force: '1' }); } });
-      var isFull = /:full$/.test(String(r.place_id || ''));
-      var fsUrl = new URL(API + 'reviewsaathi-fullset'); fsUrl.searchParams.set('key', key); fsUrl.searchParams.set('q', r.shop || r.name); fsUrl.searchParams.set('pid', r.place_id || ''); fsUrl.searchParams.set('area', r.area || ''); fsUrl.searchParams.set('category', r.category || ''); fsUrl.searchParams.set('phone', r.phone || '');
-      var fsBtn = !isFull && r.place_id ? h('a', { class: 'btn sm go', href: fsUrl.toString(), target: '_blank', rel: 'noopener', style: 'margin-top:8px', text: 'Make full set' }) : null;
       var item = h('div', { class: 'item' },
         h('b', { text: r.shop || r.name }), r.followup_due ? h('span', { class: 'chip warn', style: 'margin-left:8px', text: 'Follow-up due' }) : null,
         h('div', { class: 'small muted', style: 'margin:4px 0', text: [r.category, r.area].filter(Boolean).join(' \u00b7 ') }),
         h('div', { class: 'small', text: 'Made ' + when(r.created_at) + (r.unanswered != null && r.checked ? ' \u00b7 ' + r.unanswered + ' of ' + r.checked + ' reviews had no reply' : '') }),
-        r.place_id && !isFull ? st : null, kit, fsBtn, del);
+        r.place_id ? st : null, kit, del);
       if (window.RSKit) window.RSKit.mount(kit, r, { compact: true });
       del.addEventListener('click', function(){ if (del.getAttribute('data-sure') !== '1') { del.setAttribute('data-sure', '1'); del.textContent = 'Tap again to delete'; return; } del.disabled = true; api('deletereport', { id: r.id }).then(function(){ REPORTS = REPORTS.filter(function(x){ return x.id !== r.id; }); drawReports(); }); });
       box.appendChild(item);
@@ -442,7 +439,7 @@ svg.chart text{font:11px var(--f-body);fill:var(--muted)}
   }
 
   /* ---------- costs ---------- */
-  var KIND = { sample: 'Free sample', leads: 'Shop search', review_check: 'Review check', updates: 'Monthly updates', fullset: 'Full set' };
+  var KIND = { sample: 'Free sample', leads: 'Shop search', review_check: 'Review check', updates: 'Monthly updates' };
   function loadReal(){
     var box = $('realcost'); box.replaceChildren(h('p', { class: 'muted', text: 'Reading your Outscraper account...' }));
     fetch(API + 'reviewsaathi-usage?key=' + encodeURIComponent(key)).then(function(r){ return r.json(); }).then(function(u){

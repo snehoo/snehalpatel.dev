@@ -26,28 +26,15 @@
     var T = NOUNS[kindOf(String(r.category || '').toLowerCase())], place = T[0], people = T[1];
     var People = people.charAt(0).toUpperCase() + people.slice(1);
     var n = Number(r.unanswered || 0), tot = Number(r.checked || 0);
-    var full = r.kind === 'fullset' || /:full$/.test(String(r.place_id || ''));
-    var shop = String(r.shop || '').replace(/\s*\(full set\)\s*$/i, '');
-    if (full) {
-      // sent after the owner says yes to the full set: the work first, then the plan and the price
-      var f1 = 'Hello ' + shop + ' team,\n\n'
-        + 'Here is the full set for your ' + place + ': replies to your latest ' + n + ' Google reviews with no reply, and four updates for your page. The PDF is attached.\n\n'
-        + 'They are yours to use. The ones marked "Check before posting" touch a sensitive topic, so look at those first.\n\n'
-        + 'If you like them, we can do this for you every month. Standard is Rs.3,499 plus GST a month: we write your replies and updates, keep your page fresh and send a monthly report. Sensitive reviews wait for your OK.\n\n'
-        + 'Shall I set you up?\n\nReviewSaathi';
-      var f2 = 'Hi, did you get a chance to look at the full set for ' + shop + '? Shall I set you up to have this done every month?\n\nReviewSaathi';
-      var f3 = 'No problem if this is not a priority. The replies and updates are yours to use.\n\nIf you would like us to take care of your Google reviews every month, just reply YES any time.\n\nReviewSaathi';
-      return { m1: f1, m2: f2, m3: f3, place: place, people: people, full: true };
-    }
     var line = n === tot
       ? (tot === 1 ? 'Your latest Google review has no reply.' : 'All ' + tot + ' of your latest Google reviews have no reply.')
       : n + ' of your latest ' + tot + ' Google reviews have no reply.';
     var m1 = 'Hello ' + r.shop + ' team,\n\n'
       + line + ' ' + People + ' read reviews before choosing a ' + place + '.\n\n'
       + 'I wrote three sample replies and a Google update for you. The PDF is attached.\n\n'
-      + 'Would you like the full set of replies and updates for your ' + place + '?\n\n'
+      + 'Would you like me to explain how this would work for your ' + place + ' every month?\n\n'
       + 'ReviewSaathi';
-    var m2 = 'Hi, did you get a chance to see the sample replies for ' + r.shop + '? Would you like the full set of replies and updates for your ' + place + '?\n\nReviewSaathi';
+    var m2 = 'Hi, did you get a chance to see the sample replies for ' + r.shop + '? Would you like me to explain how this would work for your ' + place + ' every month?\n\nReviewSaathi';
     var m3 = 'No problem if this is not a priority. The sample replies are yours to use.\n\nIf you would like us to take care of your Google reviews and updates every month, just reply YES any time.\n\nReviewSaathi';
     return { m1: m1, m2: m2, m3: m3, place: place, people: people };
   }
@@ -93,7 +80,6 @@
   function track(r, status) {
     try {
       if (!r || !r.place_id) return;
-      r = { place_id: String(r.place_id).replace(/:full$/, '') };
       var key = ''; try { key = localStorage.getItem('rs_key') || ''; } catch (e) {}
       if (!key) key = new URLSearchParams(location.search).get('key') || '';
       if (!key) return;

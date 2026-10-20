@@ -39,14 +39,14 @@ main{padding:26px 0 80px}
 .live.amber{background:var(--warn-bg);color:var(--warn)}.live.red{background:var(--bad-bg);color:var(--bad)}.live.grey{background:var(--sunk);color:var(--muted)}.live.green{background:var(--good-bg);color:var(--good)}
 .dot{width:10px;height:10px;border-radius:50%;background:currentColor;display:inline-block;flex:none}
 .live .dot{box-shadow:0 0 0 4px color-mix(in srgb,currentColor 22%,transparent)}
-.drow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px}
+.drow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px}
 .dcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px;min-width:0}
 .dcard h3{font:600 15px var(--f-body);color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
 .big{font:800 clamp(28px,4vw,38px)/1.1 var(--f-display);letter-spacing:-.02em}
 .sub{font-size:14px;color:var(--muted);margin-top:6px}
 .chip{display:inline-flex;align-items:center;font:600 12px var(--f-body);border-radius:99px;padding:3px 9px;background:var(--good-bg);color:var(--good);white-space:nowrap}
 .chip.warn{background:var(--warn-bg);color:var(--warn)}.chip.bad{background:var(--bad-bg);color:var(--bad)}.chip.mute{background:var(--sunk);color:var(--muted)}
-.d2{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,4fr);gap:14px}.d3{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,3fr) minmax(0,3fr);gap:14px}
+.d2{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,4fr);gap:14px}.d3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}.d3>:first-child{grid-column:1/-1}
 @media (max-width:860px){.d2,.d3{grid-template-columns:minmax(0,1fr)}}
 .brk{display:grid;gap:10px;margin-top:16px}.brk .l{display:flex;justify-content:space-between;font-size:14px}.brk .l span:last-child{font-weight:600}
 .brk .b{height:7px;border-radius:4px;background:var(--sunk);overflow:hidden}.brk .b i{display:block;height:100%;background:var(--accent)}.brk .b i.y{background:var(--pin)}
@@ -55,9 +55,10 @@ main{padding:26px 0 80px}
 .attn .a div{color:var(--ink);line-height:1.35}.attn .a small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap;background:none}
 .tbl td{padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top}.tbl tr:last-child td{border-bottom:0}.tbl .rp{max-width:340px;color:var(--ink2)}
-.score{font:800 56px/1 var(--f-display)}.hl{display:grid;gap:8px;margin-top:14px}.hl .c{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;font-size:15px}.hl .c:hover{background:var(--sunk)}.hl .c .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.score{font:800 56px/1 var(--f-display)}.hl{display:grid;gap:8px;margin-top:14px}.hl .c{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;font-size:15px}.hl .c:hover{background:var(--sunk)}.hl .c .nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hl .c .small{flex:0 0 auto;white-space:nowrap}.tbl td:last-child{white-space:nowrap}
 .hl .c .dot.green{color:var(--good)}.hl .c .dot.amber{color:var(--warn)}.hl .c .dot.red{color:var(--bad)}.hl .c .dot.grey{color:var(--muted)}
 .grad{background:linear-gradient(150deg,#1f9d57,#0e4f2b 70%);color:#fff;border:0}.grad h3,.grad .sub{color:rgba(255,255,255,.78)}.grad .big{color:#fff}.grad .chip{background:rgba(255,255,255,.18);color:#fff}
+.grad.off{background:var(--surface);color:var(--ink);border:1px solid var(--line)}.grad.off h3,.grad.off .sub{color:var(--muted)}.grad.off .big{color:var(--muted)}.grad.off .chip{background:var(--bad-bg);color:var(--bad)}
 .grad .bar{background:rgba(255,255,255,.22)}.grad .bar i{background:#fff}
 .back{background:none;border:0;color:var(--accent);font:600 16px var(--f-body);cursor:pointer;padding:0;margin-bottom:6px}
 svg.chart text{font:11px var(--f-body);fill:var(--muted)}
@@ -244,7 +245,7 @@ svg.chart text{font:11px var(--f-body);fill:var(--muted)}
         h('div', { class: 'row', style: 'flex:0 0 auto' }, h('span', { class: 'small muted', style: 'align-self:center', text: 'Updated ' + new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit' }) }), h('button', { class: 'btn sm', type: 'button', text: 'Refresh', onclick: loadOverview }))));
       var nr = ov.renewals && ov.renewals[0];
       box.appendChild(h('div', { class: 'drow' },
-        h('div', { class: 'dcard' }, h('h3', {}, 'Replies this month', h('span', { class: 'chip mute', text: 'all time ' + ov.replies_total })), h('div', { class: 'big', text: ov.replies_month }), h('div', { class: 'sub', text: ov.posted_month + ' posted · ' + ov.to_post + ' ready to post' })),
+        h('div', { class: 'dcard' }, h('h3', {}, 'Replies this month', h('span', { class: 'chip mute', text: 'all time ' + ov.replies_total })), h('div', { class: 'big', text: ov.replies_month }), h('div', { class: 'sub', text: ov.posted_month + ' posted · ' + (ov.replies_ready != null ? ov.replies_ready : ov.to_post) + ' ready to post' })),
         h('div', { class: 'dcard' }, h('h3', {}, 'Updates this month'), h('div', { class: 'big', text: ov.updates_month }), h('div', { class: 'sub', text: ov.updates_approved_month + ' approved by owners' })),
         h('div', { class: 'dcard' }, h('h3', {}, 'Active clients', ov.new_clients ? h('span', { class: 'chip warn', text: ov.new_clients + ' new to set up' }) : null), h('div', { class: 'big', text: ov.active }), h('div', { class: 'sub', text: 'Standard plan' })),
         h('div', { class: 'dcard' }, h('h3', {}, 'Next renewal', nr ? h('span', { class: 'chip', text: nr.billing === 'yearly' ? 'yearly' : 'monthly' }) : null), h('div', { class: 'big', text: nr ? ist(nr.next_renewal) : 'None soon' }), h('div', { class: 'sub', text: nr ? nr.shop + ' · ' + money(nr.amount) : 'Nothing due in the next 45 days' }))));
@@ -268,8 +269,8 @@ svg.chart text{font:11px var(--f-body);fill:var(--muted)}
       clients.slice(0, 8).forEach(function(c){ var c2 = clientState(c); if (c2 === 'green') good++; hl.appendChild(h('div', { class: 'c', onclick: function(){ show('client=' + c.id); } }, h('i', { class: 'dot ' + c2 }), h('span', { class: 'nm', text: c.shop }), h('span', { class: 'small muted', text: c.status === 'active' ? 'Last check ' + ago(c.last_checked) : c.status }))); });
       if (!clients.length) hl.appendChild(h('p', { class: 'small muted', text: 'Clients appear here after they fill the onboarding form.' }));
       var pct = act.length ? Math.round(good / act.length * 100) : null;
-      var cred = h('div', { class: 'dcard grad' }, h('h3', {}, 'Outscraper credit', h('span', { class: 'chip', text: usage ? 'live' : 'offline' })), h('div', { class: 'big', text: usage ? usd(usage.balance) : 'n/a' }),
-        h('div', { class: 'sub', text: usage ? 'Spent this period ' + usd(usage.spent) + ' · about ' + Math.floor(usage.balance / 0.15) + ' samples left' : 'Could not read the balance' }));
+      var cred = h('div', { class: 'dcard grad' + (usage ? '' : ' off') }, h('h3', {}, 'Outscraper credit', h('span', { class: 'chip', text: usage ? 'live' : 'cannot read' })), h('div', { class: 'big', text: usage ? usd(usage.balance) : 'n/a' }),
+        h('div', { class: 'sub', text: usage ? 'Spent this period ' + usd(usage.spent) + ' · about ' + Math.floor(usage.balance / 0.15) + ' samples left' : 'Check that the Usage workflow is published, then Refresh.' }));
       if (usage) { var fp = Math.min(100, Math.round(usage.reviews_used / 500 * 100)); cred.appendChild(h('div', { class: 'bar', style: 'margin-top:14px' }, h('i', { style: 'width:' + fp + '%' }))); cred.appendChild(h('div', { class: 'sub', text: Math.min(500, usage.reviews_used) + ' of 500 free reviews used this month' })); }
       box.appendChild(h('div', { class: 'd3' }, h('div', { class: 'dcard' }, h('h3', {}, 'Recent replies'), h('div', { style: 'overflow-x:auto' }, tb)),
         h('div', { class: 'dcard' }, h('h3', {}, 'Client health'), h('div', { class: 'score', text: pct === null ? '-' : pct + '%' }), h('div', { class: 'sub', text: act.length ? good + ' of ' + act.length + ' active clients running well' : 'No active clients' }), hl), cred));

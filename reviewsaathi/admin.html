@@ -91,6 +91,9 @@ main{padding:26px 0 80px}
   <h2 style="font-size:26px">Replies to post</h2>
   <p class="small muted">These are ready. Open the shop's Google page, paste the reply, then tap Done.</p>
   <div id="postlist"><p class="muted">Loading...</p></div>
+  <h2 style="font-size:26px;margin-top:28px">Updates the owner approved</h2>
+  <p class="small muted">Monthly updates for the Google page. They wait here until Google gives us posting access.</p>
+  <div id="updlist"><p class="muted">Loading...</p></div>
 </section>
 
 <section class="tab" id="clients" hidden>
@@ -205,7 +208,25 @@ main{padding:26px 0 80px}
   /* ---------- to post ---------- */
   function copy(text, btn){ var o = btn.textContent; var done = function(){ btn.textContent = 'Copied'; setTimeout(function(){ btn.textContent = o; }, 1400); };
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function(){}); }
+  function loadUpdates(){
+    var box = $('updlist'); box.replaceChildren(h('p', { class: 'muted', text: 'Loading...' }));
+    api('updates').then(function(d){
+      var list = d.updates || []; box.replaceChildren();
+      if (!list.length) { box.appendChild(h('div', { class: 'panel' }, h('b', { text: 'No approved updates.' }), h('p', { class: 'small muted', text: 'They appear here after an owner approves the monthly email.' }))); return; }
+      list.forEach(function(u){
+        var done = h('button', { class: 'btn sm', type: 'button', text: 'Done' });
+        var cp = h('button', { class: 'btn sm go', type: 'button', text: 'Copy update' });
+        var item = h('div', { class: 'item' }, h('b', { text: u.shop }), h('div', { class: 'small muted', text: u.month }),
+          h('div', { class: 'reply' }, h('b', { text: u.title }), h('p', { text: u.body })),
+          h('div', { class: 'row' }, cp, /^https?:/.test(u.maps_link || '') ? h('a', { class: 'btn sm', href: u.maps_link, target: '_blank', rel: 'noopener', text: 'Open Google page' }) : null, done));
+        cp.addEventListener('click', function(){ copy(u.title + '\n\n' + u.body, cp); });
+        done.addEventListener('click', function(){ done.disabled = true; api('updposted', { id: u.id }).then(function(){ item.remove(); }); });
+        box.appendChild(item);
+      });
+    }).catch(fail(box));
+  }
   function loadPost(){
+    loadUpdates();
     var box = $('postlist'); box.replaceChildren(h('p', { class: 'muted', text: 'Loading...' }));
     api('replies').then(function(d){
       var list = d.replies || []; box.replaceChildren();
@@ -227,6 +248,7 @@ main{padding:26px 0 80px}
 
   /* ---------- clients ---------- */
   $('copylink').addEventListener('click', function(){ copy('https://snehalpatel.dev/reviewsaathi/onboard.html', $('copylink')); });
+  function updUrl(id){ var u = new URL(API + 'reviewsaathi-updates'); u.searchParams.set('key', key); u.searchParams.set('client', id); return u.toString(); }
   function reportUrl(id, send){ var u = new URL(API + 'reviewsaathi-report'); u.searchParams.set('key', key); u.searchParams.set('client', id); if (send) u.searchParams.set('send', '1'); return u.toString(); }
   function loadClients(){
     var box = $('clientlist'); box.replaceChildren(h('p', { class: 'muted', text: 'Loading...' }));
@@ -244,7 +266,7 @@ main{padding:26px 0 80px}
           h('div', { class: 'small', text: 'Waiting for owner OK: ' + c.waiting + ' · Ready to post: ' + c.to_post + ' · Last check: ' + (c.last_checked ? new Date(c.last_checked).toLocaleString('en-IN') : 'never') }),
           c.services ? h('div', { class: 'small muted', style: 'margin-top:6px', text: 'Offers: ' + c.services }) : null,
           h('div', { class: 'row', style: 'margin-top:10px' }, sel, mg, /^https?:/.test(c.maps_link || '') ? h('a', { class: 'btn sm', href: c.maps_link, target: '_blank', rel: 'noopener', text: 'Google page' }) : null),
-          c.plan === 'standard' ? h('div', { class: 'row', style: 'margin-top:8px' }, h('a', { class: 'btn sm go', href: reportUrl(c.id, false), target: '_blank', rel: 'noopener', text: 'Make report now' }), h('a', { class: 'btn sm', href: reportUrl(c.id, true), target: '_blank', rel: 'noopener', text: 'Make and email owner' })) : null));
+          c.plan === 'standard' ? h('div', { class: 'row', style: 'margin-top:8px' }, h('a', { class: 'btn sm go', href: reportUrl(c.id, false), target: '_blank', rel: 'noopener', text: 'Make report now' }), h('a', { class: 'btn sm', href: reportUrl(c.id, true), target: '_blank', rel: 'noopener', text: 'Make and email owner' }), h('a', { class: 'btn sm', href: updUrl(c.id), target: '_blank', rel: 'noopener', text: 'Make updates for owner OK' })) : null));
       });
     }).catch(fail(box));
   }

@@ -80,12 +80,12 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
       <div class="field"><label for="owner_name">Your name</label><input id="owner_name" name="owner_name" required autocomplete="name"></div>
       <div class="field"><label for="owner_phone">Your WhatsApp number</label><input id="owner_phone" name="owner_phone" required inputmode="tel" autocomplete="tel" placeholder="98XXXXXXXX"></div>
       <div class="field"><label for="owner_email">Your email</label><input id="owner_email" name="owner_email" required type="email" autocomplete="email"><p class="hint">Hard reviews are sent here for your OK.</p></div>
-      <div class="field"><label for="language">Language for replies</label>
-        <select id="language" name="language"><option>English</option><option>Hindi</option><option>Marathi</option><option>English and Hindi</option><option>English and Marathi</option></select></div>
+      <input type="hidden" name="language" value="English">
+      <p class="small muted" style="margin:0 0 18px">Replies are written in English for now.</p>
       <div class="field"><label for="tone">How should replies sound?</label>
         <select id="tone" name="tone"><option value="friendly">Friendly and warm</option><option value="formal">Polite and formal</option><option value="casual">Short and casual</option></select></div>
-      <div class="field"><label for="services">What do you offer?</label><textarea id="services" name="services" placeholder="Example: root canal, braces, teeth cleaning, whitening"></textarea><p class="hint">We only write about what you list here.</p></div>
-      <div class="field"><label for="current_offer">Any offer or news right now? (optional)</label><input id="current_offer" name="current_offer" placeholder="Example: free check-up in November"></div>
+      <div class="field"><label for="services">What do you offer?</label><textarea id="services" name="services" placeholder="List your main products or services, one per line"></textarea><p class="hint">We only write about what you list here.</p></div>
+      <div class="field"><label for="current_offer">Any offer or news right now? (optional)</label><input id="current_offer" name="current_offer" placeholder="For example: a festival discount, new timings, a new service"></div>
       <div class="field"><label for="approval_contact">Where should we send hard reviews for your OK? (optional)</label><input id="approval_contact" name="approval_contact" placeholder="Leave empty to use your email above"></div>
       <div class="field"><label for="auto_reply_positive">Happy reviews (4 and 5 stars)</label>
         <select id="auto_reply_positive" name="auto_reply_positive"><option value="yes">Reply for me, no need to ask</option><option value="no">Ask me before replying</option></select></div>

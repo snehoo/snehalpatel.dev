@@ -31,6 +31,36 @@ main{padding:26px 0 80px}
 .reply{background:var(--sunk);border-radius:10px;padding:12px 14px;margin:8px 0;font-size:17px}
 .item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
 .gate{max-width:420px;margin:60px auto}
+
+.dash{display:grid;gap:16px}
+.dtop{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.dtop h1{font-size:clamp(28px,5vw,40px)}
+.live{display:inline-flex;align-items:center;gap:8px;font:600 14px var(--f-body);border-radius:99px;padding:5px 12px;background:var(--good-bg);color:var(--good)}
+.live.amber{background:var(--warn-bg);color:var(--warn)}.live.red{background:var(--bad-bg);color:var(--bad)}.live.grey{background:var(--sunk);color:var(--muted)}.live.green{background:var(--good-bg);color:var(--good)}
+.dot{width:10px;height:10px;border-radius:50%;background:currentColor;display:inline-block;flex:none}
+.live .dot{box-shadow:0 0 0 4px color-mix(in srgb,currentColor 22%,transparent)}
+.drow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px;min-width:0}
+.dcard h3{font:600 15px var(--f-body);color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
+.big{font:800 clamp(28px,4vw,38px)/1.1 var(--f-display);letter-spacing:-.02em}
+.sub{font-size:14px;color:var(--muted);margin-top:6px}
+.chip{display:inline-flex;align-items:center;font:600 12px var(--f-body);border-radius:99px;padding:3px 9px;background:var(--good-bg);color:var(--good);white-space:nowrap}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}.chip.bad{background:var(--bad-bg);color:var(--bad)}.chip.mute{background:var(--sunk);color:var(--muted)}
+.d2{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,4fr);gap:14px}.d3{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,3fr) minmax(0,3fr);gap:14px}
+@media (max-width:860px){.d2,.d3{grid-template-columns:minmax(0,1fr)}}
+.brk{display:grid;gap:10px;margin-top:16px}.brk .l{display:flex;justify-content:space-between;font-size:14px}.brk .l span:last-child{font-weight:600}
+.brk .b{height:7px;border-radius:4px;background:var(--sunk);overflow:hidden}.brk .b i{display:block;height:100%;background:var(--accent)}.brk .b i.y{background:var(--pin)}
+.attn{display:grid;gap:8px}.attn .a{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;font-size:15px}
+.attn .a .dot{margin-top:6px}.attn .a.red{color:var(--bad)}.attn .a.amber{color:var(--warn)}.attn .a.green{color:var(--good)}.attn .a.grey{color:var(--muted)}
+.attn .a div{color:var(--ink);line-height:1.35}.attn .a small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap;background:none}
+.tbl td{padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top}.tbl tr:last-child td{border-bottom:0}.tbl .rp{max-width:340px;color:var(--ink2)}
+.score{font:800 56px/1 var(--f-display)}.hl{display:grid;gap:8px;margin-top:14px}.hl .c{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;font-size:15px}.hl .c:hover{background:var(--sunk)}.hl .c .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hl .c .dot.green{color:var(--good)}.hl .c .dot.amber{color:var(--warn)}.hl .c .dot.red{color:var(--bad)}.hl .c .dot.grey{color:var(--muted)}
+.grad{background:linear-gradient(150deg,#1f9d57,#0e4f2b 70%);color:#fff;border:0}.grad h3,.grad .sub{color:rgba(255,255,255,.78)}.grad .big{color:#fff}.grad .chip{background:rgba(255,255,255,.18);color:#fff}
+.grad .bar{background:rgba(255,255,255,.22)}.grad .bar i{background:#fff}
+.back{background:none;border:0;color:var(--accent);font:600 16px var(--f-body);cursor:pointer;padding:0;margin-bottom:6px}
+svg.chart text{font:11px var(--f-body);fill:var(--muted)}
 </style>
 </head>
 <body>
@@ -46,6 +76,7 @@ main{padding:26px 0 80px}
 <div id="app" hidden>
 <header><div class="wrap"><a class="logo" href="./"><img src="/assets/reviewsaathi-logo.svg" alt="" width="34" height="34" style="border-radius:8px;display:block">ReviewSaathi</a><button class="btn sm" id="logout" type="button">Lock</button></div></header>
 <nav aria-label="Sections"><div class="wrap" role="tablist">
+  <button role="tab" data-t="overview">Overview</button>
   <button role="tab" data-t="find">Find shops</button>
   <button role="tab" data-t="reports">Reports</button>
   <button role="tab" data-t="post">To post</button>
@@ -55,7 +86,15 @@ main{padding:26px 0 80px}
 
 <main><div class="wrap">
 
-<section class="tab" id="find">
+<section class="tab" id="overview" hidden>
+  <div class="dash" id="dash"><p class="muted">Loading...</p></div>
+</section>
+
+<section class="tab" id="client" hidden>
+  <div class="dash" id="clientdash"><p class="muted">Loading...</p></div>
+</section>
+
+<section class="tab" id="find" hidden>
   <div class="panel">
     <h2 style="font-size:26px;margin-bottom:14px">Find shops that need replies</h2>
     <div class="field"><label for="city">City</label><input id="city" value="Mumbai region" disabled></div>
@@ -65,7 +104,7 @@ main{padding:26px 0 80px}
     <div class="field"><label for="area">Which area?</label><select id="area"></select></div>
     <div class="field" id="areaotherbox" hidden><label for="areaother">Type the area</label><input id="areaother" placeholder="Example: Mulund West"></div>
     <div class="field"><label for="count">How many shops to check?</label>
-      <select id="count"><option value="10" selected>10 shops (quick)</option><option value="20">20 shops (normal)</option><option value="30">30 shops (wide)</option></select>
+      <select id="count"><option value="8">8 shops (quick)</option><option value="12" selected>12 shops (normal)</option><option value="20">20 shops (wide)</option></select>
       <p class="hint" id="estimate"></p></div>
     <button class="btn go" id="findgo" type="button">Find shops</button>
   </div>
@@ -107,6 +146,7 @@ main{padding:26px 0 80px}
 
 <section class="tab" id="costs" hidden>
   <h2 style="font-size:26px">What it is costing</h2>
+  <div id="realcost" style="margin-bottom:14px"></div>
   <div id="costbox"><p class="muted">Loading...</p></div>
 </section>
 
@@ -136,27 +176,146 @@ main{padding:26px 0 80px}
   }
 
   /* ---------- gate ---------- */
-  function start(){ $('gate').hidden = true; $('app').hidden = false; show((location.hash || '#find').slice(1)); }
+  function start(){ $('gate').hidden = true; $('app').hidden = false; show((location.hash || '#overview').slice(1)); }
   $('keygo').addEventListener('click', function(){ var v = $('key').value.trim(); if (!v) return; key = v; try { localStorage.setItem('rs_key', v); } catch(e){} $('gate').hidden = true; start(); });
   $('logout').addEventListener('click', function(){ try { localStorage.removeItem('rs_key'); } catch(e){} location.reload(); });
 
   /* ---------- tabs ---------- */
   var tabs = [].slice.call(document.querySelectorAll('nav button'));
-  function show(id){
-    if (!document.getElementById(id) || !document.getElementById(id).classList.contains('tab')) id = 'find';
+  function show(raw){
+    var id = raw, cid = '';
+    if (raw.indexOf('client=') === 0) { id = 'client'; cid = raw.slice(7); }
+    if (!document.getElementById(id) || !document.getElementById(id).classList.contains('tab')) { id = 'overview'; raw = 'overview'; }
     [].forEach.call(document.querySelectorAll('section.tab'), function(s){ s.hidden = s.id !== id; });
-    tabs.forEach(function(t){ t.setAttribute('aria-selected', t.getAttribute('data-t') === id ? 'true' : 'false'); });
-    history.replaceState(null, '', '#' + id);
+    tabs.forEach(function(t){ t.setAttribute('aria-selected', t.getAttribute('data-t') === (id === 'client' ? 'clients' : id) ? 'true' : 'false'); });
+    history.replaceState(null, '', '#' + raw);
+    if (id === 'overview') loadOverview(); if (id === 'client') loadClient(cid);
     if (id === 'costs') loadCosts(); if (id === 'clients') loadClients(); if (id === 'post') loadPost(); if (id === 'reports') loadReports();
   }
   tabs.forEach(function(t){ t.addEventListener('click', function(){ show(t.getAttribute('data-t')); }); });
+
+  /* ---------- overview dashboard ---------- */
+  var USAGE = null, OV = null;
+  function ago(ts){ if (!ts) return 'never'; var m = Math.round((Date.now() - new Date(ts).getTime()) / 60000); if (m < 1) return 'just now'; if (m < 60) return m + ' min ago'; var hh = Math.round(m / 60); if (hh < 48) return hh + ' h ago'; return Math.round(hh / 24) + ' days ago'; }
+  function ist(ts, withTime){ if (!ts) return ''; var d = new Date(ts); var o = { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short' }; if (withTime) { o.hour = 'numeric'; o.minute = '2-digit'; o.hour12 = true; } return d.toLocaleString('en-IN', o); }
+  function greet(){ var hr = Number(new Date().toLocaleString('en-GB', { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false })); return hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening'; }
+  function usd(n){ return '$' + (Number(n) || 0).toFixed(2); }
+  function money(n){ return 'Rs.' + Math.round(Number(n) || 0).toLocaleString('en-IN'); }
+  function svgEl(tag, attrs){ var e = document.createElementNS('http://www.w3.org/2000/svg', tag); Object.keys(attrs || {}).forEach(function(k){ e.setAttribute(k, attrs[k]); }); return e; }
+  function healthItems(ov, usage, clients){
+    var it = [], active = ov.active || 0;
+    if (active > 0) { var age = ov.last_review_check ? (Date.now() - new Date(ov.last_review_check).getTime()) / 3600000 : 999;
+      it.push(age > 8 ? { c: 'red', t: 'Review check has not run for ' + (age > 99 ? 'a long time' : Math.round(age) + ' hours'), s: 'It should run every 3 hours. Check that Review Check is published in n8n.' } : { c: 'green', t: 'Review check ran ' + ago(ov.last_review_check), s: 'Runs every 3 hours.' }); }
+    else it.push({ c: 'grey', t: 'No active clients yet', s: 'Review check starts once a client is set to active.' });
+    if (ov.errors_24h > 0) { var ev = (ov.events || []).filter(function(e){ return e.level === 'error'; })[0]; it.push({ c: 'red', t: ov.errors_24h + ' error' + (ov.errors_24h > 1 ? 's' : '') + ' in the last 24 hours', s: ev ? ev.source + ': ' + ev.message : '' }); }
+    else it.push({ c: 'green', t: 'No errors in the last 24 hours', s: 'Claude, Jev, Outscraper and the workflows are all answering.' });
+    if (usage === false) it.push({ c: 'red', t: 'Cannot reach Outscraper', s: 'Check the API key and your credit.' });
+    else if (usage) { if (usage.balance < 1) it.push({ c: 'red', t: 'Outscraper credit almost gone: ' + usd(usage.balance), s: 'Top it up before the next review check.' });
+      else if (usage.balance < 2.5) it.push({ c: 'amber', t: 'Outscraper credit is low: ' + usd(usage.balance), s: 'About ' + Math.floor(usage.balance / 0.15) + ' samples left.' });
+      else it.push({ c: 'green', t: 'Outscraper credit ' + usd(usage.balance), s: 'Free monthly records left: ' + usage.free_reviews_left + ' reviews, ' + usage.free_places_left + ' places.' }); }
+    var warns = (ov.events || []).filter(function(e){ return e.level === 'warn' && (Date.now() - new Date(e.ts).getTime()) < 864e5; });
+    if (warns.length) it.push({ c: 'amber', t: warns[0].message, s: warns[0].source + ' · ' + ago(warns[0].ts) });
+    if (ov.waiting_owner > 0) it.push({ c: ov.oldest_waiting_days > 3 ? 'amber' : 'grey', t: ov.waiting_owner + ' waiting for an owner to tap OK', s: 'Oldest has waited ' + ov.oldest_waiting_days + ' days. Owners get one reminder.' });
+    if (ov.to_post > 0) it.push({ c: 'grey', t: ov.to_post + ' approved item' + (ov.to_post > 1 ? 's are' : ' is') + ' waiting to be posted', s: 'Posting starts when Google approves our access.' });
+    return it;
+  }
+  function overall(items){ if (items.some(function(i){ return i.c === 'red'; })) return 'red'; if (items.some(function(i){ return i.c === 'amber'; })) return 'amber'; return 'green'; }
+  var LABEL = { green: 'All systems go', amber: 'Needs a look', red: 'Something is wrong' };
+  function mrrChart(hist){
+    var W = 520, H = 190, pl = 12, pr = 12, pt = 18, pb = 26, n = hist.length, max = Math.max.apply(null, hist.map(function(x){ return x.mrr; }).concat([1000]));
+    var svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, class: 'chart', width: '100%', role: 'img', 'aria-label': 'Monthly recurring revenue, last 6 months' });
+    var bw = (W - pl - pr) / n;
+    hist.forEach(function(x, i){ var bh = Math.max(3, (x.mrr / max) * (H - pt - pb)), bx = pl + i * bw + bw * 0.2, by = H - pb - bh, last = i === n - 1;
+      svg.appendChild(svgEl('rect', { x: bx, y: by, width: bw * 0.6, height: bh, rx: 6, fill: last ? 'var(--accent)' : 'var(--sunk)' }));
+      var t = svgEl('text', { x: bx + bw * 0.3, y: H - 8, 'text-anchor': 'middle' }); t.textContent = x.label; svg.appendChild(t);
+      if (x.mrr > 0) { var v = svgEl('text', { x: bx + bw * 0.3, y: by - 6, 'text-anchor': 'middle', style: 'fill:var(--ink2);font-weight:600' }); v.textContent = x.mrr >= 1000 ? (x.mrr / 1000).toFixed(1).replace('.0', '') + 'k' : x.mrr; svg.appendChild(v); } });
+    return svg;
+  }
+  var ST = { ready_to_post: ['Ready to post', ''], posted: ['Posted', ''], waiting_owner: ['Waiting for owner', 'warn'], skipped_by_owner: ['Owner said no', 'mute'], for_owner: ['For owner', 'mute'], approved: ['Approved', ''], waiting: ['Waiting for owner', 'warn'], skipped: ['Skipped', 'mute'] };
+  function stChip(s){ var x = ST[s] || [s, 'mute']; return h('span', { class: 'chip ' + x[1], text: x[0] }); }
+  function loadOverview(){
+    var box = $('dash'); box.replaceChildren(h('p', { class: 'muted', text: 'Loading...' }));
+    var pu = fetch(API + 'reviewsaathi-usage?key=' + encodeURIComponent(key)).then(function(r){ return r.json(); }).then(function(u){ return u && u.ok ? u : false; }).catch(function(){ return false; });
+    Promise.all([api('overview'), api('clients'), pu]).then(function(res){
+      var ov = res[0], clients = res[1].clients || [], usage = res[2]; USAGE = usage; OV = ov;
+      var items = healthItems(ov, usage, clients), st = overall(items), margin = ov.mrr > 0 ? Math.round((1 - ov.cost_month_inr / ov.mrr) * 100) : null;
+      box.replaceChildren();
+      box.appendChild(h('div', { class: 'dtop' }, h('div', {}, h('span', { class: 'live ' + st }, h('i', { class: 'dot' }), LABEL[st]), h('h1', { style: 'margin-top:10px', text: greet() + ', Snehal' })),
+        h('div', { class: 'row', style: 'flex:0 0 auto' }, h('span', { class: 'small muted', style: 'align-self:center', text: 'Updated ' + new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit' }) }), h('button', { class: 'btn sm', type: 'button', text: 'Refresh', onclick: loadOverview }))));
+      var nr = ov.renewals && ov.renewals[0];
+      box.appendChild(h('div', { class: 'drow' },
+        h('div', { class: 'dcard' }, h('h3', {}, 'Replies this month', h('span', { class: 'chip mute', text: 'all time ' + ov.replies_total })), h('div', { class: 'big', text: ov.replies_month }), h('div', { class: 'sub', text: ov.posted_month + ' posted · ' + ov.to_post + ' ready to post' })),
+        h('div', { class: 'dcard' }, h('h3', {}, 'Updates this month'), h('div', { class: 'big', text: ov.updates_month }), h('div', { class: 'sub', text: ov.updates_approved_month + ' approved by owners' })),
+        h('div', { class: 'dcard' }, h('h3', {}, 'Active clients', ov.new_clients ? h('span', { class: 'chip warn', text: ov.new_clients + ' new to set up' }) : null), h('div', { class: 'big', text: ov.active }), h('div', { class: 'sub', text: 'Standard plan' })),
+        h('div', { class: 'dcard' }, h('h3', {}, 'Next renewal', nr ? h('span', { class: 'chip', text: nr.billing === 'yearly' ? 'yearly' : 'monthly' }) : null), h('div', { class: 'big', text: nr ? ist(nr.next_renewal) : 'None soon' }), h('div', { class: 'sub', text: nr ? nr.shop + ' · ' + money(nr.amount) : 'Nothing due in the next 45 days' }))));
+      // MRR + attention
+      var tot = Math.max(1, ov.mrr);
+      var mrrCard = h('div', { class: 'dcard' }, h('h3', {}, 'Monthly recurring revenue', margin !== null ? h('span', { class: 'chip ' + (margin < 60 ? 'warn' : ''), text: margin + '% margin' }) : null), h('div', { class: 'big', text: money(ov.mrr) }),
+        h('div', { class: 'sub', text: 'Costs this month ' + money(ov.cost_month_inr) + ' · plus GST on invoices' }));
+      mrrCard.appendChild(mrrChart(ov.mrr_history || []));
+      mrrCard.appendChild(h('div', { class: 'brk' },
+        h('div', {}, h('div', { class: 'l' }, h('span', { text: 'Monthly clients' }), h('span', { text: money(ov.mrr_monthly) })), h('div', { class: 'b' }, h('i', { style: 'width:' + Math.round(ov.mrr_monthly / tot * 100) + '%' }))),
+        h('div', {}, h('div', { class: 'l' }, h('span', { text: 'Yearly clients (per month)' }), h('span', { text: money(ov.mrr_yearly) })), h('div', { class: 'b' }, h('i', { class: 'y', style: 'width:' + Math.round(ov.mrr_yearly / tot * 100) + '%' })))));
+      var attn = h('div', { class: 'attn' }); items.forEach(function(i){ attn.appendChild(h('div', { class: 'a ' + i.c }, h('i', { class: 'dot' }), h('div', {}, i.t, i.s ? h('small', { text: i.s }) : null))); });
+      box.appendChild(h('div', { class: 'd2' }, mrrCard, h('div', { class: 'dcard' }, h('h3', {}, 'Needs attention', h('span', { class: 'chip ' + (st === 'green' ? '' : st === 'amber' ? 'warn' : 'bad'), text: LABEL[st] })), attn)));
+      // recent replies, client health, credit
+      var tb = h('table', { class: 'tbl' }, h('thead', {}, h('tr', {}, h('th', { text: 'When' }), h('th', { text: 'Client' }), h('th', { text: 'Reply' }), h('th', { text: 'Status' }))));
+      var body = h('tbody', {}); (ov.recent || []).forEach(function(r){ body.appendChild(h('tr', {}, h('td', { text: ist(r.posted_at || r.created_at, true), style: 'white-space:nowrap' }), h('td', { text: r.shop }), h('td', { class: 'rp', text: r.reply }), h('td', {}, stChip(r.status)))); });
+      if (!(ov.recent || []).length) body.appendChild(h('tr', {}, h('td', { colspan: 4, class: 'muted', text: 'No replies yet.' })));
+      tb.appendChild(body);
+      var act = clients.filter(function(c){ return c.status === 'active' || c.status === 'test'; }), good = 0;
+      var hl = h('div', { class: 'hl' });
+      clients.slice(0, 8).forEach(function(c){ var c2 = clientState(c); if (c2 === 'green') good++; hl.appendChild(h('div', { class: 'c', onclick: function(){ show('client=' + c.id); } }, h('i', { class: 'dot ' + c2 }), h('span', { class: 'nm', text: c.shop }), h('span', { class: 'small muted', text: c.status === 'active' ? 'Last check ' + ago(c.last_checked) : c.status }))); });
+      if (!clients.length) hl.appendChild(h('p', { class: 'small muted', text: 'Clients appear here after they fill the onboarding form.' }));
+      var pct = act.length ? Math.round(good / act.length * 100) : null;
+      var cred = h('div', { class: 'dcard grad' }, h('h3', {}, 'Outscraper credit', h('span', { class: 'chip', text: usage ? 'live' : 'offline' })), h('div', { class: 'big', text: usage ? usd(usage.balance) : 'n/a' }),
+        h('div', { class: 'sub', text: usage ? 'Spent this period ' + usd(usage.spent) + ' · about ' + Math.floor(usage.balance / 0.15) + ' samples left' : 'Could not read the balance' }));
+      if (usage) { var fp = Math.min(100, Math.round(usage.reviews_used / 500 * 100)); cred.appendChild(h('div', { class: 'bar', style: 'margin-top:14px' }, h('i', { style: 'width:' + fp + '%' }))); cred.appendChild(h('div', { class: 'sub', text: Math.min(500, usage.reviews_used) + ' of 500 free reviews used this month' })); }
+      box.appendChild(h('div', { class: 'd3' }, h('div', { class: 'dcard' }, h('h3', {}, 'Recent replies'), h('div', { style: 'overflow-x:auto' }, tb)),
+        h('div', { class: 'dcard' }, h('h3', {}, 'Client health'), h('div', { class: 'score', text: pct === null ? '-' : pct + '%' }), h('div', { class: 'sub', text: act.length ? good + ' of ' + act.length + ' active clients running well' : 'No active clients' }), hl), cred));
+    }).catch(function(e){ box.replaceChildren(h('div', { class: 'panel' }, h('b', { text: e.message === 'key' ? 'The key was not accepted.' : 'Could not load the overview.' }))); });
+  }
+  function clientState(c){ if (c.status === 'new') return 'grey'; if (c.status === 'paused') return 'grey'; var age = c.last_checked ? (Date.now() - new Date(c.last_checked).getTime()) / 3600000 : 999; if (age > 12) return 'red'; if (c.waiting > 0 && age > 8) return 'amber'; if (c.waiting > 3) return 'amber'; return 'green'; }
+
+  /* ---------- one client ---------- */
+  function loadClient(id){
+    var box = $('clientdash'); box.replaceChildren(h('p', { class: 'muted', text: 'Loading...' }));
+    api('client', { id: id }).then(function(d){
+      var c = d.client; if (!c) { box.replaceChildren(h('div', { class: 'panel' }, h('b', { text: 'Client not found.' }))); return; }
+      var log = d.log || [], ups = d.updates || [];
+      var posted = log.filter(function(l){ return l.status === 'posted'; }).length, waiting = log.filter(function(l){ return l.status === 'waiting_owner'; }).length, ready = log.filter(function(l){ return l.status === 'ready_to_post'; }).length;
+      var st = clientState({ status: c.status, last_checked: c.last_checked, waiting: waiting });
+      var sa = new Date(c.started_at), nxt = new Date(sa);
+      if (c.billing === 'yearly') { while (nxt < new Date()) nxt.setFullYear(nxt.getFullYear() + 1); } else { while (nxt < new Date()) nxt.setMonth(nxt.getMonth() + 1); }
+      box.replaceChildren();
+      box.appendChild(h('button', { class: 'back', type: 'button', text: '< All clients', onclick: function(){ show('clients'); } }));
+      box.appendChild(h('div', { class: 'dtop' }, h('div', {}, h('span', { class: 'live ' + (st === 'green' ? '' : st), style: st === 'green' ? '' : '' }, h('i', { class: 'dot' }), st === 'green' ? 'Running well' : st === 'amber' ? 'Needs a look' : st === 'red' ? 'Not checked lately' : c.status), h('h1', { style: 'margin-top:10px', text: c.shop })),
+        h('div', { class: 'row', style: 'flex:0 0 auto' }, /^https?:/.test(c.maps_link || '') ? h('a', { class: 'btn sm', href: c.maps_link, target: '_blank', rel: 'noopener', text: 'Google page' }) : null, c.owner_phone ? h('a', { class: 'btn sm', href: 'tel:' + c.owner_phone, text: 'Call ' + (c.owner_name || 'owner') }) : null)));
+      box.appendChild(h('div', { class: 'drow' },
+        h('div', { class: 'dcard' }, h('h3', {}, 'Replies'), h('div', { class: 'big', text: log.length }), h('div', { class: 'sub', text: posted + ' posted · ' + ready + ' ready · ' + waiting + ' waiting for owner' })),
+        h('div', { class: 'dcard' }, h('h3', {}, 'Updates'), h('div', { class: 'big', text: ups.length }), h('div', { class: 'sub', text: ups.filter(function(u){ return u.status === 'approved' || u.status === 'posted'; }).length + ' approved' })),
+        h('div', { class: 'dcard' }, h('h3', {}, 'Renews', h('span', { class: 'chip', text: c.billing === 'yearly' ? 'yearly' : 'monthly' })), h('div', { class: 'big', text: ist(nxt) }), h('div', { class: 'sub', text: money(c.billing === 'yearly' ? 34999 : 3499) + ' plus GST' })),
+        h('div', { class: 'dcard' }, h('h3', {}, 'Cost to serve this month'), h('div', { class: 'big', text: money(d.cost_month_inr) }), h('div', { class: 'sub', text: 'Last review check ' + ago(c.last_checked) }))));
+      var tb = h('table', { class: 'tbl' }, h('thead', {}, h('tr', {}, h('th', { text: 'Date and time' }), h('th', { text: 'Review' }), h('th', { text: 'Our reply' }), h('th', { text: 'Status' }))));
+      var body = h('tbody', {});
+      log.forEach(function(l){ body.appendChild(h('tr', {}, h('td', { style: 'white-space:nowrap' }, ist(l.at, true), l.posted_at ? h('div', { class: 'small muted', text: 'posted ' + ist(l.posted_at, true) }) : null),
+        h('td', { class: 'rp' }, h('b', { text: (l.reviewer || 'Customer') + ' · ' + l.stars + ' stars' }), h('div', { text: l.review_text || '' })), h('td', { class: 'rp', text: l.reply || '' }), h('td', {}, stChip(l.status)))); });
+      if (!log.length) body.appendChild(h('tr', {}, h('td', { colspan: 4, class: 'muted', text: 'No replies yet for this client.' })));
+      tb.appendChild(body);
+      box.appendChild(h('div', { class: 'dcard' }, h('h3', {}, 'Reply log'), h('div', { style: 'overflow-x:auto' }, tb)));
+      var ul = h('div', { class: 'attn' });
+      ups.forEach(function(u){ ul.appendChild(h('div', { class: 'a grey' }, h('i', { class: 'dot' }), h('div', {}, u.title, h('small', { text: u.text }), h('small', { text: ist(u.created_at, true) + ' · ' + (ST[u.status] || [u.status])[0] })))); });
+      if (!ups.length) ul.appendChild(h('p', { class: 'small muted', text: 'No updates yet. They are made on the 2nd of each month.' }));
+      box.appendChild(h('div', { class: 'dcard' }, h('h3', {}, 'Page updates'), ul));
+    }).catch(function(){ box.replaceChildren(h('div', { class: 'panel' }, h('b', { text: 'Could not load this client.' }))); });
+  }
 
   /* ---------- find shops ---------- */
   TYPES.forEach(function(t){ $('type').appendChild(h('option', { value: t[1], text: t[0] })); });
   AREAS.forEach(function(a){ $('area').appendChild(h('option', { value: a === 'Something else' ? '__other' : a, text: a })); });
   function typeVal(){ return $('type').value === '__other' ? $('typeother').value.trim() : $('type').value; }
   function areaVal(){ return $('area').value === '__other' ? $('areaother').value.trim() : $('area').value; }
-  function estimate(){ var n = Number($('count').value); var cost = (40 + n * 6) * 0.003 * 88; $('estimate').textContent = 'About ' + rs(cost) + ' at list price. The first 500 a month are free.'; }
+  function estimate(){ var n = Number($('count').value); var cost = (30 + n * 5) * 0.003 * 88; $('estimate').textContent = 'About ' + rs(cost) + ' at list price. The first 500 a month are free.'; }
   $('type').addEventListener('change', function(){ $('typeotherbox').hidden = $('type').value !== '__other'; });
   $('area').addEventListener('change', function(){ $('areaotherbox').hidden = $('area').value !== '__other'; });
   $('count').addEventListener('change', estimate); estimate();
@@ -268,7 +427,7 @@ main{padding:26px 0 80px}
           h('div', { class: 'small muted', style: 'margin:6px 0', text: [c.owner_name, c.owner_phone, c.owner_email].filter(Boolean).join(' · ') }),
           h('div', { class: 'small', text: 'Waiting for owner OK: ' + c.waiting + ' · Ready to post: ' + c.to_post + ' · Last check: ' + (c.last_checked ? new Date(c.last_checked).toLocaleString('en-IN') : 'never') }),
           c.services ? h('div', { class: 'small muted', style: 'margin-top:6px', text: 'Offers: ' + c.services }) : null,
-          h('div', { class: 'row', style: 'margin-top:10px' }, sel, mg, /^https?:/.test(c.maps_link || '') ? h('a', { class: 'btn sm', href: c.maps_link, target: '_blank', rel: 'noopener', text: 'Google page' }) : null),
+          h('div', { class: 'row', style: 'margin-top:10px' }, h('button', { class: 'btn sm go', type: 'button', text: 'Open client page', onclick: function(){ show('client=' + c.id); } }), sel, mg, /^https?:/.test(c.maps_link || '') ? h('a', { class: 'btn sm', href: c.maps_link, target: '_blank', rel: 'noopener', text: 'Google page' }) : null),
           c.plan === 'standard' ? h('div', { class: 'row', style: 'margin-top:8px' }, h('a', { class: 'btn sm go', href: reportUrl(c.id, false), target: '_blank', rel: 'noopener', text: 'Make report now' }), h('a', { class: 'btn sm', href: reportUrl(c.id, true), target: '_blank', rel: 'noopener', text: 'Make and email owner' }), h('a', { class: 'btn sm', href: updUrl(c.id), target: '_blank', rel: 'noopener', text: 'Make updates for owner OK' })) : null));
       });
     }).catch(fail(box));
@@ -276,7 +435,22 @@ main{padding:26px 0 80px}
 
   /* ---------- costs ---------- */
   var KIND = { sample: 'Free sample', leads: 'Shop search', review_check: 'Review check' };
-  function loadCosts(){
+  function loadReal(){
+    var box = $('realcost'); box.replaceChildren(h('p', { class: 'muted', text: 'Reading your Outscraper account...' }));
+    fetch(API + 'reviewsaathi-usage?key=' + encodeURIComponent(key)).then(function(r){ return r.json(); }).then(function(u){
+      box.replaceChildren(); if (!u.ok) { box.appendChild(h('div', { class: 'panel' }, h('b', { text: 'Could not read Outscraper.' }), h('p', { class: 'small muted', text: u.error || '' }))); return; }
+      box.appendChild(h('div', { class: 'cards' },
+        h('div', { class: 'card' }, h('b', { text: usd(u.balance) }), h('span', { text: 'Credit left at Outscraper (the real number)' })),
+        h('div', { class: 'card' }, h('b', { text: usd(u.spent) }), h('span', { text: 'Spent this billing period' })),
+        h('div', { class: 'card' }, h('b', { text: String(u.reviews_used) }), h('span', { text: 'Reviews read (' + u.free_reviews_left + ' free left)' })),
+        h('div', { class: 'card' }, h('b', { text: String(u.places_used) }), h('span', { text: 'Places read (' + u.free_places_left + ' free left)' }))));
+      var tb = h('table', { class: 'tbl' }, h('thead', {}, h('tr', {}, h('th', { text: 'When' }), h('th', { text: 'Records' }), h('th', { text: 'Cost' }))));
+      var body = h('tbody', {}); (u.recent_runs || []).forEach(function(r){ body.appendChild(h('tr', {}, h('td', { text: new Date(r.at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) }), h('td', { text: r.records }), h('td', { text: usd(r.cost) }))); });
+      tb.appendChild(body);
+      box.appendChild(h('div', { class: 'dcard', style: 'margin-top:12px' }, h('h3', {}, 'Latest runs, as Outscraper billed them'), h('div', { style: 'overflow-x:auto' }, tb), h('p', { class: 'small muted', style: 'margin-top:8px', text: 'The table below is our own log, which can miss runs that crashed. This one is the real bill.' })));
+    }).catch(function(){ box.replaceChildren(h('div', { class: 'panel' }, h('b', { text: 'Could not read Outscraper.' }))); });
+  }
+  function loadCosts(){ loadReal();
     var box = $('costbox'); box.replaceChildren(h('p', { class: 'muted', text: 'Loading...' }));
     api('costs').then(function(d){
       var m = d.month || {}; box.replaceChildren();

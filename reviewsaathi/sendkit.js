@@ -27,17 +27,15 @@
     var People = people.charAt(0).toUpperCase() + people.slice(1);
     var n = Number(r.unanswered || 0), tot = Number(r.checked || 0);
     var line = n === tot
-      ? (tot === 1 ? 'Your latest Google review is still awaiting a reply.' : 'All ' + tot + ' of your latest Google reviews are still awaiting a reply.')
-      : n + ' of your latest ' + tot + ' Google reviews are still awaiting a reply.';
+      ? (tot === 1 ? 'Your latest Google review has no reply.' : 'All ' + tot + ' of your latest Google reviews have no reply.')
+      : n + ' of your latest ' + tot + ' Google reviews have no reply.';
     var m1 = 'Hello ' + r.shop + ' team,\n\n'
-      + 'I came across your Google page and prepared a short sample report for you.\n\n'
-      + People + ' often read reviews before choosing a ' + place + '. Fresh updates and replies also help build trust.\n\n'
-      + 'Right now, ' + line.charAt(0).toLowerCase() + line.slice(1) + '\n\n'
-      + 'I have written a few sample replies and one Google update for your ' + place + '. Please open the attached PDF to see how they could look.\n\n'
-      + 'If you would like us to take care of this for you every month, reply YES and I will share how it works.\n\n'
-      + 'ReviewSaathi\nMake every review count.';
-    var m2 = 'Hi again from ReviewSaathi. Did you get a chance to open the PDF I sent for ' + r.shop + '? '
-      + 'If you would like us to take care of your Google replies and updates every month, reply YES and I will share how it works.';
+      + line + ' ' + People + ' read reviews before choosing a ' + place + '.\n\n'
+      + 'I wrote three sample replies and a Google update for you. The PDF is attached.\n\n'
+      + 'Want us to do this every month? Reply YES and I will explain.\n\n'
+      + 'ReviewSaathi';
+    var m2 = 'Hi, did you get a chance to see the sample replies I sent for ' + r.shop + '? '
+      + 'If you want this taken care of every month, reply YES and I will explain.\n\nReviewSaathi';
     return { m1: m1, m2: m2, place: place, people: people };
   }
 
@@ -164,8 +162,7 @@
     var url = SITE + 'm/' + encodeURIComponent(r.id) + (r.has_pdf ? '.pdf' : '');
     var month = ''; try { month = new Date(r.period_to).toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata', month: 'long', year: 'numeric' }); } catch (e) {}
     var greet = r.owner_name ? 'Hello ' + r.owner_name + ',' : 'Hello ' + r.shop + ' team,';
-    return { url: url, text: greet + '\n\nYour ReviewSaathi report for ' + r.shop + (month ? ' (' + month + ')' : '') + ' is ready:\n' + url
-      + '\n\nIt shows what changed on your Google page and what we did. Reply here if you have any question.\n\nReviewSaathi' };
+    return { url: url, text: greet + '\n\nHere is how ' + r.shop + (month ? ' did in ' + month : ' is doing') + ': reviews gained, what we handled for you, and how you compare with shops nearby.\n' + url + '\n\nReviewSaathi' };
   }
   function mountMonthly(el, r) {
     addStyles(); el.className = 'rsk compact'; el.textContent = '';

@@ -44,15 +44,15 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
 <main><div class="wrap">
 <div id="formbox">
   <h1 style="font-size:clamp(30px,6vw,42px)">Let's get you started</h1>
-  <p style="margin-top:8px">Four short steps. About 5 minutes. You can add us on Google later if you are busy.</p>
-  <p class="saved" id="saved" hidden>Your answers are saved on this phone, so you can leave and come back.</p>
+  <p style="margin-top:8px">Five short steps. About 5 minutes. You can add us on Google later if you are busy.</p>
+  <p class="saved" id="saved" hidden>Your answers are saved on this device, so you can leave and come back. <a href="#" id="startover">Start over</a></p>
 
   <form id="f" autocomplete="on" novalidate>
     <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
 
     <div class="step">
       <h2><span class="n">1</span>Your Google page</h2>
-      <p class="small muted" style="margin:0 0 12px">Your Google page is what people see when they search for your business on Google or Google Maps.</p>
+      <p class="small muted" style="margin:0 0 12px">Your Google page is what people see when they search for your business on Google or Google Maps. Google calls it your <b>Business Profile</b>.</p>
       <div class="field"><label for="shop">Business name</label><input id="shop" name="shop" maxlength="120" placeholder="As it shows on Google"></div>
       <div class="field"><label for="maps_link">Link to your Google page</label><input id="maps_link" name="maps_link" type="url" inputmode="url" maxlength="500" placeholder="Paste the link here">
         <div class="how"><b>How to get the link</b><ol><li>Open the <b>Google Maps</b> app.</li><li>Search for your business name and tap it.</li><li>Under the name you will see buttons like Directions, Call and Save. Tap <b>Share</b>.</li><li>Tap <b>Copy link</b>, come back here and paste it in the box.</li></ol></div></div>
@@ -60,7 +60,7 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
 
     <div class="step">
       <h2><span class="n">2</span>Your permission</h2>
-      <label class="chk" id="c_ok"><input type="checkbox" id="permission_ok" name="permission_ok" value="yes"><span>I allow ReviewSaathi to read the reviews on my Google page, and to write replies and short posts (news about my business) for it.</span></label>
+      <label class="chk" id="c_ok"><input type="checkbox" id="permission_ok" name="permission_ok" value="yes"><span>I allow ReviewSaathi to read the reviews on my Google page, and to write replies and short posts (news about my business) for it. Posts are sent to me first and go up only if I approve them.</span></label>
       <label class="chk" id="c_never"><input type="checkbox" id="never"><span>I understand that:<ul><li>ReviewSaathi never writes fake reviews and never asks for my Google password.</li><li>Nothing goes on my page that I have said no to.</li><li>If my work has rules about advertising (for example doctors), I follow them.</li><li>I have read the <a href="terms" target="_blank">Terms</a> and the <a href="privacy" target="_blank">Privacy Policy</a>.</li></ul></span></label>
       <div class="field" style="margin-top:14px"><label for="permission_name">Your full name</label><input id="permission_name" name="permission_name" maxlength="80" autocomplete="name"><p class="hint">This is your signature. We also use it when we message you.</p></div>
     </div>
@@ -73,13 +73,16 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
         <label><input type="radio" name="billing" value="yearly"><b>Yearly</b> &middot; Rs.34,999 a year<br><span class="small muted">Two months cheaper.</span></label>
       </div>
       <p class="small muted" style="margin-top:8px">Prices are plus GST. Nothing is charged on this form. We send you a payment link after we set you up.</p>
-      <div class="how" id="managerbox">
-        <b>Add us on Google (2 minutes, or later)</b>
-        <p class="small" style="margin:4px 0 6px">This lets us reply on your Google page for you. You stay the owner, you can remove us any time, and we never see your password.</p>
+    </div>
+
+    <div class="step" id="managerbox">
+      <h2><span class="n">4</span>Add us on Google (2 minutes, or later)</h2>
+      <div class="how">
+        <p class="small" style="margin:0 0 6px">This lets us reply on your Google page for you. You stay the owner, you can remove us any time, and we never see your password.</p>
         <ol>
           <li>Open the <b>Google Maps</b> app and tap your photo at the top right.</li>
           <li>Tap <b>Your Business Profile</b>.</li>
-          <li>Tap the three dots, then <b>Business Profile settings</b>, then <b>Managers</b>. (On some phones this is called <b>People and access</b>.)</li>
+          <li>Tap the three dots (&#8942;) at the top right, then <b>Business Profile settings</b>, then <b>Managers</b>. (On some phones this is called <b>People and access</b>.)</li>
           <li>Tap <b>Add</b>, paste our email, choose <b>Manager</b> and tap <b>Invite</b>.</li>
         </ol>
         <div class="mail"><code id="mgr">thebluefox292@gmail.com</code><button type="button" id="copymgr">Copy email</button></div>
@@ -89,14 +92,14 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
     </div>
 
     <div class="step">
-      <h2><span class="n">4</span>How to reach you, and how replies should sound</h2>
+      <h2><span class="n">5</span>How to reach you, and how replies should sound</h2>
       <div class="field"><label for="owner_phone">Your WhatsApp number</label><input id="owner_phone" name="owner_phone" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="98XXXXXXXX"></div>
       <div class="field"><label for="owner_email">Your email</label><input id="owner_email" name="owner_email" type="email" autocomplete="email" maxlength="120"><p class="hint">Unhappy reviews (1 to 3 stars) and sensitive ones come here first. Nothing is posted until you tap <b>Post</b> in that email.</p></div>
       <input type="hidden" name="language" value="English">
       <p class="small muted" style="margin:0 0 18px">Replies are written in English for now.</p>
       <div class="field"><label for="tone">How should replies sound?</label>
         <select id="tone" name="tone"><option value="friendly">Friendly and warm</option><option value="formal">Polite and formal</option><option value="casual">Short and casual</option></select></div>
-      <div class="field"><label for="services">What do you offer?</label><textarea id="services" name="services" maxlength="800" placeholder="Your main products or services, one per line"></textarea><p class="hint">We use this for your monthly posts, and only write about what you list.</p></div>
+      <div class="field"><label for="services">What do you offer? (you can add this later)</label><textarea id="services" name="services" maxlength="800" placeholder="Your main products or services, one per line"></textarea><p class="hint">We use this for your monthly posts, and only write about what you list.</p></div>
       <div class="field"><label for="address_as">How should replies address customers?</label>
         <select id="address_as" name="address_as"><option value="name">By first name</option><option value="sir">As Sir or Ma'am</option><option value="none">Without a name</option></select></div>
       <div class="field"><label for="invite_call">When a customer is unhappy, may the reply ask them to call you or visit?</label>
@@ -119,6 +122,7 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
   <p>We will message you on WhatsApp soon with the next steps.</p>
   <p id="nomgr" hidden style="margin-top:10px">Not added us on Google yet? That is fine. We will help you with it on WhatsApp.</p>
   <p class="small muted" style="margin-top:12px">Your reference: <b id="ref"></b>. Keep it if you contact us.</p>
+  <p class="small" style="margin-top:12px"><a href="#" id="another">Sign up another business</a></p>
 </div>
 </div></main>
 <footer class="sitefoot"><div class="wrap small muted">
@@ -171,7 +175,23 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
     document.getElementById('saved').hidden = false;
   }
   restore();
-  form.addEventListener('input', save); form.addEventListener('change', save);
+  function unmark(e){
+    var box = e.target.closest && (e.target.closest('.chk') || e.target.closest('.field'));
+    if (!box || !box.classList.contains('bad')) return;
+    box.classList.remove('bad'); e.target.removeAttribute('aria-invalid');
+    Array.prototype.forEach.call(box.querySelectorAll('.ferr'), function(x){ x.remove(); });
+    if (!document.querySelector('.ferr')) { err.hidden = true; err.textContent = ''; }
+  }
+  form.addEventListener('input', function(e){ unmark(e); save(); }); form.addEventListener('change', function(e){ unmark(e); save(); });
+  document.getElementById('startover').addEventListener('click', function(e){ e.preventDefault(); store(DRAFT, null); form.reset(); clearMarks(); document.getElementById('saved').hidden = true; });
+  document.getElementById('another').addEventListener('click', function(e){ e.preventDefault(); try { sessionStorage.removeItem(DONE); } catch(x){} location.href = location.pathname; });
+  // only real Google hosts: google.<country>, maps.app.goo.gl, goo.gl, g.page, share.google
+  function googleLink(u){
+    if (/\s/.test(u)) return false;
+    var h = '';
+    try { h = new URL(/^https?:\/\//i.test(u) ? u : 'https://' + u).hostname.toLowerCase(); } catch(x){ return false; }
+    return /(^|\.)google\.(com|co\.in|co\.[a-z]{2}|com\.[a-z]{2}|[a-z]{2})$/.test(h) || /(^|\.)goo\.gl$/.test(h) || h === 'g.page' || h === 'share.google';
+  }
 
   // after a successful send, Back shows the thank-you again instead of a form that can be sent twice
   function showThanks(ref, mgr){
@@ -198,7 +218,7 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
     if (!v('shop')) out.push([E.shop, 'Please type your business name.']);
     var link = v('maps_link');
     if (!link) out.push([E.maps_link, 'Please paste the link to your Google page.']);
-    else if (/\s/.test(link) || !/^(https?:\/\/)?([a-z0-9-]+\.)*(google\.[a-z.]+|goo\.gl|g\.page|share\.google)(\/|$)/i.test(link)) out.push([E.maps_link, 'This does not look like a Google Maps link. Use Share, then Copy link, in the Google Maps app.']);
+    else if (/\s/.test(link) || !googleLink(link)) out.push([E.maps_link, 'This does not look like a Google Maps link. Use Share, then Copy link, in the Google Maps app.']);
     if (!E.permission_ok.checked) out.push([E.permission_ok, 'Please tick this box to give us permission.']);
     if (!document.getElementById('never').checked) out.push([document.getElementById('never'), 'Please tick this box.']);
     if (!v('permission_name')) out.push([E.permission_name, 'Please type your full name.']);

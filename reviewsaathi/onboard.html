@@ -27,9 +27,15 @@ main{padding:26px 0 70px}
 .err{background:var(--bad-bg);color:var(--bad);border-radius:10px;padding:12px 14px;margin:14px 0;font-weight:600}
 .done{text-align:center;padding:30px 10px}.done h2{margin-bottom:10px}
 .hp{position:absolute;left:-9999px;opacity:0}
-code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radius:6px;word-break:break-all}
+code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radius:6px}
+.mail{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:8px 0}.mail code{white-space:nowrap;font-size:16px;padding:8px 10px}
+.mail button{min-height:44px;padding:8px 16px;border-radius:10px;border:2px solid var(--accent);background:var(--surface);color:var(--accent);font:700 16px var(--f-body);cursor:pointer}
+.bad input,.bad textarea,.bad select{border-color:var(--bad)}.chk.bad span{color:var(--bad)}
+.ferr{color:var(--bad);font-weight:600;font-size:15px;margin:6px 0 0}
+.chk ul{margin:6px 0 0;padding-left:1.1em;display:grid;gap:4px}
+.saved{font-size:14px;color:var(--muted);margin:4px 0 0}
 
-.sitefoot{padding:28px 0 44px;border-top:1px solid var(--line);margin-top:20px}.sitefoot nav{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:10px}.sitefoot p{color:var(--muted)}
+.sitefoot{padding:28px 0 44px;border-top:1px solid var(--line);margin-top:20px}.sitefoot nav{display:flex;flex-wrap:wrap;gap:4px 18px;margin-bottom:10px}.sitefoot nav a{display:inline-block;padding:10px 0;min-height:44px}.sitefoot p{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -38,78 +44,81 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
 <main><div class="wrap">
 <div id="formbox">
   <h1 style="font-size:clamp(30px,6vw,42px)">Let's get you started</h1>
-  <p style="margin-top:8px">Four short steps. About 15 minutes. You can stop us any time.</p>
+  <p style="margin-top:8px">Four short steps. About 5 minutes. You can add us on Google later if you are busy.</p>
+  <p class="saved" id="saved" hidden>Your answers are saved on this phone, so you can leave and come back.</p>
 
   <form id="f" autocomplete="on" novalidate>
     <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
 
     <div class="step">
       <h2><span class="n">1</span>Your Google page</h2>
-      <div class="field"><label for="shop">Business name</label><input id="shop" name="shop" required placeholder="As it shows on Google"></div>
-      <div class="field"><label for="maps_link">Link to your Google page</label><input id="maps_link" name="maps_link" required inputmode="url" placeholder="Paste the link here">
-        <div class="how"><b>How to get the link</b><ol><li>Open Google Maps on your phone</li><li>Search for your business</li><li>Tap <b>Share</b>, then <b>Copy link</b></li></ol></div></div>
+      <p class="small muted" style="margin:0 0 12px">Your Google page is what people see when they search for your business on Google or Google Maps.</p>
+      <div class="field"><label for="shop">Business name</label><input id="shop" name="shop" maxlength="120" placeholder="As it shows on Google"></div>
+      <div class="field"><label for="maps_link">Link to your Google page</label><input id="maps_link" name="maps_link" type="url" inputmode="url" maxlength="500" placeholder="Paste the link here">
+        <div class="how"><b>How to get the link</b><ol><li>Open the <b>Google Maps</b> app.</li><li>Search for your business name and tap it.</li><li>Under the name you will see buttons like Directions, Call and Save. Tap <b>Share</b>.</li><li>Tap <b>Copy link</b>, come back here and paste it in the box.</li></ol></div></div>
     </div>
 
     <div class="step">
       <h2><span class="n">2</span>Your permission</h2>
-      <p class="small muted">We only do what you allow here, and you can stop us any time.</p>
-      <label class="chk"><input type="checkbox" id="permission_ok" name="permission_ok" value="yes"><span>I allow ReviewSaathi to read the reviews on my Google page, write replies, and post updates, in my business name.</span></label>
-      <label class="chk"><input type="checkbox" id="never" required><span>I understand ReviewSaathi never buys or writes fake reviews, never asks for my Google password, and never posts anything I have said no to. I understand I am responsible for following any advertising or public-communication rules of my profession. I have read the <a href="terms" target="_blank">Terms</a> and <a href="privacy" target="_blank">Privacy Policy</a>.</span></label>
-      <div class="field" style="margin-top:14px"><label for="permission_name">Type your full name to sign</label><input id="permission_name" name="permission_name" required autocomplete="name"></div>
+      <label class="chk" id="c_ok"><input type="checkbox" id="permission_ok" name="permission_ok" value="yes"><span>I allow ReviewSaathi to read the reviews on my Google page, and to write replies and short posts (news about my business) for it.</span></label>
+      <label class="chk" id="c_never"><input type="checkbox" id="never"><span>I understand that:<ul><li>ReviewSaathi never writes fake reviews and never asks for my Google password.</li><li>Nothing goes on my page that I have said no to.</li><li>If my work has rules about advertising (for example doctors), I follow them.</li><li>I have read the <a href="terms" target="_blank">Terms</a> and the <a href="privacy" target="_blank">Privacy Policy</a>.</li></ul></span></label>
+      <div class="field" style="margin-top:14px"><label for="permission_name">Your full name</label><input id="permission_name" name="permission_name" maxlength="80" autocomplete="name"><p class="hint">This is your signature. We also use it when we message you.</p></div>
     </div>
 
     <div class="step">
-      <h2><span class="n">3</span>Standard plan</h2>
-      <input type="hidden" name="plan" value="standard" id="planfix">
+      <h2><span class="n">3</span>Your plan</h2>
+      <input type="hidden" name="plan" value="standard">
       <div class="radio">
         <label><input type="radio" name="billing" value="monthly" checked><b>Monthly</b> &middot; Rs.3,499 a month<br><span class="small muted">Stop any time.</span></label>
         <label><input type="radio" name="billing" value="yearly"><b>Yearly</b> &middot; Rs.34,999 a year<br><span class="small muted">Two months cheaper.</span></label>
       </div>
-      <p class="small muted" style="margin-top:8px">Prices are plus GST. We will send you the payment link after we set you up. Nothing is charged on this form.</p>
+      <p class="small muted" style="margin-top:8px">Prices are plus GST. Nothing is charged on this form. We send you a payment link after we set you up.</p>
       <div class="how" id="managerbox">
-        <b>For Standard: add us on Google (2 minutes)</b>
+        <b>Add us on Google (2 minutes, or later)</b>
+        <p class="small" style="margin:4px 0 6px">This lets us reply on your Google page for you. You stay the owner, you can remove us any time, and we never see your password.</p>
         <ol>
-          <li>Open your Google page and tap <b>Edit profile</b>, then <b>People and access</b> (or <b>Business Profile settings</b>)</li>
-          <li>Tap <b>Add</b>, and type this email: <code id="mgr">thebluefox292@gmail.com</code></li>
-          <li>Choose the role <b>Manager</b> and send the invite</li>
+          <li>Open the <b>Google Maps</b> app and tap your photo at the top right.</li>
+          <li>Tap <b>Your Business Profile</b>.</li>
+          <li>Tap the three dots, then <b>Business Profile settings</b>, then <b>Managers</b>. (On some phones this is called <b>People and access</b>.)</li>
+          <li>Tap <b>Add</b>, paste our email, choose <b>Manager</b> and tap <b>Invite</b>.</li>
         </ol>
-        <p class="small muted" style="margin-top:6px">You stay the Owner. You can remove us in 2 taps. We never see your password.</p>
-        <label class="chk"><input type="checkbox" name="manager_added" value="yes">I have sent the invite</label>
+        <div class="mail"><code id="mgr">thebluefox292@gmail.com</code><button type="button" id="copymgr">Copy email</button></div>
+        <p class="small muted" style="margin:0 0 4px">This is the ReviewSaathi team account.</p>
+        <label class="chk"><input type="checkbox" name="manager_added" value="yes"><span>I have sent the invite. <span class="muted">(Not done yet? You can still send this form. We will help you on WhatsApp.)</span></span></label>
       </div>
     </div>
 
     <div class="step">
-      <h2><span class="n">4</span>A few details</h2>
-      <div class="field"><label for="owner_name">Your name</label><input id="owner_name" name="owner_name" required autocomplete="name"></div>
-      <div class="field"><label for="owner_phone">Your WhatsApp number</label><input id="owner_phone" name="owner_phone" required inputmode="tel" autocomplete="tel" placeholder="98XXXXXXXX"></div>
-      <div class="field"><label for="owner_email">Your email</label><input id="owner_email" name="owner_email" required type="email" autocomplete="email"><p class="hint">Hard reviews are sent here for your OK.</p></div>
+      <h2><span class="n">4</span>How to reach you, and how replies should sound</h2>
+      <div class="field"><label for="owner_phone">Your WhatsApp number</label><input id="owner_phone" name="owner_phone" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="98XXXXXXXX"></div>
+      <div class="field"><label for="owner_email">Your email</label><input id="owner_email" name="owner_email" type="email" autocomplete="email" maxlength="120"><p class="hint">Unhappy reviews (1 to 3 stars) and sensitive ones come here first. Nothing is posted until you tap <b>Post</b> in that email.</p></div>
       <input type="hidden" name="language" value="English">
       <p class="small muted" style="margin:0 0 18px">Replies are written in English for now.</p>
       <div class="field"><label for="tone">How should replies sound?</label>
         <select id="tone" name="tone"><option value="friendly">Friendly and warm</option><option value="formal">Polite and formal</option><option value="casual">Short and casual</option></select></div>
-      <div class="field"><label for="services">What do you offer?</label><textarea id="services" name="services" placeholder="List your main products or services, one per line"></textarea><p class="hint">We only write about what you list here.</p></div>
+      <div class="field"><label for="services">What do you offer?</label><textarea id="services" name="services" maxlength="800" placeholder="Your main products or services, one per line"></textarea><p class="hint">We use this for your monthly posts, and only write about what you list.</p></div>
       <div class="field"><label for="address_as">How should replies address customers?</label>
         <select id="address_as" name="address_as"><option value="name">By first name</option><option value="sir">As Sir or Ma'am</option><option value="none">Without a name</option></select></div>
-      <div class="field"><label for="invite_call">When a customer is unhappy, may we invite them to call or visit?</label>
+      <div class="field"><label for="invite_call">When a customer is unhappy, may the reply ask them to call you or visit?</label>
         <select id="invite_call" name="invite_call"><option value="yes">Yes</option><option value="no">No</option></select></div>
-      <div class="field"><label for="avoid">Anything we must never say or mention? (optional)</label><textarea id="avoid" name="avoid" placeholder="For example: no prices, no staff names, no medical advice" maxlength="400"></textarea><p class="hint">Include any rules from your profession or your own preferences. We already never promise refunds, discounts or results.</p></div>
-      <div class="field"><label for="current_offer">Any offer or news right now? (optional)</label><input id="current_offer" name="current_offer" placeholder="For example: a festival discount, new timings, a new service"></div>
-      <div class="field"><label for="approval_contact">Where should we send hard reviews for your OK? (optional)</label><input id="approval_contact" name="approval_contact" placeholder="Leave empty to use your email above"></div>
+      <div class="field"><label for="avoid">Anything we must never say or mention? (optional)</label><textarea id="avoid" name="avoid" maxlength="400" placeholder="For example: no prices, no staff names"></textarea><p class="hint">We already never promise refunds, discounts or results.</p></div>
+      <div class="field"><label for="current_offer">Any offer or news right now? (optional)</label><input id="current_offer" name="current_offer" maxlength="300" placeholder="For example: festival discount"></div>
+      <div class="field"><label for="approval_contact">Send unhappy reviews to a different email? (optional)</label><input id="approval_contact" name="approval_contact" maxlength="120" placeholder="Another email"><p class="hint">Leave empty to use your email above.</p></div>
       <div class="field"><label for="auto_reply_positive">Happy reviews (4 and 5 stars)</label>
-        <select id="auto_reply_positive" name="auto_reply_positive"><option value="yes">Reply for me, no need to ask</option><option value="no">Ask me before replying</option></select></div>
+        <select id="auto_reply_positive" name="auto_reply_positive"><option value="yes">Reply for me, no need to ask</option><option value="no">Ask me before every reply</option></select></div>
     </div>
 
     <div class="err" id="err" hidden></div>
     <p class="small muted" style="margin:0 0 12px">You stay the owner of your Google page and of every reply we write. You can stop at any time, and the replies stay yours. See <a href="cancellation" target="_blank">Cancellation and refunds</a>.</p>
-    <button class="btn go" id="go" type="submit" style="width:100%">Send</button>
-    
+    <button class="btn go" id="go" type="submit" style="width:100%">Send and finish</button>
   </form>
 </div>
 
 <div id="thanks" class="step done" hidden>
   <h2>Thank you. We have your details.</h2>
-  <p>We will message you on WhatsApp shortly with what happens next.</p>
-  <p class="small muted" style="margin-top:12px">Your reference: <b id="ref"></b></p>
+  <p>We will message you on WhatsApp soon with the next steps.</p>
+  <p id="nomgr" hidden style="margin-top:10px">Not added us on Google yet? That is fine. We will help you with it on WhatsApp.</p>
+  <p class="small muted" style="margin-top:12px">Your reference: <b id="ref"></b>. Keep it if you contact us.</p>
 </div>
 </div></main>
 <footer class="sitefoot"><div class="wrap small muted">
@@ -121,27 +130,117 @@ code{font:15px var(--f-mono);background:var(--sunk);padding:2px 7px;border-radiu
 (function(){
   var API = 'https://aiservices-snehoo.duckdns.org/webhook/reviewsaathi-onboard';
   var MANAGER_EMAIL = 'thebluefox292@gmail.com';   // temporary; switch to a proper business address later
-  document.getElementById('mgr').textContent = MANAGER_EMAIL;
+  var DRAFT = 'rs_onboard_draft', DONE = 'rs_onboard_done';
   var form = document.getElementById('f'), err = document.getElementById('err'), go = document.getElementById('go');
-  function plan(){ return 'standard'; }
-  function toggle(){ document.getElementById('managerbox').hidden = plan() !== 'standard'; }
-  form.addEventListener('change', toggle); toggle();
-  function show(m){ err.textContent = m; err.hidden = !m; if (m) err.scrollIntoView({behavior:'smooth', block:'center'}); }
+  document.getElementById('mgr').textContent = MANAGER_EMAIL;
+  function store(k, v){ try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch(e){} }
+  function read(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+
+  // copy the manager email
+  var cp = document.getElementById('copymgr');
+  cp.addEventListener('click', function(){
+    var done = function(){ cp.textContent = 'Copied'; setTimeout(function(){ cp.textContent = 'Copy email'; }, 1600); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(MANAGER_EMAIL).then(done, function(){});
+  });
+
+  // yearly link from the landing page
+  if (new URLSearchParams(location.search).get('billing') === 'yearly') form.querySelector('input[name=billing][value=yearly]').checked = true;
+
+  // keep answers if the phone reloads the page (for example after switching to Google Maps)
+  function save(){
+    var d = {};
+    Array.prototype.forEach.call(form.elements, function(el){
+      if (!el.name || el.name === 'website' || el.type === 'hidden') return;
+      if (el.type === 'checkbox') d[el.name || el.id] = el.checked;
+      else if (el.type === 'radio') { if (el.checked) d[el.name] = el.value; }
+      else d[el.name] = el.value;
+    });
+    d.never = document.getElementById('never').checked;
+    store(DRAFT, JSON.stringify(d));
+  }
+  function restore(){
+    var raw = read(DRAFT); if (!raw) return;
+    var d; try { d = JSON.parse(raw); } catch(e){ return; }
+    Array.prototype.forEach.call(form.elements, function(el){
+      if (!el.name || !(el.name in d)) return;
+      if (el.type === 'checkbox') el.checked = !!d[el.name];
+      else if (el.type === 'radio') el.checked = d[el.name] === el.value;
+      else if (el.type !== 'hidden') el.value = d[el.name];
+    });
+    document.getElementById('never').checked = !!d.never;
+    document.getElementById('saved').hidden = false;
+  }
+  restore();
+  form.addEventListener('input', save); form.addEventListener('change', save);
+
+  // after a successful send, Back shows the thank-you again instead of a form that can be sent twice
+  function showThanks(ref, mgr){
+    document.getElementById('formbox').hidden = true; document.getElementById('thanks').hidden = false;
+    document.getElementById('ref').textContent = ref; document.getElementById('nomgr').hidden = !!mgr; window.scrollTo(0, 0);
+  }
+  function checkDone(){ var d = null; try { d = JSON.parse(sessionStorage.getItem(DONE) || 'null'); } catch(e){} if (d) showThanks(d.ref, d.mgr); }
+  checkDone(); window.addEventListener('pageshow', checkDone);
+
+  // checks: every problem is marked next to its box, the first one is shown, and the list sits above the button
+  function clearMarks(){
+    Array.prototype.forEach.call(document.querySelectorAll('.bad'), function(x){ x.classList.remove('bad'); });
+    Array.prototype.forEach.call(document.querySelectorAll('.ferr'), function(x){ x.remove(); });
+    err.hidden = true; err.textContent = '';
+  }
+  function mark(el, msg){
+    var box = el.closest('.chk') || el.closest('.field') || el.parentNode;
+    box.classList.add('bad'); el.setAttribute('aria-invalid', 'true');
+    var p = document.createElement('p'); p.className = 'ferr'; p.textContent = msg; box.appendChild(p);
+  }
+  function check(){
+    var E = form.elements, out = [];
+    var v = function(n){ return (E[n].value || '').trim(); };
+    if (!v('shop')) out.push([E.shop, 'Please type your business name.']);
+    var link = v('maps_link');
+    if (!link) out.push([E.maps_link, 'Please paste the link to your Google page.']);
+    else if (/\s/.test(link) || !/^(https?:\/\/)?([a-z0-9-]+\.)*(google\.[a-z.]+|goo\.gl|g\.page|share\.google)(\/|$)/i.test(link)) out.push([E.maps_link, 'This does not look like a Google Maps link. Use Share, then Copy link, in the Google Maps app.']);
+    if (!E.permission_ok.checked) out.push([E.permission_ok, 'Please tick this box to give us permission.']);
+    if (!document.getElementById('never').checked) out.push([document.getElementById('never'), 'Please tick this box.']);
+    if (!v('permission_name')) out.push([E.permission_name, 'Please type your full name.']);
+    var ph = v('owner_phone').replace(/[\s()+-]/g, '');
+    if (!ph) out.push([E.owner_phone, 'Please type your WhatsApp number.']);
+    else if (!/^(91)?[6-9]\d{9}$/.test(ph)) out.push([E.owner_phone, 'Please type a 10-digit mobile number, for example 9876543210.']);
+    var em = v('owner_email');
+    if (!em) out.push([E.owner_email, 'Please type your email.']);
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) out.push([E.owner_email, 'This email does not look right.']);
+    var ac = v('approval_contact');
+    if (ac && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(ac)) out.push([E.approval_contact, 'This email does not look right.']);
+    return out;
+  }
+  function fail(m){ err.textContent = m; err.hidden = false; go.disabled = false; go.textContent = 'Send and finish'; err.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+
   form.addEventListener('submit', function(e){
-    e.preventDefault(); show('');
-    var need = ['shop','maps_link','permission_name','owner_name','owner_phone','owner_email'];
-    for (var i = 0; i < need.length; i++) { if (!form.elements[need[i]].value.trim()) { show('Please fill in all the boxes.'); form.elements[need[i]].focus(); return; } }
-    if (!form.elements.permission_ok.checked || !document.getElementById('never').checked) { show('Please tick both boxes in step 2.'); return; }
+    e.preventDefault(); clearMarks();
+    var probs = check();
+    if (probs.length) {
+      probs.forEach(function(p){ mark(p[0], p[1]); });
+      err.textContent = probs.length === 1 ? 'One thing needs fixing. It is marked in red.' : probs.length + ' things need fixing. They are marked in red.';
+      err.hidden = false;
+      probs[0][0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(function(){ try { probs[0][0].focus({ preventScroll: true }); } catch(x){} }, 400);
+      return;
+    }
     var body = new URLSearchParams(new FormData(form));
-    if (!form.elements.permission_ok.checked) body.delete('permission_ok');
+    body.set('owner_name', (form.elements.permission_name.value || '').trim());
     go.disabled = true; go.textContent = 'Sending...';
-    fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() })
+    var ctl = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function(){ if (ctl) ctl.abort(); }, 30000);
+    fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString(), signal: ctl ? ctl.signal : undefined })
       .then(function(r){ return r.json(); })
       .then(function(j){
-        if (j && j.ok) { document.getElementById('formbox').hidden = true; document.getElementById('thanks').hidden = false; document.getElementById('ref').textContent = j.id; window.scrollTo(0,0); }
-        else { show((j && j.error) || 'Something went wrong. Please try again.'); go.disabled = false; go.textContent = 'Send'; }
+        clearTimeout(timer);
+        if (j && j.ok) {
+          var mgr = !!form.elements.manager_added.checked;
+          try { sessionStorage.setItem(DONE, JSON.stringify({ ref: j.id, mgr: mgr })); } catch(x){}
+          store(DRAFT, null); form.reset(); showThanks(j.id, mgr);
+        } else fail((j && j.error) || 'Something went wrong. Please try again.');
       })
-      .catch(function(){ show('We could not send this. Please check your internet and try again.'); go.disabled = false; go.textContent = 'Send'; });
+      .catch(function(x){ clearTimeout(timer); fail(x && x.name === 'AbortError' ? 'This is taking too long. Please check your internet and tap Send again. Your answers are kept.' : 'We could not send this. Please check your internet and try again. Your answers are kept.'); });
   });
 })();
 </script>

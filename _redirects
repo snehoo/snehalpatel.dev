@@ -1,0 +1,4 @@
+# ReviewSaathi moved to its own domain on 21 Oct 2026. Old links keep working.
+/reviewsaathi https://reviewsaathi.com/ 301
+/reviewsaathi/ https://reviewsaathi.com/ 301
+/reviewsaathi/* https://reviewsaathi.com/:splat 301

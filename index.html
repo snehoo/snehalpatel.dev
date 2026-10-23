@@ -670,17 +670,6 @@
 
   <header style="display:none;"></header>
 
-  <nav class="menu-panel" id="menuPanel">
-    <button class="menu-close" id="menuClose">Close</button>
-    <div class="menu-grid">
-      <a href="#projects">Work</a>
-      <a href="#services">Services</a>
-      <a href="#projects">Projects</a>
-      <a href="#sidegigs">Side Gigs</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-    </div>
-  </nav>
 
   <!-- ── Hero ── -->
   <section class="hero">
@@ -924,15 +913,6 @@
 </div>
 
 <script>
-  const menuBtn   = document.getElementById('menuBtn');
-  const menuClose = document.getElementById('menuClose');
-  const menuPanel = document.getElementById('menuPanel');
-  function openMenu()  { menuPanel.classList.add('open');    menuBtn.textContent = 'Close'; }
-  function closeMenu() { menuPanel.classList.remove('open'); menuBtn.textContent = 'Menu';  }
-  menuBtn.addEventListener('click', () => menuPanel.classList.contains('open') ? closeMenu() : openMenu());
-  menuClose.addEventListener('click', closeMenu);
-  menuPanel.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
-
   const modalOverlay = document.getElementById('modalOverlay');
   const modalClose   = document.getElementById('modalClose');
   const contactForm  = document.getElementById('contactForm');

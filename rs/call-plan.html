@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>ReviewSaathi Call Plan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+</head>
+<body>
+<style>
+/* Layout: one working column; a sticky bar with progress; script first, then the call list grouped by kind of shop, then answers to objections */
+:root{
+  --bg:#f4f7f4; --surface:#ffffff; --ink:#16201c; --muted:#5b6a62; --line:#d6ddd7;
+  --brand:#17703f; --brand-soft:#e3f1e8; --warm:#a8520c; --warm-soft:#fbeedf;
+  --vary:#fff1bf; --vary-ink:#5c4400; --done:#8a958f;
+  --f-head:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1512; --surface:#18201c; --ink:#e7eee9; --muted:#9aa9a1; --line:#2c3832;
+  --brand:#5cc48a; --brand-soft:#1c3327; --warm:#f0a35c; --warm-soft:#3a2716;
+  --vary:#4a3c10; --vary-ink:#ffe9a8; --done:#6c7a73; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1512; --surface:#18201c; --ink:#e7eee9; --muted:#9aa9a1; --line:#2c3832;
+  --brand:#5cc48a; --brand-soft:#1c3327; --warm:#f0a35c; --warm-soft:#3a2716;
+  --vary:#4a3c10; --vary-ink:#ffe9a8; --done:#6c7a73; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body)}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 64px}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:30px}
+h2{font-size:24px;margin-top:44px;padding-top:8px;scroll-margin-top:72px}
+h3{font-size:18px;margin-top:22px}
+p{margin:8px 0}
+.lead{color:var(--muted);max-width:62ch}
+.eyebrow{font:600 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--brand)}
+a{color:var(--brand)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar .in{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.bar nav{display:flex;flex-wrap:wrap;gap:4px 14px;font-weight:600;font-size:15px}
+.bar nav a{text-decoration:none}
+.prog{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.meter{width:110px;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--brand);width:0}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:12px}
+.grid2>*{min-width:0}
+ul.tight{margin:6px 0;padding-left:20px}
+ul.tight li{margin:3px 0}
+.say{background:var(--brand-soft);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:16.5px}
+.say b{font-weight:600}
+.say .who{display:block;font:600 12px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--brand);margin-bottom:2px}
+.v{background:var(--vary);color:var(--vary-ink);border-radius:4px;padding:0 3px}
+.legend{font-size:14px;color:var(--muted)}
+.steps{counter-reset:s;display:grid;gap:14px;margin-top:12px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-width:0}
+.step h3{margin:0 0 4px;display:flex;gap:10px;align-items:baseline}
+.step h3::before{counter-increment:s;content:counter(s);font:700 14px var(--f-body);color:var(--surface);background:var(--brand);border-radius:50%;width:24px;height:24px;display:inline-grid;place-items:center;flex:none}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
+.tabs button,.chips button{font:600 14px var(--f-body);padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.tabs button[aria-pressed="true"],.chips button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--surface)}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+.tw{overflow-x:auto}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{font:600 13px var(--f-body);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.grp h3{display:flex;align-items:baseline;gap:10px;margin-top:28px}
+.grp h3 small{font:500 14px var(--f-body);color:var(--muted)}
+.grp .tip{font-size:14.5px;color:var(--muted);margin:2px 0 8px;max-width:70ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.card>*{min-width:0}
+.card.is-done{opacity:.62}
+.card.is-done .nm{text-decoration:line-through;text-decoration-color:var(--done)}
+.ck{grid-row:span 3;padding-top:3px}
+.ck input{width:22px;height:22px;accent-color:var(--brand)}
+.top{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}
+.nm{font:600 17px var(--f-body)}
+.pill{font:600 12px var(--f-body);padding:2px 9px;border-radius:999px;white-space:nowrap}
+.t1{background:var(--brand);color:var(--surface)}
+.t2{background:var(--brand-soft);color:var(--brand)}
+.t3{background:var(--line);color:var(--muted)}
+.tw0{background:var(--warm);color:var(--surface)}
+.meta{font-size:14.5px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+.num{font-variant-numeric:tabular-nums}
+.ph{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:14.5px}
+.ph code{font:500 15px var(--f-mono);user-select:all}
+.mini{font:600 13px var(--f-body);padding:3px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;text-decoration:none}
+.note{font-size:14.5px;background:var(--warm-soft);border-radius:8px;padding:6px 10px;margin-top:4px}
+details.op{grid-column:2;font-size:15px}
+details.op summary{cursor:pointer;font-weight:600;color:var(--brand);font-size:14.5px}
+.log{grid-column:2;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:4px}
+.log select,.log input,.log textarea{font:15px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 8px}
+.log textarea{flex:1 1 220px;min-height:34px;resize:vertical}
+.log label{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center}
+details.obj{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin:8px 0;padding:0 14px}
+details.obj summary{cursor:pointer;padding:10px 0;font-weight:600}
+details.obj .say{margin-top:0}
+.empty{color:var(--muted);font-size:15px;padding:8px 0}
+.copied{color:var(--brand);font-size:14px}
+textarea.fallback{width:100%;min-height:120px;margin-top:8px;font:13px var(--f-mono)}
+@media (max-width:520px){h1{font-size:25px}.prog{margin-left:0}.card{grid-template-columns:auto 1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="bar"><div class="in">
+  <nav aria-label="Sections"><a href="#before">Before you call</a><a href="#script">The call</a><a href="#list">Call list</a><a href="#objections">Objections</a></nav>
+  <div class="prog"><span id="progtxt">0 of 0 done</span><span class="meter"><i id="progbar"></i></span></div>
+</div></div>
+
+<main class="wrap">
+  <p class="eyebrow">ReviewSaathi · calling plan</p>
+  <h1>Calling the shops we sent a free sample to</h1>
+  <p class="lead">Every shop below got a free 2-page PDF on WhatsApp with ready replies to their Google reviews. Your job: reach the owner, check they saw it, explain the service in 30 seconds, and send the form link. Tick a shop when you are done; your ticks and notes stay saved on this phone or computer.</p>
+
+  <h2 id="before">Before you call</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3 style="margin-top:0">What ReviewSaathi does</h3>
+      <ul class="tight">
+        <li>Replies to every new Google review for the shop, usually within a day.</li>
+        <li>Puts 4 updates a month on their Google page (a service, an offer, timings). The owner OKs them first.</li>
+        <li>Replies to angry or sensitive reviews wait for the owner's approval.</li>
+        <li>A short report every month.</li>
+      </ul>
+      <p><b>Price:</b> Rs.3,499 a month + GST, or Rs.34,999 a year. Same for every shop. Monthly can stop any time.</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Who to ask for, and when</h3>
+      <ul class="tight">
+        <li><b>Clinics:</b> ask for the doctor by name (shown on each card). Call 2 to 4 pm, or 11 am to 12.</li>
+        <li><b>Salons:</b> ask for the owner. Call 11 am to 1 pm. Many salons are shut on Tuesday; avoid evenings and weekends.</li>
+        <li><b>Garages:</b> ask for the owner (malik). Call 10 am to 12 or 3 to 5 pm on weekdays.</li>
+        <li>If the person on the phone is staff, get the owner's name and a good time, and ask them to show the PDF to the owner.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Keep it short</h3>
+      <ul class="tight">
+        <li>2 to 4 minutes a call. Talk naturally; do not read word for word.</li>
+        <li>No need to remember numbers. The point is simple: we write their review replies so they do not have to.</li>
+        <li>One goal: send the form link. Do not explain everything.</li>
+        <li>Write the outcome on the card straight after the call.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Never say or do</h3>
+      <ul class="tight">
+        <li>Never promise "top of Google" or more customers.</li>
+        <li>Never offer fake or paid reviews.</li>
+        <li>Never ask for a password or OTP.</li>
+        <li>No discounts. The price is the same for everyone.</li>
+        <li>Do not argue. If they say no twice, thank them and stop.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="script">The call, step by step</h2>
+  <p class="legend">Lines are in simple Hindi written in English letters. <span class="v">Highlighted words</span> change with the kind of shop; pick the kind below. Each shop in the call list also has its own opener, with the doctor's name filled in for clinics.</p>
+  <div class="tabs" role="group" aria-label="Kind of shop">
+    <button type="button" data-kind="clinic" aria-pressed="true">Dentist / clinic</button>
+    <button type="button" data-kind="salon" aria-pressed="false">Salon</button>
+    <button type="button" data-kind="garage" aria-pressed="false">Garage</button>
+    <button type="button" data-kind="other" aria-pressed="false">Other shop</button>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <h3>Opening</h3>
+      <div class="say"><span class="who">When someone picks up</span>Namaste! Main [aapka naam] bol raha/rahi hoon, ReviewSaathi se. <span class="v" data-s="ask"></span></div>
+      <div class="say"><span class="who">When the owner is on the line</span>Kuch din pehle humne aapke <span class="v" data-s="place"></span> ke WhatsApp pe ek free PDF bheja tha, aapke Google reviews ke replies ready karke. Hum har review ka reply aapke liye likh dete hain, taaki aapko khud na likhna pade. <span class="v" data-s="why"></span> Aapne PDF dekha kya?</div>
+    </div>
+
+    <div class="step">
+      <h3>Their answer, and what you say</h3>
+      <div class="tw"><table>
+        <thead><tr><th>They say</th><th>You say</th></tr></thead>
+        <tbody>
+          <tr><td>"Haan, dekha."</td><td>Badhiya! Yahi kaam hum har mahine karte hain. 30 second mein batata/batati hoon kaise. <i>(go to step 3)</i></td></tr>
+          <tr><td>"Nahi dekha."</td><td>Koi baat nahi, main abhi WhatsApp pe dobara bhejta/bhejti hoon, 1 minute ka hai. Dekh ke bataiye, main kal call karun? <i>(re-send the PDF from the card, set a call-back)</i></td></tr>
+          <tr><td>"Owner nahi hain / doctor busy hain."</td><td>Koi baat nahi. Unka naam kya hai, aur kab free milte hain? Please unko woh PDF dikha dijiye jo WhatsApp pe aaya tha. <i>(note the name and time)</i></td></tr>
+          <tr><td>"Abhi busy hoon."</td><td>Bilkul. Kab call karun, kal 3 baje theek rahega? <i>(note it, call exactly then)</i></td></tr>
+          <tr><td>"Interested nahi."</td><td>Koi baat nahi, aapke time ke liye thank you. PDF wale replies aapke hain, free mein use kar lijiye. <i>(mark "Not interested")</i></td></tr>
+          <tr><td>A question or a worry</td><td>Answer it in one line from <a href="#objections">Objections</a>, then go back to step 3 or 5.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="step">
+      <h3>How it works, in 30 seconds</h3>
+      <div class="say">Bilkul simple hai.<br>
+        Aapke Google pe jo bhi naya review aata hai, uska reply hum likh ke daalte hain, aapke <span class="v" data-s="biz"></span> ke naam se, mostly ek din mein.<br>
+        Har mahine aapke Google page pe 4 updates daalte hain, jaise <span class="v" data-s="upd"></span>. Pehle aapko dikhate hain, aap OK karo tabhi jaata hai.<br>
+        Agar koi <span class="v" data-s="cust"></span> naraz hai ya review sensitive hai, toh uska reply pehle aapke paas aata hai. Aap approve karoge tabhi jaayega.<br>
+        Mahine ke end mein ek chhota report bhi milta hai. Aapko kuch karna nahi hai.</div>
+    </div>
+
+    <div class="step">
+      <h3>Price and setup (only when they ask, or once they are interested)</h3>
+      <div class="say">Rs.3,499 mahina, plus GST. Ya poore saal ka ek saath Rs.34,999. Monthly wala kabhi bhi band kar sakte hain, koi contract nahi.</div>
+      <div class="say">Shuru karna aasaan hai: phone pe 5 minute ka form hai. Phir Google ki apni screen pe ek baar "Allow" dabana hai. Password hum kabhi nahi maangte. Uske baad payment link aata hai.</div>
+    </div>
+
+    <div class="step">
+      <h3>Closing</h3>
+      <div class="say"><span class="who">If they are interested</span>Toh main abhi aapko WhatsApp pe form ka link bhej deta/deti hoon, reviewsaathi.com/onboard. 5 minute lagenge. Form, Google aur payment ho gaya, toh usi din se replies shuru. Theek hai?</div>
+      <div class="say"><span class="who">If they are not sure</span>Koi baat nahi. PDF wale replies aap free mein use kar lijiye, copy-paste karke. Main [din] ko ek baar call karun?</div>
+      <div class="say"><span class="who">Always end with</span>Thank you [sir / ma'am], aapka din achha jaaye!</div>
+    </div>
+
+    <div class="step">
+      <h3>Right after the call</h3>
+      <p>Send one short WhatsApp from your phone, then fill the card (outcome, next call date, a note).</p>
+      <div class="say"><span class="who">Interested</span>Hi, this is [your name] from ReviewSaathi. Thanks for your time today. Here is the form to start, it takes 5 minutes on your phone: reviewsaathi.com/onboard</div>
+      <div class="say"><span class="who">Had not seen the PDF</span>Hi, this is [your name] from ReviewSaathi. Here is the free sample for [shop] again, with replies ready for your Google reviews. I will call you on [day].</div>
+    </div>
+
+    <div class="step">
+      <h3>Follow-up rules</h3>
+      <ul class="tight">
+        <li><b>No answer:</b> try once more after 2 hours, then the next day. After 3 tries, send the "had not seen the PDF" message and stop.</li>
+        <li><b>"Call later":</b> call exactly at the time they gave.</li>
+        <li><b>"Will think":</b> one call after 2 days. Then stop.</li>
+        <li><b>Form sent:</b> if they have not filled it in 2 days, one call to help.</li>
+        <li><b>Signed up, or a question you cannot answer:</b> tell Snehal the same day.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="list">Call list</h2>
+  <p class="lead">Grouped by kind of shop. Inside each group: <b>Warm</b> (they already replied) first, then <b>Call first</b> (most unanswered reviews, busiest pages), then <b>Call next</b> and <b>Later</b>, oldest message first.</p>
+  <div class="chips" role="group" aria-label="Show">
+    <button type="button" data-f="todo" aria-pressed="true">Not done yet</button>
+    <button type="button" data-f="first" aria-pressed="false">Warm and Call first</button>
+    <button type="button" data-f="all" aria-pressed="false">All</button>
+  </div>
+  <div class="chips" style="margin-top:0">
+    <button type="button" id="copynotes">Copy my call notes for Snehal</button>
+    <span class="copied" id="copiedmsg" hidden>Copied. Paste it in WhatsApp to Snehal.</span>
+  </div>
+  <textarea class="fallback" id="fallback" hidden aria-label="Your call notes"></textarea>
+  <div id="groups"></div>
+
+  <h2 id="objections">Objections</h2>
+  <p class="lead">One line each. Say it calmly, then go back to the close. If they still say no, thank them and stop.</p>
+  <div id="objs"></div>
+</main>
+
+<script>
+var SHOPS = [{"id": "ChIJo0BRCIuV5zsRVof7Fnz4HU4", "file": "dream-machines-2026-10-28-1835-uhdc", "name": "Dream Machines", "group": "other", "type": "computer store", "area": "Kalyan", "phone": "+91 97029 49000", "wa": "9702949000", "sent": "2026-10-28", "touches": 3, "rating": 4.3, "reviews": 85, "un": 20, "checked": 20, "score": 6.93, "warm": false, "doctor": "", "note": "Our first test shop (computer store). Low priority.", "tier": 3}, {"id": "ChIJbcRdDie-5zsRv8lo6dw0Q3c", "file": "family-dental-care-2026-11-01-1736-ntfk", "name": "Family Dental Care", "group": "clinic", "type": "Dentist", "area": "Kalyan", "phone": "+91 99697 37680", "wa": "9969737680", "sent": "2026-11-02", "touches": 3, "rating": 5.0, "reviews": 190, "un": 9, "checked": 20, "score": 6.58, "warm": false, "doctor": "Dr. Niraj Bhat", "note": "", "tier": 2}, {"id": "ChIJWzDtuoiV5zsRJ-1SIXW0kUo", "file": "mahavir-dental-clinic-2026-10-28-2025-9yug", "name": "Mahavir Dental Clinic", "group": "clinic", "type": "dentist", "area": "Kalyan", "phone": "+91 99304 09832", "wa": "9930409832", "sent": "2026-11-02", "touches": 3, "rating": 4.9, "reviews": 571, "un": 8, "checked": 20, "score": 5.86, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJWUmHrLaV5zsRlmg5B1kW6VQ", "file": "elite-dental-care-dombivli-west-2026-11-02-0210-xygu", "name": "Elite Dental Care - Dombivli West", "group": "clinic", "type": "Dental clinic", "area": "Kalyan", "phone": "+91 81691 05951", "wa": "8169105951", "sent": "2026-11-02", "touches": 3, "rating": 4.8, "reviews": 61, "un": 10, "checked": 10, "score": 8.29, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJWaM9Oh--5zsRKsIXK8-yQAA", "file": "smiledent-dental-care-and-implant-centre-2026-11-02-0245-c8nj", "name": "Smiledent Dental Care And Implant Centre Dombivli West", "group": "clinic", "type": "Dentist", "area": "Kalyan", "phone": "+91 98205 60087", "wa": "9820560087", "sent": "2026-11-02", "touches": 3, "rating": 4.9, "reviews": 323, "un": 10, "checked": 10, "score": 7.81, "warm": false, "doctor": "Dr. Tushar Mane", "note": "", "tier": 2}, {"id": "ChIJ5aoQVPWV5zsRC47jdqeFbpY", "file": "diamond-dental-clinic-and-implant-centre-2026-11-02-0210-tbpv", "name": "Diamond Dental Clinic and Implant Centre", "group": "clinic", "type": "Dental clinic", "area": "Kalyan", "phone": "+91 90828 74792", "wa": "9082874792", "sent": "2026-11-02", "touches": 3, "rating": 4.7, "reviews": 166, "un": 9, "checked": 10, "score": 8.12, "warm": false, "doctor": "Dr. Mahajan", "note": "", "tier": 1}, {"id": "ChIJ3b_uXwC_5zsRu7WkGXBowsw", "file": "promax-dental-care-dentist-in-dombivali--2026-11-02-0210-ewmn", "name": "Promax Dental Care - Dentist in Dombivali west", "group": "clinic", "type": "Dental clinic", "area": "Kalyan", "phone": "+91 97021 60428", "wa": "9702160428", "sent": "2026-11-02", "touches": 3, "rating": 4.9, "reviews": 97, "un": 10, "checked": 10, "score": 8.49, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJV_MIXqWV5zsRpr7_-SegZdA", "file": "dr-hemant-baonerkar-s-ora-face-oral-maxi-2026-10-28-2024-vtdx", "name": "Dr. Hemant Baonerkar's Ora Face Oral Maxillofacial Surgery And Dental", "group": "clinic", "type": "oral surgeon", "area": "Kalyan", "phone": "+91 90493 30109", "wa": "9049330109", "sent": "2026-11-02", "touches": 3, "rating": 4.9, "reviews": 113, "un": 20, "checked": 20, "score": 7.56, "warm": false, "doctor": "Dr. Hemant Baonerkar", "note": "Oral surgeon. Treat like a dental clinic.", "tier": 2}, {"id": "ChIJt_0KEIyV5zsRjtii4jAXdJY", "file": "bossin-unisex-salon-academy-2026-10-28-2020-pcxx", "name": "BOSSIN Unisex Salon & Academy", "group": "salon", "type": "beauty salon", "area": "Kalyan", "phone": "+91 91528 98090", "wa": "9152898090", "sent": "2026-11-02", "touches": 3, "rating": 4.6, "reviews": 694, "un": 18, "checked": 20, "score": 7.44, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJhQrOn-GV5zsRTXHJnsf4HSc", "file": "wellflex-physiotherapy-and-rehabilitatio-2026-10-28-1423-tehi", "name": "Wellflex Physiotherapy and Rehabilitation Services - by Dr. Sharayu Ba", "group": "clinic", "type": "physical therapist", "area": "Kalyan", "phone": "+91 83560 45837", "wa": "8356045837", "sent": "2026-11-02", "touches": 3, "rating": 4.8, "reviews": 19, "un": 16, "checked": 19, "score": 4.67, "warm": false, "doctor": "Dr. Sharayu", "note": "Physiotherapy clinic. Only 19 reviews, so need is real but the clinic is small.", "tier": 3}, {"id": "ChIJj1ROUnq_5zsRMNOec-XipV0", "file": "pitale-dental-care-dombivli-2026-11-02-1228-cdzr", "name": "Pitale Dental Care Dombivli", "group": "clinic", "type": "Dental clinic", "area": "Kalyan", "phone": "+91 88500 02752", "wa": "8850002752", "sent": "2026-11-02", "touches": 3, "rating": 4.9, "reviews": 99, "un": 5, "checked": 10, "score": 6.5, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJ-yM1-Te55zsR2gcoGbHJGoI", "file": "thane-seva-dental-2026-11-03-1345-n9r2", "name": "Thane Seva Dental", "group": "clinic", "type": "Dental clinic", "area": "Thane", "phone": "+91 75069 99274", "wa": "7506999274", "sent": "2026-11-03", "touches": 3, "rating": 4.9, "reviews": 234, "un": 3, "checked": 10, "score": 5.67, "warm": false, "doctor": "Dr. Priyanka Pardeshi", "note": "", "tier": 2}, {"id": "ChIJ5dJYAHiW5zsRxq1rWJ7WuJA", "file": "dr-patel-s-dental-care-2026-11-03-0210-jhwm", "name": "Dr.Patel's Dental Care", "group": "clinic", "type": "Dental clinic", "area": "Kalyan", "phone": "+91 98604 90335", "wa": "9860490335", "sent": "2026-11-03", "touches": 3, "rating": 5.0, "reviews": 364, "un": 2, "checked": 10, "score": 5.06, "warm": false, "doctor": "Dr. Harit Patel", "note": "", "tier": 3}, {"id": "ChIJA_xbG7SV5zsR2y7pkhHKdw0", "file": "dr-manasi-s-dental-clinic-and-orthodonti-2026-11-03-1345-wzrg", "name": "Dr Manasi's Dental Clinic and Orthodontic Centre", "group": "clinic", "type": "Dentist", "area": "Kalyan", "phone": "+91 91528 06040", "wa": "9152806040", "sent": "2026-11-03", "touches": 3, "rating": 4.9, "reviews": 519, "un": 4, "checked": 10, "score": 6.82, "warm": false, "doctor": "Dr. Manasi", "note": "", "tier": 2}, {"id": "ChIJKyMWo0K55zsRe4WPqdD7J4o", "file": "dentaland-2026-11-03-1345-9f9z", "name": "DENTALAND", "group": "clinic", "type": "Dental clinic", "area": "Thane", "phone": "+91 88797 96642", "wa": "8879796642", "sent": "2026-11-03", "touches": 3, "rating": 4.9, "reviews": 505, "un": 2, "checked": 10, "score": 6.0, "warm": false, "doctor": "Dr. Bhavana Sharma", "note": "", "tier": 2}, {"id": "ChIJl8Rfg1eV5zsRCawkQkyE92o", "file": "dr-deokar-s-shree-sai-dental-clinic-2026-11-03-1345-ehxe", "name": "Dr. Deokar's Shree Sai Dental Clinic", "group": "clinic", "type": "Dental clinic", "area": "Kalyan", "phone": "+91 98505 09791", "wa": "9850509791", "sent": "2026-11-03", "touches": 3, "rating": 4.9, "reviews": 285, "un": 9, "checked": 10, "score": 8.56, "warm": false, "doctor": "Dr. Rahul Deokar", "note": "", "tier": 1}, {"id": "ChIJVd9ZNCO55zsRGmsZZJNsOaA", "file": "tooth-tickle-dental-clinic-2026-11-03-1230-vtw9", "name": "Tooth Tickle Dental Clinic", "group": "clinic", "type": "Dental clinic", "area": "Thane", "phone": "+91 73045 22446", "wa": "7304522446", "sent": "2026-11-03", "touches": 3, "rating": 4.8, "reviews": 163, "un": 2, "checked": 10, "score": 4.31, "warm": false, "doctor": "", "note": "", "tier": 3}, {"id": "ChIJ27tcQGm55zsRm2cnnrMx1tw", "file": "all-smiles-dental-clinic-dr-rani-patil-2026-11-03-1345-feri", "name": "All Smiles Dental Clinic Dr Rani Patil", "group": "clinic", "type": "Dental clinic", "area": "Thane", "phone": "+91 99300 33737", "wa": "9930033737", "sent": "2026-11-03", "touches": 3, "rating": 5.0, "reviews": 1113, "un": 10, "checked": 10, "score": 9.55, "warm": false, "doctor": "Dr. Rani Patil", "note": "", "tier": 1}, {"id": "ChIJx8gJddyV5zsR5L9C1nTFMhI", "file": "dr-manju-s-dental-zone-2026-11-04-0740-wc9p", "name": "Dr. Manju s Dental Zone", "group": "clinic", "type": "Dentist", "area": "Ulhasnagar", "phone": "+91 95292 43438", "wa": "9529243438", "sent": "2026-11-04", "touches": 3, "rating": 4.9, "reviews": 194, "un": 8, "checked": 10, "score": 7.99, "warm": false, "doctor": "Dr. Manju", "note": "", "tier": 1}, {"id": "ChIJt9HuV_aV5zsRbssEqFP7oT4", "file": "dr-wani-s-shree-dental-care-implant-cent-2026-11-04-0740-5ukt", "name": "Dr. Wani's Shree Dental care & Implant Centre Best Dental in Ulhasnaga", "group": "clinic", "type": "Dental clinic", "area": "Ulhasnagar", "phone": "+91 83908 83377", "wa": "8390883377", "sent": "2026-11-04", "touches": 3, "rating": 4.9, "reviews": 160, "un": 10, "checked": 10, "score": 8.71, "warm": false, "doctor": "Dr. Wani", "note": "", "tier": 1}, {"id": "ChIJWdEjEhmT5zsR0YnPG-Me1tE", "file": "dr-muley-s-multispeciality-dental-clinic-2026-11-04-0815-s7kq", "name": "Dr. Muley's Multispeciality Dental Clinic and Orthodontic Center", "group": "clinic", "type": "Dental clinic", "area": "Ambernath", "phone": "+91 96046 70132", "wa": "9604670132", "sent": "2026-11-04", "touches": 3, "rating": 4.8, "reviews": 578, "un": 10, "checked": 10, "score": 9.26, "warm": false, "doctor": "Dr. Muley", "note": "", "tier": 1}, {"id": "ChIJqwVHeTmT5zsRTEFBw8bMWBE", "file": "family-dental-care-multispeciality-denta-2026-11-04-0740-9mb8", "name": "Family Dental care multispeciality dental clinic", "group": "clinic", "type": "Dental clinic", "area": "Ambernath", "phone": "+91 93258 18057", "wa": "9325818057", "sent": "2026-11-04", "touches": 3, "rating": 4.8, "reviews": 351, "un": 10, "checked": 10, "score": 9.05, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJEfRKQvWT5zsRwufno8cZUC8", "file": "siddhivinayak-dental-clinic-2026-11-04-0740-fjfj", "name": "Siddhivinayak Dental Clinic", "group": "clinic", "type": "Dental clinic", "area": "Ambernath", "phone": "+91 95949 72568", "wa": "9594972568", "sent": "2026-11-04", "touches": 2, "rating": 4.9, "reviews": 187, "un": 2, "checked": 10, "score": 5.17, "warm": true, "doctor": "Dr. Vikas Surwase", "note": "Replied \"Yes\" on WhatsApp on 6 Nov. Warm: call first and close.", "tier": 1}, {"id": "ChIJj5V4svKT5zsRAnZi_yoQOxo", "file": "dr-sinkar-s-dental-care-ambernath-2026-11-04-0740-3y5t", "name": "Dr.Sinkar's Dental Care Ambernath", "group": "clinic", "type": "Dental clinic", "area": "Ambernath", "phone": "+91 72495 09073", "wa": "7249509073", "sent": "2026-11-04", "touches": 3, "rating": 5.0, "reviews": 284, "un": 5, "checked": 10, "score": 6.95, "warm": false, "doctor": "Dr. Roshan Sinkar", "note": "", "tier": 2}, {"id": "ChIJwaoB2CmV5zsRK6FXCEjDigs", "file": "lohara-salon-2026-11-05-1509-6yxg", "name": "Lohara Salon", "group": "salon", "type": "Hair salon", "area": "Kalyan", "phone": "+91 90764 75157", "wa": "9076475157", "sent": "2026-11-05", "touches": 3, "rating": 4.4, "reviews": 834, "un": 10, "checked": 10, "score": 8.32, "warm": false, "doctor": "", "note": "Some unanswered reviews are complaints. Be gentle: unhappy customers waiting for a reply is the reason to call, not a criticism.", "tier": 2}, {"id": "ChIJHX5UC96V5zsR7spkszmtz04", "file": "lookwell-salon-gnp-arcadia-dombivli-2026-11-05-0740-is8u", "name": "LookWell Salon - GNP Arcadia Dombivli", "group": "salon", "type": "Beauty salon", "area": "Kalyan", "phone": "+91 93214 77302", "wa": "9321477302", "sent": "2026-11-05", "touches": 3, "rating": 4.7, "reviews": 1711, "un": 9, "checked": 10, "score": 9.33, "warm": false, "doctor": "", "note": "LookWell has 7 branches in this list. Ask who handles Google for all branches: one owner may decide for every branch.", "tier": 1}, {"id": "ChIJI2uAVB6-5zsRk81UJVe_1Z8", "file": "sunitta-s-salon-2026-11-05-0740-zerp", "name": "Sunitta's Salon", "group": "salon", "type": "Beauty salon", "area": "Kalyan", "phone": "+91 84528 49771", "wa": "8452849771", "sent": "2026-11-05", "touches": 3, "rating": 4.8, "reviews": 1724, "un": 10, "checked": 10, "score": 9.74, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJd25SNzSV5zsR6umNlC4VcA0", "file": "g-s-salon-unisex-salon-2026-11-05-1505-d4tj", "name": "G S salon Unisex salon", "group": "salon", "type": "Hairdresser", "area": "Kalyan", "phone": "+91 95949 94224", "wa": "9594994224", "sent": "2026-11-05", "touches": 3, "rating": 4.9, "reviews": 303, "un": 10, "checked": 10, "score": 8.98, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJjyHTNOO_5zsRkgFpdKTL8Jg", "file": "lookwell-salon-dombivli-west-2026-11-05-1509-ijqp", "name": "LookWell Salon - Dombivli West", "group": "salon", "type": "Beauty salon", "area": "Kalyan", "phone": "+91 84258 90061", "wa": "8425890061", "sent": "2026-11-05", "touches": 3, "rating": 4.7, "reviews": 422, "un": 10, "checked": 10, "score": 9.13, "warm": false, "doctor": "", "note": "LookWell has 7 branches in this list. Ask who handles Google for all branches: one owner may decide for every branch.", "tier": 1}, {"id": "ChIJlQH1Jsu_5zsRnxhtEoscmVE", "file": "hollywood-unisex-salon-2026-11-05-0815-ajtv", "name": "Hollywood Unisex Salon", "group": "salon", "type": "Beauty salon", "area": "Kalyan", "phone": "+91 93241 20511", "wa": "9324120511", "sent": "2026-11-05", "touches": 3, "rating": 4.8, "reviews": 1062, "un": 10, "checked": 10, "score": 9.53, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJpS24TlyV5zsRhnwScuWdZYQ", "file": "scube-salon-dombivli-west-2026-11-05-0740-munm", "name": "Scube Salon - Dombivli West", "group": "salon", "type": "Beauty salon", "area": "Kalyan", "phone": "+91 91527 28858", "wa": "9152728858", "sent": "2026-11-05", "touches": 3, "rating": 4.8, "reviews": 150, "un": 10, "checked": 10, "score": 8.68, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJ_6nq9NSV5zsRxgkej-zOKEM", "file": "hiral-beauty-salon-2026-11-06-0740-gy3y", "name": "Hiral Beauty Salon", "group": "salon", "type": "Beauty salon", "area": "Kalyan", "phone": "+91 93231 09998", "wa": "9323109998", "sent": "2026-11-06", "touches": 3, "rating": 4.9, "reviews": 229, "un": 10, "checked": 10, "score": 8.06, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJJ7pvyra75zsRpAi3nSZNPTk", "file": "salon-ministry-thane-2026-11-06-0740-iq7a", "name": "Salon Ministry Thane", "group": "salon", "type": "Beauty salon", "area": "Thane", "phone": "+91 92086 09208", "wa": "9208609208", "sent": "2026-11-06", "touches": 3, "rating": 4.9, "reviews": 1068, "un": 10, "checked": 10, "score": 9.53, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJtVRN4lqV5zsRXLrXRL1BAGU", "file": "sufiyan-hair-studio-unisex-salon-2026-11-06-0740-5ni3", "name": "SUFIYAN HAIR STUDIO UNISEX SALON", "group": "salon", "type": "Hairdresser", "area": "Kalyan", "phone": "+91 96994 96170", "wa": "9699496170", "sent": "2026-11-06", "touches": 3, "rating": 4.9, "reviews": 334, "un": 3, "checked": 10, "score": 6.23, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJa-O1U7CV5zsR7y3D-0vAImw", "file": "bellelush-salon-academy-2026-11-06-0740-jk7y", "name": "Bellelush Salon & Academy", "group": "salon", "type": "Beauty salon", "area": "Kalyan", "phone": "+91 77158 42107", "wa": "7715842107", "sent": "2026-11-06", "touches": 2, "rating": 4.9, "reviews": 243, "un": 10, "checked": 10, "score": 8.89, "warm": true, "doctor": "", "note": "Their WhatsApp assistant said the owner is now in the chat (8 Nov). Ask for the owner by name and say you are following up on that chat.", "tier": 1}, {"id": "ChIJra-F29mV5zsRb2b1zoFnwKE", "file": "sugra-s-studio-salon-2026-11-06-0740-8ued", "name": "Sugra's Studio & Salon", "group": "salon", "type": "Beauty salon", "area": "Mumbai", "phone": "+91 98671 23328", "wa": "9867123328", "sent": "2026-11-06", "touches": 3, "rating": 4.9, "reviews": 106, "un": 7, "checked": 10, "score": 7.33, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJ3xFEKmGX5zsRf2PhHbXsbPU", "file": "lookwell-salon-godrej-hill-2026-11-06-0740-jc3k", "name": "LookWell Salon - Godrej Hill", "group": "salon", "type": "Beauty salon", "area": "Kalyan", "phone": "+91 77188 90907", "wa": "7718890907", "sent": "2026-11-06", "touches": 3, "rating": 4.8, "reviews": 1220, "un": 9, "checked": 10, "score": 9.19, "warm": false, "doctor": "", "note": "LookWell has 7 branches in this list. Ask who handles Google for all branches: one owner may decide for every branch.", "tier": 1}, {"id": "ChIJObg0p6CV5zsRBaoPMsCK6i8", "file": "curls-clips-unisex-salon-2026-11-06-0740-946r", "name": "CURLS & CLIPS UNISEX SALON", "group": "salon", "type": "Hair salon", "area": "Kalyan", "phone": "+91 86938 57630", "wa": "8693857630", "sent": "2026-11-06", "touches": 3, "rating": 4.9, "reviews": 239, "un": 10, "checked": 10, "score": 8.88, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJU41UUYCT5zsRd4Da_IpmAM4", "file": "cut-the-crap-unisex-salon-and-academy-2026-11-07-0740-gxcx", "name": "Cut The Crap Unisex Salon and Academy", "group": "salon", "type": "Beauty salon", "area": "Ambernath", "phone": "+91 82377 34777", "wa": "8237734777", "sent": "2026-11-07", "touches": 2, "rating": 4.3, "reviews": 423, "un": 10, "checked": 10, "score": 8.63, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJcbyRYoCT5zsRZupy-3W6u1Q", "file": "lookwell-salon-panvelkar-pride-ambernath-2026-11-07-0815-x3f6", "name": "LookWell Salon - Panvelkar Pride Ambernath", "group": "salon", "type": "Beauty salon", "area": "Ambernath", "phone": "+91 99305 23103", "wa": "9930523103", "sent": "2026-11-07", "touches": 2, "rating": 4.7, "reviews": 2000, "un": 8, "checked": 10, "score": 9.0, "warm": false, "doctor": "", "note": "LookWell has 7 branches in this list. Ask who handles Google for all branches: one owner may decide for every branch.", "tier": 1}, {"id": "ChIJU-U5HriT5zsRWiKU7YYgYQE", "file": "saisha-s-haven-family-salon-makeover-aca-2026-11-07-0740-yi6t", "name": "Saisha's Haven Family Salon Makeover & Academy", "group": "salon", "type": "Beauty salon", "area": "Ambernath", "phone": "+91 70205 00963", "wa": "7020500963", "sent": "2026-11-07", "touches": 2, "rating": 4.8, "reviews": 281, "un": 3, "checked": 10, "score": 6.15, "warm": false, "doctor": "", "note": "", "tier": 3}, {"id": "ChIJfwqypruV5zsRp2PUFTet5Ic", "file": "lookwell-salon-gnp-galaxy-ambernath-2026-11-07-0815-udu8", "name": "LookWell Salon - GNP Galaxy Ambernath", "group": "salon", "type": "Beauty salon", "area": "Ambernath", "phone": "+91 99305 06594", "wa": "9930506594", "sent": "2026-11-07", "touches": 2, "rating": 4.7, "reviews": 1564, "un": 10, "checked": 10, "score": 9.69, "warm": false, "doctor": "", "note": "LookWell has 7 branches in this list. Ask who handles Google for all branches: one owner may decide for every branch.", "tier": 1}, {"id": "ChIJ7VKtL3-T5zsRM5jaBh2la3c", "file": "haviva-salon-and-spa-ambernath-2026-11-07-0740-v6ew", "name": "Haviva salon and spa - Ambernath", "group": "salon", "type": "Beauty salon", "area": "Ambernath", "phone": "+91 73500 09960", "wa": "7350009960", "sent": "2026-11-07", "touches": 2, "rating": 4.7, "reviews": 507, "un": 10, "checked": 10, "score": 9.21, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJVZDRoTuT5zsRayV4iYX8h4c", "file": "lookwell-salon-nisarg-greens-2026-11-07-0740-c5d2", "name": "Lookwell Salon - Nisarg Greens", "group": "salon", "type": "Beauty salon", "area": "Ambernath", "phone": "+91 98677 18059", "wa": "9867718059", "sent": "2026-11-07", "touches": 2, "rating": 4.7, "reviews": 1611, "un": 10, "checked": 10, "score": 9.71, "warm": false, "doctor": "", "note": "LookWell has 7 branches in this list. Ask who handles Google for all branches: one owner may decide for every branch.", "tier": 1}, {"id": "ChIJ7zFdLICT5zsR97rdSaP4aTs", "file": "adil-s-unisex-family-salon-bridal-studio-2026-11-07-0740-y8ur", "name": "Adil'S Unisex Family salon & Bridal Studio", "group": "salon", "type": "Beauty salon", "area": "Ambernath", "phone": "+91 96730 67191", "wa": "9673067191", "sent": "2026-11-07", "touches": 2, "rating": 4.9, "reviews": 270, "un": 10, "checked": 10, "score": 8.93, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJjzmDw6ST5zsRVOxg8QEQ6rw", "file": "sarika-beauty-parlour-and-cosmetics-2026-11-07-0740-bcbc", "name": "Sarika Beauty Parlour And Cosmetics", "group": "salon", "type": "Beauty salon", "area": "Ambernath", "phone": "+91 96235 96260", "wa": "9623596260", "sent": "2026-11-07", "touches": 2, "rating": 4.9, "reviews": 523, "un": 9, "checked": 10, "score": 8.82, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJl35CcGaU5zsRR1sAj0oELvk", "file": "viky-s-adam-temptation-unisex-salon-2026-11-09-0740-a6dc", "name": "Viky's Adam Temptation Unisex Salon", "group": "salon", "type": "Hair salon", "area": "Ulhasnagar", "phone": "+91 75074 77094", "wa": "7507477094", "sent": "2026-11-09", "touches": 2, "rating": 4.4, "reviews": 188, "un": 10, "checked": 10, "score": 6.88, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJfxwZpOCV5zsRdNH0cUxjti0", "file": "solastaa-salon-ulhasnagar-2026-11-09-0740-ayj4", "name": "Solastaa Salon - Ulhasnagar", "group": "salon", "type": "Beauty salon", "area": "Ulhasnagar", "phone": "+91 80970 39888", "wa": "8097039888", "sent": "2026-11-09", "touches": 2, "rating": 4.8, "reviews": 527, "un": 2, "checked": 10, "score": 6.02, "warm": false, "doctor": "", "note": "", "tier": 3}, {"id": "ChIJm5-0jUaV5zsRizOfw5dnHNw", "file": "lookwell-salon-shahad-2026-11-09-0740-9jcy", "name": "LookWell Salon - Shahad", "group": "salon", "type": "Beauty salon", "area": "Ulhasnagar", "phone": "+91 93249 92277", "wa": "9324992277", "sent": "2026-11-09", "touches": 2, "rating": 4.9, "reviews": 820, "un": 9, "checked": 10, "score": 9.01, "warm": false, "doctor": "", "note": "LookWell has 7 branches in this list. Ask who handles Google for all branches: one owner may decide for every branch.", "tier": 1}, {"id": "ChIJUcH70P-V5zsRXExeCh5x4qY", "file": "hb-salon-academy-2026-11-09-0740-y9ic", "name": "HB Salon & academy", "group": "salon", "type": "Hairdresser", "area": "Ulhasnagar", "phone": "+91 82089 38417", "wa": "8208938417", "sent": "2026-11-09", "touches": 2, "rating": 4.9, "reviews": 63, "un": 10, "checked": 10, "score": 8.31, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJBcWtgaCV5zsRSBL8TNrXDpo", "file": "varsha-s-spalon-2026-11-09-0740-rfhj", "name": "VARSHA S SPALON", "group": "salon", "type": "Beauty salon", "area": "Ulhasnagar", "phone": "+91 77110 77110", "wa": "7711077110", "sent": "2026-11-09", "touches": 2, "rating": 4.8, "reviews": 415, "un": 2, "checked": 10, "score": 5.92, "warm": false, "doctor": "", "note": "", "tier": 3}, {"id": "ChIJ9S7iZ1aV5zsREvk5UVpoa2s", "file": "harsh-hair-tattoo-studio-unisex-salon-an-2026-11-09-0740-42k5", "name": "Harsh Hair&Tattoo Studio Unisex Salon And Academy", "group": "salon", "type": "Make-up artist", "area": "Ulhasnagar", "phone": "+91 80871 67162", "wa": "8087167162", "sent": "2026-11-09", "touches": 2, "rating": 4.9, "reviews": 949, "un": 10, "checked": 10, "score": 9.48, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJGTX6F-eV5zsRl5hLOFkyokM", "file": "gokul-automobile-repair-shop-2026-11-10-0740-n2pf", "name": "Gokul Automobile Repair Shop", "group": "garage", "type": "Auto repair shop", "area": "Khoni Pagadyacha Pada", "phone": "+91 93260 91269", "wa": "9326091269", "sent": "2026-11-10", "touches": 1, "rating": 4.8, "reviews": 36, "un": 9, "checked": 10, "score": 6.47, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJecW_BYWV5zsRLh5ZOHDwBJY", "file": "bharat-auto-garage-2026-11-10-0740-tk2b", "name": "BHARAT AUTO GARAGE", "group": "garage", "type": "Mechanic", "area": "Kalyan", "phone": "+91 98704 58042", "wa": "9870458042", "sent": "2026-11-10", "touches": 1, "rating": 4.1, "reviews": 80, "un": 10, "checked": 10, "score": 6.51, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJh0UwuDa_5zsRR9bSOjtEO1E", "file": "narayan-motors-2026-11-10-0740-yifx", "name": "Narayan Motors", "group": "garage", "type": "Car repair and maintenance service", "area": "Kalyan", "phone": "+91 79778 10772", "wa": "7977810772", "sent": "2026-11-10", "touches": 1, "rating": 4.6, "reviews": 13, "un": 10, "checked": 10, "score": 5.05, "warm": false, "doctor": "", "note": "", "tier": 3}, {"id": "ChIJi4XtHLSV5zsRRNXzKqEf-tM", "file": "as-auto-garag-car-repair-garag-2026-11-10-0740-ew5q", "name": "AS AUTO GARAG CAR REPAIR GARAG", "group": "garage", "type": "Auto repair shop", "area": "Kalyan", "phone": "+91 73793 24115", "wa": "7379324115", "sent": "2026-11-10", "touches": 1, "rating": 4.9, "reviews": 139, "un": 6, "checked": 10, "score": 7.05, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJ-XIsKr2V5zsRBvIdNAbI7fg", "file": "car-care-clinic-2026-11-10-0740-9agv", "name": "CAR CARE CLINIC", "group": "garage", "type": "Auto repair shop", "area": "Kalyan", "phone": "+91 99207 00994", "wa": "9920700994", "sent": "2026-11-10", "touches": 1, "rating": 5.0, "reviews": 1116, "un": 10, "checked": 10, "score": 9.55, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJN4yXHnyW5zsRbO2hMxGhyTI", "file": "uday-auto-garage-in-kalyan-multi-brand-c-2026-11-10-0740-verr", "name": "Uday Auto Garage In Kalyan Multi-Brand Car Service Center Used Cars", "group": "garage", "type": "Auto repair shop", "area": "Kalyan", "phone": "+91 97690 68308", "wa": "9769068308", "sent": "2026-11-10", "touches": 1, "rating": 4.9, "reviews": 319, "un": 10, "checked": 10, "score": 9.01, "warm": true, "doctor": "", "note": "Asked \"cost?\" on 10 Nov and got the price on WhatsApp. Warm: call to answer questions and send the form.", "tier": 1}, {"id": "ChIJpffUwpiV5zsRHq9tHXjitGY", "file": "mosim-car-garage-battery-2026-11-10-0740-99rt", "name": "Mosim car garage & battery", "group": "garage", "type": "Auto repair shop", "area": "Khoni Pagadyacha Pada", "phone": "+91 82688 65642", "wa": "8268865642", "sent": "2026-11-10", "touches": 1, "rating": 4.7, "reviews": 200, "un": 9, "checked": 10, "score": 8.4, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJVTByxRmU5zsRgnKQlpGAm8E", "file": "mallikas-s-salon-2026-11-09-0740-83s8", "name": "Mallikas's Salon", "group": "salon", "type": "Beauty salon", "area": "Ulhasnagar", "phone": "+91 93244 01725", "wa": "9324401725", "sent": "2026-11-10", "touches": 1, "rating": 4.6, "reviews": 93, "un": 10, "checked": 10, "score": 7.97, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJvWcdYQC_5zsR3x3ZMidgxiI", "file": "car-service-point-dombivli-2026-11-10-0740-avnv", "name": "CAR SERVICE POINT DOMBIVLI", "group": "garage", "type": "Car repair and maintenance service", "area": "Kalyan", "phone": "+91 96644 03666", "wa": "9664403666", "sent": "2026-11-10", "touches": 1, "rating": 5.0, "reviews": 48, "un": 10, "checked": 10, "score": 6.79, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJTyS_6Eu75zsRFG_lRRjwP9Q", "file": "rj-automobiles-2026-11-11-0740-ahpt", "name": "RJ Automobiles", "group": "garage", "type": "Auto repair shop", "area": "Thane", "phone": "+91 91676 71419", "wa": "9167671419", "sent": "2026-11-11", "touches": 1, "rating": 4.9, "reviews": 363, "un": 9, "checked": 10, "score": 8.66, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJCw_K7sq75zsR3QAjiLqRpzk", "file": "thane-garage-2026-11-11-0740-hnja", "name": "Thane garage", "group": "garage", "type": "Auto repair shop", "area": "Thane", "phone": "+91 70391 64464", "wa": "7039164464", "sent": "2026-11-11", "touches": 1, "rating": 5.0, "reviews": 103, "un": 8, "checked": 10, "score": 6.52, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJ4yUOblK75zsRx_yeDzjejdY", "file": "the-unique-automobiles-car-garage-car-se-2026-11-11-0740-74q2", "name": "The unique automobiles Car Garage - Car Service Centre In Ghodbander r", "group": "garage", "type": "Auto repair shop", "area": "Thane", "phone": "+91 86528 20686", "wa": "8652820686", "sent": "2026-11-11", "touches": 1, "rating": 4.9, "reviews": 230, "un": 5, "checked": 10, "score": 6.86, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJr5-o7I-75zsR7xmXM_CDmOI", "file": "fix-my-car-car-repair-center-near-me-car-2026-11-11-0740-qvjk", "name": "Fix My Car-Car Repair center Near Me-Car Garage Near Thane-Premium Car", "group": "garage", "type": "Auto repair shop", "area": "Thane", "phone": "+91 96195 71110", "wa": "9619571110", "sent": "2026-11-11", "touches": 1, "rating": 4.9, "reviews": 78, "un": 10, "checked": 10, "score": 8.4, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJm2SkfICT5zsRBWtnofz11F8", "file": "eco-car-spa-car-service-center-in-ambern-2026-11-11-0815-p7vq", "name": "ECO CAR SPA Car Service Center In Ambernath East", "group": "garage", "type": "Auto repair shop", "area": "Ambernath", "phone": "+91 88881 73300", "wa": "8888173300", "sent": "2026-11-11", "touches": 1, "rating": 4.3, "reviews": 170, "un": 4, "checked": 10, "score": 5.83, "warm": false, "doctor": "", "note": "", "tier": 3}, {"id": "ChIJ8w3yQkaV5zsRUklQ5jGyHKk", "file": "ashai-auto-care-multibrand-cars-garage-2026-11-11-0740-ur5s", "name": "ASHAI AUTO CARE MULTIBRAND CARS GARAGE", "group": "garage", "type": "Auto repair shop", "area": "Ambernath", "phone": "+91 97022 55035", "wa": "9702255035", "sent": "2026-11-11", "touches": 1, "rating": 5.0, "reviews": 24, "un": 10, "checked": 10, "score": 6.0, "warm": false, "doctor": "", "note": "", "tier": 3}, {"id": "ChIJuXE392OV5zsRZfOokto-f9s", "file": "krishna-garage-2026-11-11-0740-s8fr", "name": "KRISHNA GARAGE", "group": "garage", "type": "Motorcycle repair shop", "area": "Ulhasnagar", "phone": "+91 96167 17160", "wa": "9616717160", "sent": "2026-11-11", "touches": 1, "rating": 5.0, "reviews": 91, "un": 10, "checked": 10, "score": 8.46, "warm": false, "doctor": "", "note": "", "tier": 1}, {"id": "ChIJgYpfP6GV5zsRcbMhoDrfpLQ", "file": "rootz-unisex-salon-2026-11-12-0740-z6nf", "name": "Rootz unisex salon", "group": "salon", "type": "Hairdresser", "area": "Ulhasnagar", "phone": "+91 86260 89000", "wa": "8626089000", "sent": "2026-11-12", "touches": 1, "rating": 5.0, "reviews": 13, "un": 10, "checked": 10, "score": 5.55, "warm": false, "doctor": "", "note": "", "tier": 3}, {"id": "ChIJ3VwwA-eV5zsR4c8bWUZNysI", "file": "d-l-unisex-family-salon-2026-11-12-0740-bprm", "name": "D&L UNISEX FAMILY SALON", "group": "salon", "type": "Beauty salon", "area": "Ulhasnagar", "phone": "+91 89288 36604", "wa": "8928836604", "sent": "2026-11-12", "touches": 1, "rating": 5.0, "reviews": 10, "un": 2, "checked": 10, "score": 2.84, "warm": false, "doctor": "", "note": "", "tier": 3}, {"id": "ChIJe1Bbc2qT5zsRh8eDwSDeqvs", "file": "the-rich-unisex-salon-2026-11-12-0740-cua5", "name": "The Rich Unisex Salon", "group": "salon", "type": "Hair salon", "area": "Ambernath", "phone": "+91 80076 65669", "wa": "8007665669", "sent": "2026-11-12", "touches": 1, "rating": 4.7, "reviews": 76, "un": 10, "checked": 10, "score": 7.79, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJtQ5Bz3OT5zsR76hBy8GqOKU", "file": "the-artist-family-salon-2026-11-12-0740-wnkc", "name": "The Artist Family salon", "group": "salon", "type": "Hairdresser", "area": "Ambernath", "phone": "+91 88305 59739", "wa": "8830559739", "sent": "2026-11-12", "touches": 1, "rating": 4.8, "reviews": 88, "un": 9, "checked": 10, "score": 7.05, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJxZ_ZuUmV5zsRO_a8IaXgYvw", "file": "make-me-up-beauty-unisex-salon-2026-11-12-0740-hpai", "name": "Make me up beauty & unisex salon", "group": "salon", "type": "Beauty salon", "area": "Ulhasnagar", "phone": "+91 80074 74255", "wa": "8007474255", "sent": "2026-11-12", "touches": 1, "rating": 4.3, "reviews": 62, "un": 4, "checked": 10, "score": 5.2, "warm": false, "doctor": "", "note": "", "tier": 3}, {"id": "ChIJ7cWk0tKV5zsRkkCTyPJWwdU", "file": "s2-shyam-salon-unisex-2026-11-12-0740-5q49", "name": "S2 Shyam Salon Unisex", "group": "salon", "type": "Hairdresser", "area": "Ambernath", "phone": "+91 88284 41829", "wa": "8828441829", "sent": "2026-11-12", "touches": 1, "rating": 4.8, "reviews": 63, "un": 9, "checked": 10, "score": 7.91, "warm": false, "doctor": "", "note": "", "tier": 2}, {"id": "ChIJYeOEQzyU5zsRnVCRlWpkKWg", "file": "richlook-unisex-hair-studio-2026-11-12-0740-a7eg", "name": "Richlook Unisex Hair Studio", "group": "salon", "type": "Hair salon", "area": "Ulhasnagar", "phone": "+91 80070 58244", "wa": "8007058244", "sent": "2026-11-12", "touches": 1, "rating": 4.9, "reviews": 10, "un": 10, "checked": 10, "score": 5.04, "warm": false, "doctor": "", "note": "", "tier": 3}];
+var KEY = 'rs-call-plan-v1';
+var store = {};
+try { store = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { store = {}; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function dayLong(d) { var p = d.split('-'); return +p[2] + ' ' + MONTHS[+p[1] - 1]; }
+function dayShort(d) { var p = d.split('-'); return +p[2] + ' ' + MONTHS[+p[1] - 1].slice(0, 3); }
+function fmt(n) { return Number(n).toLocaleString('en-IN'); }
+
+/* kind-specific words for the script */
+var KIND = {
+  clinic: { ask: 'Kya Dr. [naam] se baat ho sakti hai?', place: 'clinic', why: 'Patients clinic choose karne se pehle yeh reviews padhte hain.', biz: 'clinic', upd: 'clinic ki koi service ya timing', cust: 'patient' },
+  salon:  { ask: 'Kya salon ke owner se baat ho sakti hai?', place: 'salon', why: 'Naye customers salon choose karne se pehle reviews aur photos dekhte hain.', biz: 'salon', upd: 'koi naya offer, service ya bridal package', cust: 'customer' },
+  garage: { ask: 'Kya garage ke malik se baat ho sakti hai?', place: 'garage', why: "Aajkal log 'garage near me' search karke reviews padhte hain, phir call karte hain.", biz: 'garage', upd: 'service, offer ya timing', cust: 'customer' },
+  other:  { ask: 'Kya shop ke owner se baat ho sakti hai?', place: 'shop', why: 'Naye customers aane se pehle Google pe reviews padhte hain.', biz: 'shop', upd: 'koi offer ya naya product', cust: 'customer' }
+};
+function setKind(k) {
+  document.querySelectorAll('[data-s]').forEach(function (el) { el.textContent = KIND[k][el.getAttribute('data-s')]; });
+  document.querySelectorAll('.tabs button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-kind') === k)); });
+}
+document.querySelectorAll('.tabs button').forEach(function (b) { b.addEventListener('click', function () { setKind(b.getAttribute('data-kind')); }); });
+setKind('clinic');
+
+function opener(r) {
+  var K = KIND[r.group];
+  var ask = r.group === 'clinic' ? (r.doctor ? 'Kya ' + r.doctor + ' se baat ho sakti hai?' : 'Kya doctor se baat ho sakti hai?') : K.ask;
+  return '<div class="say"><span class="who">Pick-up</span>Namaste! Main [aapka naam] bol raha/rahi hoon, ReviewSaathi se. ' + esc(ask) + '</div>' +
+    '<div class="say"><span class="who">Owner on the line</span>Kuch din pehle humne aapke ' + K.place + ' ke WhatsApp pe ek free PDF bheja tha, aapke Google reviews ke replies ready karke. Hum har review ka reply aapke liye likh dete hain, taaki aapko khud na likhna pade. ' + esc(K.why) + ' Aapne PDF dekha kya?</div>';
+}
+
+var GROUPS = [
+  { g: 'salon', title: 'Salons', tip: 'Salon owners usually run the shop phone themselves, so you often reach the decision maker straight away. Talk about new customers checking photos and reviews before booking.' },
+  { g: 'clinic', title: 'Dentists and clinics', tip: 'The phone is usually the front desk. Ask for the doctor by name. Never talk about treatments or patients; talk about reviews waiting for a reply.' },
+  { g: 'garage', title: 'Garages', tip: 'Owners are often in the workshop. If they are busy, fix a call-back time. Customers search "garage near me" and pick by reviews.' },
+  { g: 'other', title: 'Other', tip: '' }
+];
+var TIER = { 0: ['Warm', 'tw0'], 1: ['Call first', 't1'], 2: ['Call next', 't2'], 3: ['Later', 't3'] };
+var OUTCOMES = ['Not called yet', 'No answer', 'Call back', 'Interested', 'Form sent', 'Signed up', 'Not interested', 'Wrong number'];
+var filter = 'todo';
+
+function tierOf(r) { return r.warm ? 0 : r.tier; }
+function card(r) {
+  var s = store[r.id] || {};
+  var t = TIER[tierOf(r)];
+  var askFor = r.group === 'clinic' ? (r.doctor || 'the doctor') : 'the owner';
+  var need = r.un >= r.checked ? 'None of the last ' + r.checked + ' reviews has a reply' : r.un + ' of the last ' + r.checked + ' reviews have no reply';
+  var opts = OUTCOMES.map(function (o) { return '<option' + (s.outcome === o ? ' selected' : '') + '>' + o + '</option>'; }).join('');
+  return '<article class="card' + (s.done ? ' is-done' : '') + '" data-id="' + esc(r.id) + '">' +
+    '<div class="ck"><input type="checkbox" id="done-' + esc(r.id) + '" aria-label="Done: ' + esc(r.name) + '"' + (s.done ? ' checked' : '') + '></div>' +
+    '<div class="top"><span class="nm">' + esc(r.name) + '</span><span class="pill ' + t[1] + '">' + t[0] + '</span></div>' +
+    '<div class="meta">' + esc(r.type) + ' · ' + esc(r.area) + ' · Ask for <b>' + esc(askFor) + '</b><br>' +
+      '<span class="num">' + need + ' · ' + r.rating + '★ from ' + fmt(r.reviews) + ' reviews</span><br>' +
+      'Sample sent <b>' + dayShort(r.sent) + '</b> · ' + r.touches + ' WhatsApp message' + (r.touches === 1 ? '' : 's') + ' so far</div>' +
+    '<div class="ph"><code>' + esc(r.phone) + '</code><button type="button" class="mini" data-copy="' + esc(r.phone) + '">Copy number</button>' +
+      '<a class="mini" href="https://wa.me/91' + esc(r.wa) + '" target="_blank" rel="noopener">WhatsApp</a>' +
+      (r.file ? '<a class="mini" href="https://reviewsaathi.com/r/' + encodeURIComponent(r.file) + '.pdf" target="_blank" rel="noopener">Their sample PDF</a>' : '') + '</div>' +
+    (r.note ? '<div class="note" style="grid-column:2">' + esc(r.note) + '</div>' : '') +
+    '<details class="op"><summary>Opener for this call</summary>' + opener(r) + '</details>' +
+    '<div class="log"><label for="out-' + esc(r.id) + '">Outcome</label><select id="out-' + esc(r.id) + '" data-k="outcome">' + opts + '</select>' +
+      '<label>Next call <input type="date" id="next-' + esc(r.id) + '" data-k="next" value="' + esc(s.next || '') + '"></label>' +
+      '<textarea id="note-' + esc(r.id) + '" data-k="note" placeholder="Note: owner name, best time, what they said" aria-label="Note">' + esc(s.note || '') + '</textarea></div>' +
+  '</article>';
+}
+function sorted(list) {
+  return list.slice().sort(function (a, b) { return tierOf(a) - tierOf(b) || (a.sent < b.sent ? -1 : a.sent > b.sent ? 1 : 0) || b.score - a.score; });
+}
+function render() {
+  var html = '';
+  GROUPS.forEach(function (G) {
+    var all = SHOPS.filter(function (r) { return r.group === G.g; });
+    if (!all.length) return;
+    var list = sorted(all).filter(function (r) {
+      var d = (store[r.id] || {}).done;
+      if (filter === 'todo') return !d;
+      if (filter === 'first') return tierOf(r) <= 1;
+      return true;
+    });
+    var done = all.filter(function (r) { return (store[r.id] || {}).done; }).length;
+    html += '<section class="grp"><h3>' + G.title + ' <small class="num">' + done + ' of ' + all.length + ' done</small></h3>' +
+      (G.tip ? '<p class="tip">' + G.tip + '</p>' : '') +
+      (list.length ? list.map(card).join('') : '<p class="empty">Nothing left here with this filter.</p>') + '</section>';
+  });
+  document.getElementById('groups').innerHTML = html;
+  progress();
+}
+function progress() {
+  var n = SHOPS.filter(function (r) { return (store[r.id] || {}).done; }).length;
+  document.getElementById('progtxt').textContent = n + ' of ' + SHOPS.length + ' done';
+  document.getElementById('progbar').style.width = (SHOPS.length ? n / SHOPS.length * 100 : 0) + '%';
+}
+document.getElementById('groups').addEventListener('change', function (e) {
+  var c = e.target.closest('.card'); if (!c) return;
+  var id = c.getAttribute('data-id'); var s = store[id] || (store[id] = {});
+  if (e.target.type === 'checkbox') { s.done = e.target.checked; save(); c.classList.toggle('is-done', s.done); progress(); return; }
+  var k = e.target.getAttribute('data-k'); if (k) { s[k] = e.target.value; save(); }
+});
+document.getElementById('groups').addEventListener('input', function (e) {
+  if (e.target.tagName !== 'TEXTAREA') return;
+  var id = e.target.closest('.card').getAttribute('data-id'); (store[id] || (store[id] = {})).note = e.target.value; save();
+});
+function copyText(text, onDone) {
+  var fb = function () { var t = document.getElementById('fallback'); t.hidden = false; t.value = text; t.focus(); t.select(); };
+  try { navigator.clipboard.writeText(text).then(onDone, fb); } catch (e) { fb(); }
+}
+document.getElementById('groups').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-copy]'); if (!b) return;
+  var o = b.textContent;
+  copyText(b.getAttribute('data-copy'), function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = o; }, 1400); });
+});
+document.querySelectorAll('[data-f]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    filter = b.getAttribute('data-f');
+    document.querySelectorAll('[data-f]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+    render();
+  });
+});
+document.getElementById('copynotes').addEventListener('click', function () {
+  var lines = SHOPS.filter(function (r) { var s = store[r.id]; return s && (s.done || (s.outcome && s.outcome !== 'Not called yet') || s.note || s.next); })
+    .map(function (r) { var s = store[r.id]; return [r.name, s.outcome || (s.done ? 'Done' : ''), s.next ? 'next ' + s.next : '', s.note || ''].filter(Boolean).join(' | '); });
+  var text = lines.length ? 'ReviewSaathi calls\n' + lines.join('\n') : 'ReviewSaathi calls: nothing logged yet.';
+  copyText(text, function () { var m = document.getElementById('copiedmsg'); m.hidden = false; setTimeout(function () { m.hidden = true; }, 2500); });
+});
+
+var OBJ = [
+  ['"Kitna lagta hai?" (How much?)', 'Rs.3,499 mahina, plus GST. Ya poore saal ka Rs.34,999. Monthly wala kabhi bhi band kar sakte hain.'],
+  ['"Mehenga hai." (Too costly)', 'Mahine mein ek naya customer aa gaya, toh paisa wasool. Aur pasand na aaye toh kabhi bhi band kar dijiye.'],
+  ['"Discount milega?"', 'Price sabke liye same hai, kisi ko kam nahi milta. Aur koi contract nahi, kabhi bhi band kar sakte hain.'],
+  ['"Free trial hai?"', 'PDF mein jo replies hain, woh free hain, aap abhi use kar sakte hain. Monthly plan mein koi lock-in nahi, ek mahina chala ke dekh lijiye.'],
+  ['"Mera staff / bhatija / agency yeh dekhta hai."', 'Achhi baat hai. Par yeh reviews abhi bhi bina reply ke pade hain. Hum unka kaam halka kar dete hain, aur sab kuch aap check kar sakte hain.'],
+  ['"Reply main khud kar lunga."', 'Bilkul kar sakte hain. Bas yeh reviews kaafi time se wait kar rahe hain. Hum dhyan rakhte hain ki har review ka reply time pe jaaye, har baar.'],
+  ['"Customers word of mouth se aate hain."', 'Haan aate hain, par aane se pehle Google pe naam search karke reviews dekhte hain. Wahan yahi dikhta hai.'],
+  ['"Reviews se kya farak padta hai?"', 'Jo shops har review ka reply karti hain, naye customers pehle wahin jaate hain. Reply se lagta hai ki owner sunta hai.'],
+  ['"Hamare reviews toh pehle se achhe hain."', 'Haan, rating badhiya hai. Isiliye reply zaroori hai: achhe review pe thank you dikhta hai toh naye customer ko bharosa aata hai.'],
+  ['"Password dena padega?"', 'Nahi, kabhi nahi. Google ki apni screen pe ek baar "Allow" dabana hai, bas. Aur kabhi bhi apne Google account se access hata sakte hain.'],
+  ['"Reply galat chala gaya toh?"', 'Gusse wale ya sensitive reviews ka reply pehle aapke paas aata hai, aap OK karoge tabhi jaayega. Aur aap bata sakte hain replies kaise likhne hain.'],
+  ['"AI se likhte ho kya?"', 'Likhne mein AI tools ki madad lete hain, par har reply ke liye pakke rules hain, aur sensitive wale aap khud approve karte hain.'],
+  ['"Fake reviews daal sakte ho?"', 'Nahi. Google aisa karne pe page ko penalty deta hai. Hum sirf asli reviews ka reply karte hain.'],
+  ['"Google pe top pe la doge?"', 'Yeh koi bhi promise nahi kar sakta. Par jo page har review ka reply karta hai aur fresh rehta hai, woh customers ko zyada achha lagta hai. Monthly report mein fark dikhta hai.'],
+  ['"Pehle bhi kisi ne aisa bola tha, kuch nahi hua."', 'Samajh sakta/sakti hoon. Isiliye har mahine report milta hai, aur koi contract nahi. Pasand na aaye toh band kar dijiye.'],
+  ['"Soch ke batata hoon."', 'Bilkul. PDF wale replies aapke hain, use kar lijiye. Main [din] ko ek baar call karta/karti hoon.'],
+  ['"Payment kaise hoga? GST bill milega?"', 'Monthly mein autopay hota hai, UPI ya card se. Saal wala ek baar ka payment. Har payment ka GST bill milta hai.'],
+  ['"Hamari kai branches hain."', 'Har branch ka apna Google page hota hai, toh har branch ka alag plan. Pehle ek branch se shuru karke dekh sakte hain.'],
+  ['"Aap kaun ho? Kaise bharosa karein?"', 'ReviewSaathi Google reviews ka kaam karta hai. Sab details website pe hain: reviewsaathi.com. Aapka free sample bhi wahin se bana hai.']
+];
+document.getElementById('objs').innerHTML = OBJ.map(function (o) { return '<details class="obj"><summary>' + esc(o[0]) + '</summary><div class="say">' + esc(o[1]) + '</div></details>'; }).join('');
+render();
+</script>
+
+</body>
+</html>

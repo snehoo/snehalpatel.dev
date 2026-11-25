@@ -955,7 +955,8 @@ cv.addEventListener("click",e=>{const r=cv.getBoundingClientRect();const i=neare
 function renderSteps(){document.querySelectorAll("#steps i").forEach(i=>{const n=+i.dataset.s;i.className=n<S.step?"done":n===S.step?"on":""})}
 function setStatus(txt,kind){const p=$("#status");p.textContent=txt;p.className="pill"+(kind?" "+kind:"")}
 function renderStage(){
-  if(!S.agents.length){$("#hud").replaceChildren();$("#legend").replaceChildren();$("#stageMeta").textContent=S.loading?"casting…":"";return}
+  $(".probe").hidden=!S.agents.length;$("#legend").hidden=!S.agents.length;
+  if(!S.agents.length){$("#hud").replaceChildren();$("#legend").replaceChildren();$("#roundChips").replaceChildren();$("#stageMeta").textContent=S.loading?"casting…":"";return}
   const st=stats(S.agents.map(a=>a.state));
   $("#stageMeta").textContent=S.agents.length+" agents (copies of "+S.personas.length+" personas) · "+S.segments.length+" segments";
   const vs=S.viewRound!=null&&S.snapshots[S.viewRound]?S.snapshots[S.viewRound].stats:st;
@@ -968,7 +969,7 @@ function renderStage(){
 }
 function probeRange(){const p=S.brief.price||1;return[Math.max(0,p*.2),p*3]}
 function demandAt(price){const T=S.agents.filter(isTarget);const L=T.length?T:S.agents;let b=0;for(const a of L)b+=pBuy(a,price).pb;return b/(L.length||1)}
-function renderProbe(){const r=$("#f-probe");const [lo,hi]=probeRange();r.min=lo;r.max=hi;r.step=(hi-lo)/100;r.value=S.probe;$("#probeVal").textContent=fmtP(S.probe)+(S.probe!==S.runPrice?"":" (launch)");const st=stats(S.agents.map(a=>a.state));$("#probeBuy").textContent=pct(st.b)}
+function renderProbe(){const r=$("#f-probe");const [lo,hi]=probeRange();r.min=lo;r.max=hi;r.step=(hi-lo)/100;r.value=S.probe;$("#probeVal").textContent=fmtP(S.probe)+(S.probe!==S.runPrice?"":" (launch)");$("#probeBuy").textContent=S.agents.length?pct(stats(S.agents.map(a=>a.state)).b):"—"}
 $("#f-probe").addEventListener("input",e=>{S.probe=+e.target.value;S.viewRound=null;rescore();renderStage();if(!$("#t-insights").hidden)renderInsights()});
 
 /* ---------------- feed ---------------- */
@@ -1699,7 +1700,7 @@ async function groundCast(){if(!(S.brief.ground&&isPro()&&isIndia()&&!(S.brief.l
     log(`grounding: ${G.rows.length} records sampled from ${G.total.toLocaleString("en-IN")} matching people`+(G.dropped.length?` (loosened: ${G.dropped.join(", ")})`:""),"ok");setLoading("Casting your market from "+G.rows.length+" real-distribution records…")}
   catch(e){if(e?.code==="cancelled")throw e;S.groundRows=null;S.groundMeta=null;log("grounding skipped: "+errCopy(e),"err");setLoading("Casting your market…")}}
 async function genPopulation(){
-  S.brief=readBrief();clearForRun("Casting your market…");S.groundRows=null;S.groundMeta=null;S.step=1;renderSteps();
+  S.brief=readBrief();S.runPrice=S.probe=S.brief.price;clearForRun("Casting your market…");S.groundRows=null;S.groundMeta=null;S.step=1;renderSteps();
   setBusy(true,"Casting personas…");$("#runId").textContent="sim_"+Math.random().toString(16).slice(2,10);
   log("POST population · "+S.brief.name+" · "+fmtP(S.brief.price)+" "+billTxt());log("asking Claude to cast segments and personas (usually 20 to 60 s)…");
   await groundCast();
@@ -2278,7 +2279,7 @@ function setLoading(msg){S.loading=msg||null;const o=swarmOverlay();o.hidden=!ms
 function skelCard(lines){return h("div",{class:"skel","aria-hidden":"true"},h("div",{class:"row1"},h("i",{class:"sk av"}),h("i",{class:"sk",style:"width:40%"})),...(lines||[92,78,55]).map(w=>h("i",{class:"sk",style:`width:${w}%`})))}
 function skelList(n,note){return h("div",{class:"stack"},note?h("p",{class:"sub",style:"margin:0"},note):"",...Array.from({length:n},(_,i)=>skelCard([94-i*7,80-i*5,50+i*6])))}
 function feedWait(on,note){const list=$("#feedlist");const old=$("#feedwait");if(old)old.remove();if(!on)return;const w=h("div",{id:"feedwait",class:"stack"},h("p",{class:"sub",style:"margin:0"},note||"Writing what they say…"),skelCard(),skelCard([85,60]));if(list)list.prepend(w);else{$("#t-feed").replaceChildren(w)}}
-function clearForRun(msg){Object.assign(S,{segments:[],personas:[],agents:[],edges:[],adj:[],followers:[],feed:[],snapshots:[],viewRound:null,report:null,duel:null,plans:null,audit:null,casts:null,critic:null,intent:null,realism:null,bandAlt:null,isSample:false});ENS.key="";setLoading(msg);renderAll()}
+function clearForRun(msg){Object.assign(S,{segments:[],personas:[],agents:[],edges:[],adj:[],followers:[],feed:[],snapshots:[],viewRound:null,report:null,duel:null,plans:null,audit:null,casts:null,critic:null,intent:null,realism:null,bandAlt:null,isSample:false,runPrice:S.brief.price||0,probe:S.brief.price||0});ENS.key="";setLoading(msg);renderAll();renderProbe()}
 
 /* ---------------- boot ---------------- */
 markPro();planUI();$("#f-recast").addEventListener("change",e=>e.target.dataset.touched="1");

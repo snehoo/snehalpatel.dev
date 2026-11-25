@@ -16,3 +16,5 @@
   X-Robots-Tag: noindex, nofollow
 /rs/*
   X-Robots-Tag: noindex, nofollow
+/marketroom/*
+  X-Robots-Tag: noindex, nofollow

@@ -1673,7 +1673,7 @@ const IN_STATES=["Uttar Pradesh","Maharashtra","West Bengal","Bihar","Tamil Nadu
 let LIST_OVERRIDE=null;
 const isIndia=()=>/\bindia\b|mumbai|delhi|bengaluru|bangalore|pune|chennai|hyderabad|kolkata|thane|ahmedabad|jaipur|lucknow|indore|kochi|gujarat|maharashtra|karnataka|kerala|tamil/i.test((S.brief?.region||"")+" "+(S.brief?.aud||""));
 function whereFrom(sp){const q=x=>"'"+String(x).replace(/'/g,"''")+"'";const parts=[];const st=(sp.states||[]).filter(x=>IN_STATES.includes(x));if(st.length)parts.push("("+st.map(x=>`"state"=${q(x)}`).join(" OR ")+")");
-  if(sp.zone==="Urban"||sp.zone==="Rural")parts.push(`"zone"=${q(sp.zone)}`);const a=Math.max(18,Math.round(num(sp.age_min,18))),b=Math.max(a,Math.min(100,Math.round(num(sp.age_max,75))));parts.push(`"age">=${a} AND "age"<=${b}`);
+  if(sp.zone==="Urban"||sp.zone==="Rural")parts.push(`"zone"=${q(sp.zone)}`);const a0=Math.round(num(sp.age_min,0)),b0=Math.round(num(sp.age_max,0));const a=a0>=18&&a0<=90?a0:18,b=b0>a&&b0<=100?b0:Math.max(a+10,75);parts.push(`"age">=${a} AND "age"<=${b}`);
   if(sp.sex==="Male"||sp.sex==="Female")parts.push(`"sex"=${q(sp.sex)}`);const oc=(sp.occupations||[]).map(x=>String(x).replace(/[^A-Za-z ,\-\/&]/g,"").trim()).filter(x=>x.length>=3).slice(0,8);
   if(oc.length)parts.push("("+oc.map(o=>`"occupation" ILIKE ${q("%"+o+"%")}`).join(" OR ")+")");return parts.join(" AND ")}
 async function dsFetch(where,offset,length){let r;try{r=await fetch(DS_URL+"&where="+encodeURIComponent(where)+"&offset="+offset+"&length="+length)}catch{throw{code:"x",message:"Couldn't reach the India persona dataset from this page."+(ON_WEB?"":" It works on snehalpatel.dev/marketroom.")}}
@@ -1689,10 +1689,12 @@ async function groundSpec(){const d=await askJSON(`Turn this target audience int
 ${briefLine()}
 States must come from this exact list: ${IN_STATES.join("; ")}.
 Occupations are job-title keywords in the style of India's National Classification of Occupations (e.g. "Dentist", "Merchant", "Salesperson", "Teacher", "Accountant", "Driver"); give 2 to 6 only when the buyer is defined by their job (business owners, professionals), else [].
-Reply with only JSON: {"states":[],"zone":"Urban|Rural|Any","age_min":18,"age_max":70,"sex":"Any|Male|Female","occupations":[],"why":"one line"}`,"quick");
+Use 0 for age_min or age_max to leave it open.
+Reply with only JSON: {"states":[],"zone":"Urban|Rural|Any","age_min":0,"age_max":0,"sex":"Any|Male|Female","occupations":[],"why":"one line"}`,"quick");
   return{states:Array.isArray(d?.states)?d.states.map(str):[],zone:["Urban","Rural"].includes(d?.zone)?d.zone:"Any",age_min:num(d?.age_min,18),age_max:num(d?.age_max,75),sex:["Male","Female"].includes(d?.sex)?d.sex:"Any",occupations:Array.isArray(d?.occupations)?d.occupations.map(str):[],why:str(d?.why)}}
 async function groundCast(){if(!(S.brief.ground&&isPro()&&isIndia()&&!(S.brief.list||"").trim()))return;
-  try{setLoading("Sampling people from India's population data…");log("grounding: turning the audience into a population filter…");const sp=await groundSpec();const G=await groundRows(sp,40);
+  try{setLoading("Sampling people from India's population data…");log("grounding: turning the audience into a population filter…");const sp=await groundSpec();const biz=S.brief.buyer!=="household";if(biz&&!(sp.occupations||[]).length){log("grounding skipped: business buyers need job titles to match in the population data, and none were found for this audience");setLoading("Casting your market…");return}
+    const G=await groundRows(sp,40);if(biz&&G.dropped.includes("occupation")){log(`grounding skipped: too few people in the population data have the buyers' job titles (${(sp.occupations||[]).join(", ")}), so a general sample would misrepresent business owners`);setLoading("Casting your market…");return}
     S.groundRows=G.rows.map(rowLine);S.groundMeta={spec:G.spec,total:G.total,where:G.where,dropped:G.dropped,n:G.rows.length,why:sp.why};
     log(`grounding: ${G.rows.length} records sampled from ${G.total.toLocaleString("en-IN")} matching people`+(G.dropped.length?` (loosened: ${G.dropped.join(", ")})`:""),"ok");setLoading("Casting your market from "+G.rows.length+" real-distribution records…")}
   catch(e){if(e?.code==="cancelled")throw e;S.groundRows=null;S.groundMeta=null;log("grounding skipped: "+errCopy(e),"err");setLoading("Casting your market…")}}
@@ -1821,7 +1823,7 @@ One vote per persona. pick is "1", "2" or "neither". confidence is low, mid or h
 }
 $("#btn-pop").onclick=()=>guard(genPopulation);
 $("#btn-run").onclick=()=>guard(runRounds);
-$("#btn-all").onclick=()=>guard(async()=>{await genPopulation();await runRounds();if($("#f-recast").checked){await runRecasts(6);await runCritic();await runIntent("price");if(isIndia())await runRealism()}const j=S.brief.job;if(j==="pricing")await runPlans();if(j==="message"){await runDuel();if($("#f-recast").checked)await runIntent("duel")}await genReport()});
+$("#btn-all").onclick=()=>guard(async()=>{await genPopulation();await runRounds();if($("#f-recast").checked){await runRecasts(6);await runCritic();await runIntent("price");if(isIndia()&&S.brief.buyer==="household")await runRealism()}const j=S.brief.job;if(j==="pricing")await runPlans();if(j==="message"){await runDuel();if($("#f-recast").checked)await runIntent("duel")}await genReport()});
 
 /* ---------------- sample ---------------- */
 let replayAbort=false,SK="reviewsaathi";

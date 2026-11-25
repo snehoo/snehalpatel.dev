@@ -121,8 +121,8 @@ canvas{display:block;width:100%;height:100%;cursor:crosshair}
 .tip span{opacity:.75;font-family:var(--f-mono);font-size:11px}
 
 /* side tabs */
-.tabs{display:flex;gap:2px;padding:6px 8px 0;border-bottom:1px solid var(--line);overflow-x:auto}
-.tabs button{border:0;background:none;padding:8px 10px 9px;cursor:pointer;font-weight:600;font-size:13px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.tabs{display:flex;flex-wrap:wrap;gap:0 2px;padding:4px 8px 0;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:none;padding:7px 8px 8px;cursor:pointer;font-weight:600;font-size:12.5px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
 .tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 .tabs .count{font-family:var(--f-mono);font-size:10.5px;font-weight:500;margin-left:4px;color:var(--muted)}
 .tabpane{padding:12px 14px;display:flex;flex-direction:column;gap:12px}
@@ -379,6 +379,17 @@ body.intake-on main, body.intake-on #agentPage, body.intake-on footer.log, body.
 .planswitch button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 .planswitch button[data-plan="pro"][aria-pressed="true"]{background:#8B5CF6;color:#fff}
 .codebox{display:flex;gap:6px;margin-top:6px}.codebox input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:6px 8px}
+.skel{border:1px solid var(--line);border-radius:9px;padding:12px;display:flex;flex-direction:column;gap:9px;background:var(--panel)}
+.skel .row1{display:flex;gap:9px;align-items:center}
+.sk{height:10px;border-radius:5px;background:linear-gradient(90deg,var(--panel-2) 25%,color-mix(in srgb,var(--line) 80%,var(--panel-2)) 50%,var(--panel-2) 75%);background-size:200% 100%;animation:shimmer 1.3s infinite linear}
+.sk.av{width:28px;height:28px;border-radius:50%;flex:none}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+.swarm-loading{position:absolute;inset:0;display:grid;place-items:center;z-index:3;pointer-events:none}
+.swarm-loading .orb{position:relative;width:200px;height:200px;margin:0 auto}
+.swarm-loading .orb i{position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px;border-radius:50%;opacity:.85;animation:orbit 2.8s ease-in-out infinite}
+@keyframes orbit{0%{transform:rotate(var(--a)) translate(var(--r)) scale(.55);opacity:.35}50%{transform:rotate(calc(var(--a) + 170deg)) translate(calc(var(--r) * .4)) scale(1);opacity:1}100%{transform:rotate(calc(var(--a) + 360deg)) translate(var(--r)) scale(.55);opacity:.35}}
+.swarm-loading p{margin:16px 0 0;font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion: reduce){.sk,.swarm-loading .orb i{animation:none}}
 @media (prefers-reduced-motion: reduce){ .post.new{animation:none} .pill.busy::before{animation:none} }
 </style>
 
@@ -421,7 +432,7 @@ body.intake-on main, body.intake-on #agentPage, body.intake-on footer.log, body.
           <span class="thinking" id="ik-think" hidden>Reading it…</span>
         </div>
         <div class="ik-ex">Or open an example: <button type="button" data-ex="reviewsaathi">ReviewSaathi (review replies, Mumbai)</button><button type="button" data-ex="ledgerly">Ledgerly (shop khata)</button><button type="button" data-ex="agent">CoreMark vs rivals (AI shoppers)</button></div>
-        <p class="ik-ex" style="margin:0;display:block">Lite gives you one full run with the feed, personas, objections, price curve, verdict, report and the next tests to run. <span class="pro">◆ Pro</span> adds recasts, the cast check, the intent check, plans, duels, what-ifs, editable assumptions, profit, funnels and AI shoppers. Switch at the top; Pro is free to try during the beta.</p>
+        <p class="ik-ex" style="margin:0;display:block">Pro is on by default during the beta. Lite gives you one full run with the feed, personas, objections, price curve, verdict, report and the next tests to run. <span class="pro">◆ Pro</span> adds recasts, the cast check, the intent check, plans, duels, what-ifs, editable assumptions, profit, funnels and AI shoppers. Switch at the top; Pro is free to try during the beta.</p>
       </div>
 
       <div id="ik2" class="ik" hidden>
@@ -484,6 +495,8 @@ body.intake-on main, body.intake-on #agentPage, body.intake-on footer.log, body.
         <div class="field"><label for="f-profile">Kind of purchase</label><select id="f-profile"><option value="b2b_out">Business buyer, you contact them</option><option value="b2b_in">Business buyer, they find you</option><option value="local">Local service</option><option value="considered">Consumer, thought-through purchase</option><option value="impulse">Consumer, cheap or impulse buy</option><option value="regulated">High-trust or regulated (health, money, children, legal)</option></select></div>
         <div class="field"><label for="f-spend">What buyers spend today on what this replaces (same billing, 0 if nothing)</label><input id="f-spend" type="number" min="0" step="1"></div>
         <div class="field"><label for="f-list">Real customer or prospect list (optional, one per line)</label><textarea id="f-list" rows="3" placeholder="Type of buyer, size, notes. Business details only, no phone numbers."></textarea></div>
+        <label class="field" style="flex-direction:row;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--muted)"><input type="checkbox" id="f-ground" style="width:auto;margin-top:2px"> <span>Ground personas in India's population data: each one starts from a real-distribution record (Nemotron-Personas-India, census-aligned) <span class="pro">◆ Pro</span></span></label>
+        <label class="field" style="flex-direction:row;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--muted)"><input type="checkbox" id="f-blind" style="width:auto;margin-top:2px"> <span>Blind the brand: Claude sees a made-up name, so it can't recall anything about a real product (for testing past launches)</span></label>
         <div class="field"><label for="f-gates">Must-haves you can't offer yet that some buyers insist on (one per line)</label><textarea id="f-gates" rows="2" placeholder="e.g. SOC 2 certificate, GST invoice, doctor's approval, works offline"></textarea></div>
         <div class="row"><div class="field"><label for="f-listkind">Your list is</label><select id="f-listkind"><option value="lead">a lead list I picked</option><option value="census">everyone in the market</option><option value="random">a random sample</option><option value="convenience">people I happen to know</option></select></div><div class="field" style="justify-content:flex-end"><label style="display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--muted)"><input type="checkbox" id="f-roi" style="width:auto"> It replaces several tools or paid labour</label></div></div>
         <div class="field"><label for="f-decision">Decision this run is for (locked when you run it)</label><input id="f-decision" placeholder="e.g. launch at this price, or not"></div>
@@ -942,6 +955,7 @@ cv.addEventListener("click",e=>{const r=cv.getBoundingClientRect();const i=neare
 function renderSteps(){document.querySelectorAll("#steps i").forEach(i=>{const n=+i.dataset.s;i.className=n<S.step?"done":n===S.step?"on":""})}
 function setStatus(txt,kind){const p=$("#status");p.textContent=txt;p.className="pill"+(kind?" "+kind:"")}
 function renderStage(){
+  if(!S.agents.length){$("#hud").replaceChildren();$("#legend").replaceChildren();$("#stageMeta").textContent=S.loading?"casting…":"";return}
   const st=stats(S.agents.map(a=>a.state));
   $("#stageMeta").textContent=S.agents.length+" agents (copies of "+S.personas.length+" personas) · "+S.segments.length+" segments";
   const vs=S.viewRound!=null&&S.snapshots[S.viewRound]?S.snapshots[S.viewRound].stats:st;
@@ -975,7 +989,7 @@ function postCard(post,isNew){
 }
 function renderFeed(){
   const box=$("#t-feed");$("#c-feed").textContent=S.feed.length||"";
-  if(!S.feed.length){box.replaceChildren(h("p",{class:"empty"},S.personas.length?"Population ready. Run the rounds to watch the feed fill.":"No posts yet. Run a simulation from the brief."));return}
+  if(!S.feed.length){box.replaceChildren(S.loading||S.busy&&!S.isSample?skelList(4,S.loading||"Waiting for the first posts…"):h("p",{class:"empty"},S.personas.length?"Population ready. Run the rounds to watch the feed fill.":"No posts yet. Run a simulation from the brief."));return}
   const A=S.audit;const nf=A?Object.keys(A.flags).length:0;
   const bar=h("div",{class:"toolbar",id:"feedbar"},
     h("button",{class:"btn sm",type:"button",disabled:!sampleFn||S.busy,onclick:()=>guard(auditRealism),title:"A second Claude pass flags posts that are too agreeable, too polished or too alike"},A?"Audit again":"Audit realism"),
@@ -1012,17 +1026,18 @@ function shareEditor(){if(!S.segments.length)return"";const ins=S.segments.map(s
     h("button",{class:"btn sm",type:"button",style:"margin-top:6px",onclick:()=>{const v=ins.map(x=>Math.max(0,num(x.value,0)));const t=v.reduce((a,b)=>a+b,0)||1;S.segments.forEach((sg,i)=>sg.share=v[i]/t);S.editCount=(S.editCount||0)+1;applyAssumptions("segment shares edited; numbers rerun")}},"Apply and rerun numbers"))}
 function renderPersonas(){
   const box=$("#t-personas");$("#c-pers").textContent=S.personas.length||"";
-  if(!S.personas.length){box.replaceChildren(h("p",{class:"empty"},"No personas yet. Generate a population from the brief."));return}
+  if(!S.personas.length){box.replaceChildren(S.loading?skelList(3,S.loading):h("p",{class:"empty"},"No personas yet. Generate a population from the brief."));return}
   const st=S.agents.map(a=>a.state);
   const gr=S.personas.filter(p=>p.grounded).length;
   box.replaceChildren(h("p",{class:"sub",style:"margin:0;font-size:12px;color:var(--muted)"},"Each persona leads a cluster of agents who share their tastes, with some variation. Click one to interview them."+(S.personas[0]?.decides?` ${gr} of ${S.personas.length} are built from real voices.`:" This sample was written before the rulebook.")),
+    S.groundMeta?h("p",{class:"sub",style:"margin:0"},"Grounded in ",h("a",{href:GROUND_SRC.url,target:"_blank",rel:"noopener"},GROUND_SRC.name)," by "+GROUND_SRC.by+" ("+GROUND_SRC.licence+"): "+GROUND_SRC.basis+". "+S.groundMeta.n+" records sampled from "+S.groundMeta.total.toLocaleString("en-IN")+" matching people."+(S.groundMeta.why?" Filter: "+S.groundMeta.why:"")):"",
     rulebook(),isPro()?shareEditor():"",
     h("div",{class:"pgrid"},...S.personas.map((p,i)=>{const si=S.segments.findIndex(s=>s.id===p.segment);const n=S.followers[i]?.length||0;const fb=n?S.followers[i].filter(f=>st[f]==="b").length/n:0;
       return h("div",{class:"pcard"},
         h("div",{class:"hd"},h("span",{class:"av",style:"background:"+segColor(si)},p.name.replace(/^CA /,"").split(" ").map(x=>x[0]).join("").slice(0,2)),h("div",{style:"min-width:0;flex:1"},h("h3",null,p.name),h("span",{class:"h"},"@"+p.handle+(p.age?" · "+p.age:"")+" · "+(S.segments[si]?.name||"")+(p.target===false?" · bystander":""))),h("button",{class:"btn sm",type:"button",onclick:()=>openInterview(i)},"Interview")),
         h("p",null,p.role+". "+p.bio),
         p.decides?h("div",{class:"chips"},...[p.sex,p.city,p.income&&p.income+" income",ROLE[p.decides]?.label,p.workplace,p.family,p.digital&&"apps: "+p.digital,p.pressure&&"time pressure: "+p.pressure].filter(Boolean).map(t=>h("span",{class:"chip"},t))):null,
-        p.rowText?h("p",{class:"why"},h("b",{style:"color:var(--buy)"},"From your list, row "+p.row+": "),p.rowText):"",
+        p.rowText?h("p",{class:"why"},h("b",{style:"color:var(--buy)"},(S.groundRows&&!(S.brief.list||"").trim()?"From India population data, record ":"From your list, row ")+p.row+": "),p.rowText.slice(0,240)):"",
         p.raw?(isPro()?personaEditor(p):h("p",{class:"sub",style:"margin:0"},"Editing persona numbers is ",proBadge(),".")):"",
         p.trace?.length?h("div",{class:"chips"},...p.trace.map(t=>h("span",{class:"chip accent",title:RULES.find(r=>t.startsWith(r.id))?.text||""},t))):null,
         p.decides?h("p",{class:"why"},p.grounded?h("b",{style:"color:var(--buy)"},"From your sources: "):h("b",null,"Invented, no source quote. "),p.grounded?"“"+p.quote+"”":""):null,
@@ -1107,7 +1122,8 @@ async function runRecasts(N){if(!isPro())throw{code:"x",message:"Recasting is a 
   if(!sampleFn)throw{code:"x",message:(ON_WEB?"Recasting needs live runs: enter a tester code.":"Recasting needs Claude. Open this page in Claude.")};
   S.brief=S.brief.name?S.brief:readBrief();setBusy(true,`Recasting ${N} times…`);log(`robustness: asking Claude for ${N} independent casts (parallel, 3 at a time)…`);
   const res=[{k:0,...avgRuns(S.segments,S.personas),main:true}];let next=1,done=0;
-  const worker=async()=>{while(next<=N){const k=next++;try{let pop;try{pop=normPopulation(await askJSON(castPrompt(k,N+1),"default"))}catch(e1){if(e1?.code==="cancelled")throw e1;log(`  ├ cast ${k}: odd answer, retrying once`);pop=normPopulation(await askJSON(castPrompt(k,N+1),"default"))}res.push({k,...avgRuns(pop.segments,pop.personas)});log(`  ├ cast ${k}: interest ${pct(res[res.length-1].interest)} · peak ${fmtP(res[res.length-1].peak)}`)}catch(e){if(e?.code==="cancelled")throw e;log(`  ├ cast ${k} failed: ${errCopy(e)}`,"err")}done++;setStatus(`Recasting ${done}/${N}…`,"busy")}};
+  const worker=async()=>{while(next<=N){const k=next++;try{let rows=null;if(S.groundMeta&&!(S.brief.list||"").trim()){try{rows=(await groundRows(S.groundMeta.spec,40)).rows.map(rowLine)}catch(eg){if(eg?.code==="cancelled")throw eg;rows=S.groundRows}}
+        let pop;try{pop=normPopulation(await askJSON(castPrompt(k,N+1,rows),"default"),rows)}catch(e1){if(e1?.code==="cancelled")throw e1;log(`  ├ cast ${k}: odd answer, retrying once`);pop=normPopulation(await askJSON(castPrompt(k,N+1,rows),"default"),rows)}res.push({k,...avgRuns(pop.segments,pop.personas)});log(`  ├ cast ${k}: interest ${pct(res[res.length-1].interest)} · peak ${fmtP(res[res.length-1].peak)}`)}catch(e){if(e?.code==="cancelled")throw e;log(`  ├ cast ${k} failed: ${errCopy(e)}`,"err")}done++;setStatus(`Recasting ${done}/${N}…`,"busy")}};
   await Promise.all([worker(),worker(),worker()]);
   S.casts={src:"claude",key:S.brief.name+S.personas.length+S.brief.price+aKey(),list:res.sort((a,b)=>a.k-b.k),at:Date.now()};log(`robustness: ${res.length} casts compared`,"ok");setBusy(false);switchTab("insights");
 }
@@ -1337,8 +1353,42 @@ function duelIntentBlock(){const I=S.intent&&S.intent.kind==="duel"&&S.intent.ke
     h("div",{class:"chart-wrap"},h("table",{class:"ptable"},h("thead",null,h("tr",null,h("th",null,"Version"),h("th",{class:"n"},"Average intent"),h("th",{class:"n"},"Say 4 or 5"),h("th",null,"Spread, 1 → 5"))),h("tbody",null,...ag.map(x=>h("tr",null,h("td",null,x.o.label+" · "+fmtP(x.o.price)),h("td",{class:"n"},x.mean.toFixed(2)),h("td",{class:"n"},pct(x.top2)),h("td",{style:"min-width:120px"},pmfBar(x.pmf))))))),
     h("p",{style:"margin:0;font-size:13px"},Math.abs(d)<.1?"Too close to call: under 0.1 points apart.":`${d>0?"B":"A"} leads by ${Math.abs(d).toFixed(2)} points of average intent.`),btn)}
 function readBriefSafe(){try{return readBrief()}catch{return null}}
+
+/* ---------------- realism check: does the cast look like India? ---------------- */
+const REAL_SRC="NFHS-6 (2023-24) India fact sheet figures as reported in coverage of the release; ages 15-49 unless noted";
+const sexOf=p=>/^f/i.test(p.sex||"")||/\bFemale\b/.test(p.rowText||"")?"Female":/^m/i.test(p.sex||"")||/\bMale\b/.test(p.rowText||"")?"Male":"";
+const zoneOf=p=>/\bRural\b/.test(p.rowText||"")?"Rural":/\bUrban\b/.test(p.rowText||"")?"Urban":p.city==="rural"?"Rural":"Urban";
+const REAL_Q=[
+ {k:"net",q:"Have you ever used the internet?",who:p=>sexOf(p)&&(p.age||30)<=49,exp:p=>({Female:{Urban:77.3,Rural:58.6},Male:{Urban:87.1,Rural:77.1}})[sexOf(p)][zoneOf(p)],note:"by sex and urban/rural"},
+ {k:"phone",q:"Do you have a mobile phone that you yourself use?",who:p=>sexOf(p)==="Female"&&(p.age||30)<=49,exp:p=>({Urban:77.6,Rural:57.4})[zoneOf(p)],note:"women, by urban/rural"},
+ {k:"bank",q:"Do you have a bank or savings account that you yourself use?",who:p=>sexOf(p)==="Female"&&(p.age||30)<=49,exp:()=>89.0,note:"women, all-India"},
+ {k:"ins",q:"Is anyone in your household covered by a health insurance or health financing scheme?",who:()=>true,exp:()=>60.2,note:"households, all-India"},
+ {k:"school",q:"Did you complete 10 or more years of schooling?",who:p=>sexOf(p)&&(p.age||30)<=49,exp:p=>sexOf(p)==="Female"?46.4:54.6,note:"by sex, all-India"}];
+async function runRealism(){if(!sampleFn)throw{code:"x",message:ON_WEB?"The realism check needs live runs: enter a tester code.":"The realism check needs Claude. Open this page in Claude."};if(!S.personas.length)throw{code:"nopop"};
+  setBusy(true,"Realism check…");log("realism check: the cast answers 5 questions with known answers for India…");
+  const opts=REAL_Q.map(()=>Math.random()<.5?["Yes","No"]:["No","Yes"]);
+  const lines=S.personas.map(p=>`${p.id} | ${p.name}, ${p.age||"?"}, ${p.sex||"?"} | ${p.role} | ${p.bio} | income ${p.income||"?"} | lives: ${p.rowText?p.rowText.slice(0,140):p.city||"?"}`).join("\n");
+  const d=await askJSON(`Each person below answers a short survey honestly, as their own life would make true today. Answer every question for every person.
+People (id | who | role | bio | income | where they live):
+${lines}
+Questions (answer with one of the options exactly):
+${REAL_Q.map((x,i)=>`${x.k}: ${x.q} Options: ${opts[i].join(" / ")}`).join("\n")}
+Reply with only JSON: {"a":[{"by":"p1",${REAL_Q.map(x=>`"${x.k}":"Yes"`).join(",")}}]}`,"quick");
+  const byId={};S.personas.forEach((p,i)=>byId[p.id.toLowerCase()]=i);const A={};(Array.isArray(d?.a)?d.a:[]).forEach(x=>{const i=byId[str(x?.by).toLowerCase()];if(i!=null)A[i]=x});
+  const rows=REAL_Q.map(q=>{const E=S.personas.map((p,i)=>({p,i})).filter(({p,i})=>q.who(p)&&A[i]&&/^(yes|no)$/i.test(str(A[i][q.k])));if(E.length<3)return{q,n:E.length};
+    const cast=100*E.filter(({i})=>/^yes$/i.test(str(A[i][q.k]))).length/E.length;const exp=E.reduce((s,{p})=>s+q.exp(p),0)/E.length;return{q,n:E.length,cast,exp,gap:cast-exp}});
+  const ok=rows.filter(r=>r.gap!=null);const mae=ok.length?ok.reduce((s,r)=>s+Math.abs(r.gap),0)/ok.length:null;
+  S.realism={rows,mae,at:Date.now(),key:S.brief.name+S.personas.length};log(`realism check: average gap ${mae==null?"n/a":mae.toFixed(1)+" points"}`,"ok");setBusy(false);switchTab("insights")}
+function realismBlock(){if(!isIndia())return"";const R=S.realism&&S.realism.key===S.brief.name+S.personas.length?S.realism:null;
+  const btn=h("button",{class:"btn sm",type:"button",disabled:!sampleFn||!S.personas.length||S.busy,onclick:()=>guard(runRealism)},sampleFn?(R?"Check again (1 call)":"Run realism check (1 Claude call)"):"Run realism check ("+liveHint()+")");
+  const head=[h("h4",null,"Realism check: does this cast look like India?"),h("p",{class:"sub"},"The personas answer five questions whose real answers are known from the national family health survey, and their answers are compared with the official figure for people of the same sex and urban or rural life. Source: "+REAL_SRC+". Your target can genuinely differ from the national average (urban professionals use the internet more), so read big gaps as a prompt to check the cast, not as an error.")];
+  if(!R)return h("div",{class:"block"},...head,btn);
+  const lab=R.mae==null?"Not enough answers":R.mae<=8?"Close to India's real figures":R.mae<=15?"Somewhat off":"Far off: check the cast";const col=R.mae==null?"var(--muted)":R.mae<=8?"var(--buy)":R.mae<=15?"var(--consider)":"var(--reject)";
+  return h("div",{class:"block"},...head,h("p",{style:"margin:0;font-size:14px"},h("b",{style:"color:"+col},lab),R.mae!=null?` · average gap ${R.mae.toFixed(1)} points`:""),
+    h("div",{class:"chart-wrap"},h("table",{class:"ptable"},h("thead",null,h("tr",null,h("th",null,"Question"),h("th",{class:"n"},"Cast says yes"),h("th",{class:"n"},"Real figure"),h("th",{class:"n"},"Gap"),h("th",{class:"n"},"Asked"))),
+      h("tbody",null,...R.rows.map(r=>h("tr",null,h("td",null,r.q.q,h("div",{style:"font-size:11px;color:var(--muted)"},r.q.note)),h("td",{class:"n"},r.cast==null?"–":r.cast.toFixed(0)+"%"),h("td",{class:"n"},r.exp==null?"–":r.exp.toFixed(0)+"%"),h("td",{class:"n",style:"color:var(--"+(r.gap==null?"muted":Math.abs(r.gap)<=10?"buy":Math.abs(r.gap)<=20?"consider":"reject")+")"},r.gap==null?"too few":(r.gap>0?"+":"")+r.gap.toFixed(0)),h("td",{class:"n"},r.n)))))),btn)}
 function renderInsights(){
-  const box=$("#t-insights");if(!S.agents.length){box.replaceChildren(h("p",{class:"empty"},"Run a simulation to see insights."));return}
+  const box=$("#t-insights");if(!S.agents.length){box.replaceChildren(S.loading?skelList(2,"Results appear once the market is cast and the rounds run."):h("p",{class:"empty"},"Run a simulation to see insights."));return}
   const TA=S.agents.filter(isTarget);const st=stats((TA.length?TA:S.agents).map(a=>a.state));const by=S.agents.length-TA.length?stats(S.agents.filter(a=>!isTarget(a)).map(a=>a.state)):null;const dc=demandChart();const tags=tagTally();const ens=ensemble();const la=likelyActual(st);const hd=holdDown();
   const rb=st.b/Math.max(st.aware,.001);const posShare=S.feed.length?S.feed.filter(p=>p.stance>.3).length/S.feed.length:0;const spoke=new Set(S.feed.map(p=>p.pi)).size;const gr=S.personas.filter(p=>p.grounded).length;
   const checks=[
@@ -1355,7 +1405,7 @@ function renderInsights(){
     by?h("p",{class:"sub"},`Bystanders (not your target, ${S.agents.length-TA.length} agents) are left out of these numbers: ${pct(by.b/Math.max(by.aware,.001))} of those reached would buy.`):"",
     hd.warn?h("p",{class:"note",style:"border-color:var(--reject)"},h("b",null,"Buying is near zero, and these rules are why. "),hd.warn):"",
     funnelBlock(st,la),isPro()?intentBlock():lockCard("Intent check","Each persona says in their own words how likely they are to buy, at three prices, scored the way the SSR paper does."),
-    isPro()?bandBlock():lockCard("Price band","Where revenue or profit peaks across several casts, with the plan poll reconciled against the engine."),isPro()?robustBlock():lockCard("Robustness across casts","The market cast again 6 times by Claude, or perturbed, with the findings that survive."),isPro()?criticBlock():lockCard("Cast check","A skeptical second pass that names buyer types, competitors and segments the cast missed."),expBlock(),
+    isPro()?bandBlock():lockCard("Price band","Where revenue or profit peaks across several casts, with the plan poll reconciled against the engine."),isPro()?robustBlock():lockCard("Robustness across casts","The market cast again 6 times by Claude, or perturbed, with the findings that survive."),isPro()?realismBlock():(isIndia()?lockCard("Realism check","The cast answers five questions with known answers for India, compared with the national family health survey."):""),isPro()?criticBlock():lockCard("Cast check","A skeptical second pass that names buyer types, competitors and segments the cast missed."),expBlock(),
     h("div",{class:"block"},h("h4",null,"What's holding buying down"),h("p",{class:"sub"},"Your target personas at "+fmtP(S.runPrice||S.brief.price)+". One persona can be held by several."),h("div",{class:"stack"},...hd.rows.map(r=>h("div",{class:"why"},h("b",null,r.n+" of "+hd.n+" · "+r.t+". "),r.d)))),
     h("div",{class:"row"},predBtn({job:"launch",kind:"rate",label:`${S.brief.name}: % of people reached who buy`,predicted:+(rb*100).toFixed(1)})),
     h("div",{class:"block"},h("h4",null,"Realism checks"),h("div",{class:"stack"},...checks.map(([ok,t,d])=>h("div",{class:"why"},h("b",{style:"color:var("+(ok?"--buy":"--reject")+")"},(ok?"✓ ":"✗ ")+t+". "),d)))),
@@ -1535,8 +1585,8 @@ async function sendChat(q){
   if(!sampleFn||chatCtl)return;$("#chatIn").value="";const chat=$("#chat");
   chat.append(h("div",{class:"msg me"},q));const bub=h("div",{class:"msg them"},"Thinking…");chat.append(bub);chat.scrollTop=chat.scrollHeight;
   chatTurns.push({role:"user",content:q});chatCtl=new AbortController();
-  try{const {text}=await sampleFn([{role:"user",content:personaRules(chatPersona)},...chatTurns.slice(-12)],{modelTier:"quick",cache:false,signal:chatCtl.signal,onText:({text})=>{bub.textContent=text;chat.scrollTop=chat.scrollHeight}});
-    chatTurns.push({role:"assistant",content:text});log("interview @"+S.personas[chatPersona].handle+": answered");}
+  try{let {text}=await sampleFn([{role:"user",content:blindIn(personaRules(chatPersona))},...chatTurns.slice(-12).map(m=>({...m,content:blindIn(m.content)}))],{modelTier:"quick",cache:false,signal:chatCtl.signal,onText:({text})=>{bub.textContent=text;chat.scrollTop=chat.scrollHeight}});
+    if(S.brief.blind)text=text.split(BLIND_ALIAS).join(S.brief.name);bub.textContent=text;chatTurns.push({role:"assistant",content:text});log("interview @"+S.personas[chatPersona].handle+": answered");}
   catch(e){bub.textContent=e.text||"";if(e.code!=="cancelled")bub.after(h("p",{class:"note"},errCopy(e)));chatTurns.pop()}
   finally{chatCtl=null}
 }
@@ -1545,10 +1595,14 @@ async function sendChat(q){
 let sampleFn=null,ctl=null;
 function errCopy(e){return({bad_code:"That tester code wasn't accepted. Check it, or use Forget code and enter it again.",live_off:"Live runs aren't switched on for this site yet. The examples still work.",not_granted:"Claude access wasn't allowed for this page. Live runs are off; the sample still works.",sampling_disabled:"Claude isn't available on this account.",rate_limited:"Too many requests just now. Wait a minute, then try again.",session_expired:"Your session expired. Sign in again, then retry.",invalid_json:"Claude's answer wasn't in the expected shape. Try again.",refused:"Claude declined this brief. Rephrase the pitch and try again.",prompt_too_large:"The brief is too long. Shorten the pitch.",cancelled:"Stopped.",nopop:"Generate a population first."})[e?.code]||e?.message||"Something went wrong talking to Claude. Try again."}
 function setBusy(b,label){S.busy=b;["#btn-all","#btn-pop","#btn-run","#btn-replay","#f-preset"].forEach(s=>$(s).disabled=b||(!sampleFn&&s!=="#btn-replay"&&s!=="#f-preset"));if(!b&&!S.personas.length)$("#btn-run").disabled=true;$("#btn-stop").disabled=!b;setStatus(b?label:(S.isSample?"Sample run":"Ready"),b?"busy":sampleFn?"":"off");if(!$("#t-duel").hidden)renderDuel();if(!$("#t-plans").hidden)renderPlans();if(!$("#agentPage").hidden)renderShelfResults();if(!$("#t-report").hidden)renderReport()}
-async function guard(fn){if(S.busy)return;try{await fn()}catch(e){if(e?.code==="cancelled"||e?.name==="AbortError"){log("stopped by you");}else{log("error: "+errCopy(e)+(e?.code?" ("+e.code+")":""),"err");console.error(e)}}finally{ctl=null;setBusy(false)}}
+async function guard(fn){if(S.busy)return;try{await fn()}catch(e){if(e?.code==="cancelled"||e?.name==="AbortError"){log("stopped by you");}else{log("error: "+errCopy(e)+(e?.code?" ("+e.code+")":""),"err");console.error(e)}}finally{ctl=null;setLoading(null);setBusy(false)}}
 $("#btn-stop").onclick=()=>{ctl?.abort();replayAbort=true};
-async function askJSON(prompt,tier){ctl=new AbortController();return sampleFn.json(prompt,{modelTier:tier,cache:false,signal:ctl.signal})}
-function readBrief(){const B={name:$("#f-name").value.trim()||"Untitled product",pitch:$("#f-pitch").value.trim(),price:Math.max(0,num($("#f-price").value,0)),setup:Math.max(0,num($("#f-setup").value,0)),cur:$("#f-cur").value,bill:$("#f-bill").value,aud:$("#f-aud").value.trim(),region:$("#f-region").value.trim()||"unspecified",chan:$("#f-chan").value.trim(),pop:+$("#f-pop").value,rounds:+$("#f-rounds").value,preset:$("#f-preset").value,proof:$("#f-proof").value,voices:$("#f-voices").value.trim().slice(0,8000),job:$("#briefForm").dataset.job||"launch",tiers:$("#f-tiers").value.split(",").map(x=>x.trim()).filter(Boolean).slice(0,3),features:$("#f-features").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,16),bpitch:$("#f-bpitch").value.trim(),bsetup:Math.max(0,num($("#f-bsetup").value,0)),yearly:Math.max(0,num($("#f-yearly").value,0)),buyer:$("#f-buyer").value,bizsize:$("#f-bizsize").value,reach:$("#f-reach").value,profile:$("#f-profile").value,channel:$("#f-channel").value,gates:$("#f-gates").value.trim().slice(0,1500),listkind:$("#f-listkind").value,roi:$("#f-roi").checked,reng:num($("#f-reng").value,0),rtrial:num($("#f-rtrial").value,0),rpaid:num($("#f-rpaid").value,0),churn:num($("#f-churn").value,0),fee:num($("#f-fee").value,0),refund:num($("#f-refund").value,0),vcost:Math.max(0,num($("#f-vcost").value,0)),cac:Math.max(0,num($("#f-cac").value,0)),life:Math.max(0,num($("#f-life").value,0)),spend:Math.max(0,num($("#f-spend").value,0)),list:$("#f-list").value.trim().slice(0,6000),decision:$("#f-decision").value.trim(),bar:Math.max(0,num($("#f-bar").value,0)),guess:$("#f-guess").value===""?null:Math.max(0,num($("#f-guess").value,0))};B.bprice=Math.max(0,num($("#f-bprice").value,B.price));if(!B.pitch)throw{code:"brief",message:"Add a pitch first."};return B}
+
+const BLIND_ALIAS="Brand Kestrel";
+function blindIn(t){const B=S.brief;if(!B?.blind||!B.name||typeof t!=="string")return t;return t.replace(new RegExp(B.name.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"gi"),BLIND_ALIAS)}
+function blindOut(d){const B=S.brief;if(!B?.blind||!B.name)return d;try{return JSON.parse(JSON.stringify(d).split(BLIND_ALIAS).join(B.name.replace(/\\/g,"\\\\").replace(/"/g,'\\"')))}catch{return d}}
+async function askJSON(prompt,tier){ctl=new AbortController();return blindOut(await sampleFn.json(blindIn(prompt),{modelTier:tier,cache:false,signal:ctl.signal}))}
+function readBrief(){const B={name:$("#f-name").value.trim()||"Untitled product",pitch:$("#f-pitch").value.trim(),price:Math.max(0,num($("#f-price").value,0)),setup:Math.max(0,num($("#f-setup").value,0)),cur:$("#f-cur").value,bill:$("#f-bill").value,aud:$("#f-aud").value.trim(),region:$("#f-region").value.trim()||"unspecified",chan:$("#f-chan").value.trim(),pop:+$("#f-pop").value,rounds:+$("#f-rounds").value,preset:$("#f-preset").value,proof:$("#f-proof").value,voices:$("#f-voices").value.trim().slice(0,8000),job:$("#briefForm").dataset.job||"launch",tiers:$("#f-tiers").value.split(",").map(x=>x.trim()).filter(Boolean).slice(0,3),features:$("#f-features").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,16),bpitch:$("#f-bpitch").value.trim(),bsetup:Math.max(0,num($("#f-bsetup").value,0)),yearly:Math.max(0,num($("#f-yearly").value,0)),buyer:$("#f-buyer").value,bizsize:$("#f-bizsize").value,reach:$("#f-reach").value,profile:$("#f-profile").value,channel:$("#f-channel").value,ground:$("#f-ground").checked,blind:$("#f-blind").checked,gates:$("#f-gates").value.trim().slice(0,1500),listkind:$("#f-listkind").value,roi:$("#f-roi").checked,reng:num($("#f-reng").value,0),rtrial:num($("#f-rtrial").value,0),rpaid:num($("#f-rpaid").value,0),churn:num($("#f-churn").value,0),fee:num($("#f-fee").value,0),refund:num($("#f-refund").value,0),vcost:Math.max(0,num($("#f-vcost").value,0)),cac:Math.max(0,num($("#f-cac").value,0)),life:Math.max(0,num($("#f-life").value,0)),spend:Math.max(0,num($("#f-spend").value,0)),list:$("#f-list").value.trim().slice(0,6000),decision:$("#f-decision").value.trim(),bar:Math.max(0,num($("#f-bar").value,0)),guess:$("#f-guess").value===""?null:Math.max(0,num($("#f-guess").value,0))};B.bprice=Math.max(0,num($("#f-bprice").value,B.price));if(!B.pitch)throw{code:"brief",message:"Add a pitch first."};return B}
 const THEMES=[{short:"first look",long:"First impressions: they have just seen the ad or landing page for the first time."},{short:"replies",long:"Replies and arguments: people respond to earlier posts, push back, ask questions, correct each other."},{short:"trying it",long:"Trying it or comparing: a few have tried it, others compare it with what they use today."},{short:"money talk",long:"Money talk: price, value for money, who pays, who walks away, what price would change their mind."},{short:"final word",long:"Final word: settled opinions, recommendations or warnings to peers."}];
 function roundTheme(r){const R=S.brief.rounds||3;const map=R===3?[0,1,3]:R===4?[0,1,2,3]:[0,1,2,3,4];const t=THEMES[map[r-1]]||THEMES[Math.min(4,r-1)];if(S.brief.reach==="outbound"){const O=[{short:"first contact",long:"First contact: the founder has just called or messaged them, or sent a free sample."},{short:"questions",long:"Questions: they ask what they need to know, push back, or brush it off."},{short:"trying it",long:"Trying it: they have looked at the sample or trial, or compared it with what they do today."},{short:"decision",long:"Decision: price, who signs, and yes, no or later."}];return O[Math.min(3,map[r-1]>=3?3:map[r-1])]}return t}
 function briefLine(){const B=S.brief;return `Product: ${B.name}\nPitch (as the ad/landing page says it): ${B.pitch}\nPrice: ${priceTxt()}\n${buyerTxt()}\nKind of purchase: ${PROFILES[profKey()].label}\nWhere most buyers first come across it: ${CHANNELS[chanKey()].label}${B.spend>0?`\nBuyers spend about ${fmtP(B.spend)} ${billTxt()} today on what this replaces.`:""}${B.decision?`\nThe founder's decision: ${B.decision}${B.bar?` (it counts as a yes if at least ${B.bar}% of people reached buy)`:""}`:""}\nFounder's guess at the buyer: ${B.aud||"not given"}\nMarket: ${B.region}\nWhere people first see it: ${B.chan||"not given"}`}
@@ -1558,17 +1612,17 @@ const SIZETXT={micro:"tiny (under ₹1 lakh revenue a month)",small:"small (₹1
 function priceTxt(){const B=S.brief;let t=fmtP(B.price)+" "+billTxt();if(B.yearly>0&&B.bill==="month")t+=`, or ${fmtP(B.yearly)} a year paid upfront`;t+=B.setup?`, plus a ${fmtP(B.setup)} one-time setup fee`:". No setup fee";return t+"."}
 function buyerTxt(){const B=S.brief;const who=B.buyer==="household"?"Who pays: a person or household.":`Who pays: a business${B.bizsize?", target size "+SIZETXT[B.bizsize]:""}.`;const how={outbound:"How buyers meet it: the founder picks and contacts them directly (calls, DMs, visits). Nobody stumbles on it.",inbound:"How buyers meet it: they find it themselves through ads, search or social posts.",both:"How buyers meet it: some are contacted directly by the founder, others find it through ads or search."}[B.reach||"both"];return who+"\n"+how}
 
-const PROMPT_V="cast v6 · engine v14";
+const PROMPT_V="cast v7 · engine v14";
 function provTxt(){const p=S.prov;if(!p)return S.isSample?"Example run":"Not recorded";const ch=Object.keys(AX).length;return p.by+(p.tier?" · model tier "+p.tier:"")+" · "+(p.v||PROMPT_V)+(p.at?" · "+new Date(p.at).toISOString().slice(0,10):"")+(p.note?" · "+p.note:"")+" · "+PROFILES[profKey()].label+(ch?` · ${ch} assumption${ch>1?"s":""} changed by you`:"")+(S.editCount?` · ${S.editCount} persona edit${S.editCount>1?"s":""} by you`:"")}
 function personaLines(){return S.personas.map(p=>`${p.id} | ${p.name} @${p.handle} | ${S.segments.find(s=>s.id===p.segment)?.name} | ${p.role} | ceiling ${fmtP(p.wtp)} | fit ${p.fit.toFixed(1)} | skeptic ${p.skepticism.toFixed(1)} | objections: ${p.objections.join("; ")} | voice: ${p.voice}`).join("\n")}
 
-function normPopulation(d){resolveA();
+function normPopulation(d,_rows){resolveA();
   let segs=(Array.isArray(d?.segments)?d.segments:[]).slice(0,6).map((s,i)=>({id:str(s.id,"s"+(i+1)),name:str(s.name,"Segment "+(i+1)).slice(0,34),share:Math.max(.03,num(s.share,.25)),desc:str(s.desc),rows:Array.isArray(s.rows)?s.rows.map(Number).filter(n=>n>0):[],target:!(s.target===false||s.target==="false"||S.brief.reach==="outbound"&&false)}));if(S.brief.reach==="outbound")segs.forEach(x=>x.target=true);
   if(!segs.length)throw{code:"invalid_json"};const tot=segs.reduce((t,s)=>t+s.share,0);segs.forEach(s=>s.share/=tot);
   const ids=new Set();const P=(Array.isArray(d?.personas)?d.personas:[]).slice(0,18).map((p,i)=>{let id=str(p.id,"p"+(i+1));if(ids.has(id))id="p"+(i+1)+"_";ids.add(id);const name=str(p.name,"Persona "+(i+1)).slice(0,40);
     return{id,name,handle:(str(p.handle)||name).toLowerCase().replace(/[^a-z0-9_]/g,"").slice(0,18)||"user"+i,segment:segs.some(s=>s.id===str(p.segment))?str(p.segment):segs[i%segs.length].id,age:num(p.age,null),role:str(p.role,"").slice(0,80),bio:str(p.bio,"").slice(0,200),wtp:Math.max(0,num(p.wtp,0)),fit:clamp(num(p.fit,0),-1,1),skepticism:clamp(num(p.skepticism,.5),0,1),influence:clamp(num(p.influence,.5),0,1),motivations:arr(p.motivations),objections:arr(p.objections),voice:str(p.voice,"").slice(0,80),sex:["female","male"].includes(str(p.sex).toLowerCase())?str(p.sex).toLowerCase():"",city:str(p.city).toLowerCase().slice(0,12),income:str(p.income).toLowerCase().slice(0,12),decides:str(p.decides).toLowerCase().slice(0,12),workplace:str(p.workplace).slice(0,60),family:str(p.family).slice(0,60),digital:str(p.digital).toLowerCase().slice(0,6),pressure:str(p.pressure).toLowerCase().slice(0,6),uses:str(p.uses).slice(0,60),quote:str(p.quote).slice(0,240),row:p.row,gates:p.gates,buys_as:["business","household"].includes(str(p.buys_as))?str(p.buys_as):"",bizsize:["micro","small","mid","large"].includes(str(p.bizsize))?str(p.bizsize):"",target:p.target===false||p.target==="false"?false:true}});P.forEach(p=>{const sg=segs.find(x=>x.id===p.segment);if(sg&&sg.target===false)p.target=false;if(S.brief.reach==="outbound")p.target=true});
   const vz=(S.brief.voices||"").toLowerCase().replace(/\s+/g," ");P.forEach(p=>{const q=p.quote.toLowerCase().replace(/\s+/g," ").replace(/^["“]|["”]$/g,"").slice(0,48);p.grounded=!!q&&q.length>12&&vz.includes(q);if(!p.grounded)p.quote="";p.raw=rawOf(p);applyRules(p)});
-  {const LR=listRows();P.forEach(p=>{const r=num(p.row,0);p.row=r>=1&&r<=LR.length?r:0;p.rowText=p.row?LR[p.row-1]:"";const GR=gateRows();p.gates=(Array.isArray(p.gates)?p.gates:[]).map(Number).filter(g=>g>=1&&g<=GR.length);if(p.raw)p.raw.gates=p.gates});const tot=segs.reduce((t,x)=>t+x.rows.length,0);if(["census","random"].includes(S.brief.listkind)&&LR.length&&tot>=LR.length*.6&&segs.every(x=>x.rows.length)){segs.forEach(x=>x.share=x.rows.length/tot)}}
+  {const LR=_rows||listRows();P.forEach(p=>{const r=num(p.row,0);p.row=r>=1&&r<=LR.length?r:0;p.rowText=p.row?LR[p.row-1]:"";const GR=gateRows();p.gates=(Array.isArray(p.gates)?p.gates:[]).map(Number).filter(g=>g>=1&&g<=GR.length);if(p.raw)p.raw.gates=p.gates});const tot=segs.reduce((t,x)=>t+x.rows.length,0);if((["census","random"].includes(S.brief.listkind)||_rows||grounded())&&LR.length&&tot>=LR.length*.6&&segs.every(x=>x.rows.length)){segs.forEach(x=>x.share=x.rows.length/tot)}}
   if(P.length<4)throw{code:"invalid_json"};return{segments:segs,personas:P};
 }
 
@@ -1576,12 +1630,14 @@ function normPopulation(d){resolveA();
 function gateRows(){return(S.brief.gates||"").split("\n").map(x=>x.trim()).filter(Boolean).slice(0,8)}
 function gateTxt(){const G=gateRows();if(!G.length)return"";return`\n\nThings the product can't offer yet that some buyers may insist on (numbered):\n${G.map((x,i)=>(i+1)+": "+x).join("\n")}\nFor each persona set "gates" to the numbers that are true must-haves for THEM, meaning they would refuse to buy without it. Most people have none; only add one where their role, rules or situation makes it non-negotiable.`}
 function castTxt(){return castBase()+"\n"+PROFILES[profKey()].cast+listTxt()+gateTxt()}
-function listRows(){return(S.brief.list||"").split("\n").map(x=>x.trim()).filter(Boolean).slice(0,80)}
-function listTxt(){const L=listRows();if(!L.length)return"";return`\n\nReal list of buyers or prospects (row number: details):\n${L.map((x,i)=>(i+1)+": "+x.slice(0,160)).join("\n")}\nBuild every persona from one row of this list and set "row" to its number. Keep the row's facts exactly and only invent what the row doesn't say. Give each segment "rows": the row numbers that belong in it, covering every row; its share is its rows divided by all rows.`}
+function listRows(){if(LIST_OVERRIDE)return LIST_OVERRIDE;const u=(S.brief.list||"").split("\n").map(x=>x.trim()).filter(Boolean).slice(0,80);return u.length?u:(S.groundRows||[])}
+const grounded=()=>!(S.brief.list||"").trim()&&!!(LIST_OVERRIDE||S.groundRows)
+function listTxt(){const L=listRows();if(!L.length)return"";if(grounded())return`\n\nPeople sampled from India's population that match this audience (${GROUND_SRC.basis}; row number: details):\n${L.map((x,i)=>(i+1)+": "+x.slice(0,330)).join("\n")}\nBuild every persona from one of these rows and set "row" to its number. Keep their sex, age, place, urban or rural life, education, occupation and languages exactly; invent only buying details (price ceiling, fit, objections, what they use today) that fit that life. Give each segment "rows": the row numbers that belong in it, covering every row; its share is its rows divided by all rows.`;return`\n\nReal list of buyers or prospects (row number: details):\n${L.map((x,i)=>(i+1)+": "+x.slice(0,160)).join("\n")}\nBuild every persona from one row of this list and set "row" to its number. Keep the row's facts exactly and only invent what the row doesn't say. Give each segment "rows": the row numbers that belong in it, covering every row; its share is its rows divided by all rows.`}
 function castBase(){const B=S.brief;
   if(B.reach==="outbound")return`The founder chooses who to contact, so cast ONLY people inside the target audience. Create 4 segments that split the target in useful ways (size, how they get customers today, what they use now, who decides), all with "target": true, and 14 distinct personas across them. Include at least 3 clear non-buyers (price, fit, happy with what they do now), 2 influential skeptics, and at most 3 enthusiasts.`;
   return`Create 4 segments: 3 inside the target audience ("target": true) and 1 segment of bystanders who would come across it${B.reach==="both"?" through ads or forwards":""} but are not who it is for ("target": false, share no more than 0.25). Then 14 distinct personas across them, at most 3 of them bystanders. Include at least 4 clear non-buyers, 2 or 3 influential skeptics, and only 1 or 2 genuine enthusiasts.`}
-function castPrompt(k,N){return `You are building a synthetic market to stress-test a product before launch. Founders are too optimistic, so be realistic: most real people ignore, distrust or reject a new product, and many already use an alternative.
+function castPrompt(k,N,_rows){LIST_OVERRIDE=_rows||null;try{return castPromptInner(k,N)}finally{LIST_OVERRIDE=null}}
+function castPromptInner(k,N){return `You are building a synthetic market to stress-test a product before launch. Founders are too optimistic, so be realistic: most real people ignore, distrust or reject a new product, and many already use an alternative.
 
 ${briefLine()}
 
@@ -1609,12 +1665,44 @@ ${S.brief.voices?`\nReal voices from this market. Build as many personas as you 
 
 Reply with only JSON in this shape:
 {"segments":[{"id":"s1","name":"short name","share":0.3,"desc":"one line","target":true,"rows":[]}],"personas":[{"id":"p1","name":"Full Name","handle":"short_handle","segment":"s1","age":34,"role":"job or situation, place","bio":"one sentence","wtp":250,"fit":0.2,"skepticism":0.6,"influence":0.5,"motivations":["..."],"objections":["..."],"voice":"...","sex":"female","city":"metro","income":"mid","decides":"decider","workplace":"...","family":"...","digital":"mid","pressure":"mid","uses":"","target":true,"buys_as":"business","bizsize":"small","row":0,"gates":[],"quote":""}]}${N>1?`\n\nThis is independent casting number ${k+1} of ${N}. Make your own choices about segments, their shares and the people in them. Don't aim for the most typical answer.`:""}`}
+
+/* ---------------- grounding: personas from India's population data ---------------- */
+const GROUND_SRC={name:"Nemotron-Personas-India",by:"NVIDIA",licence:"CC BY 4.0",url:"https://huggingface.co/datasets/nvidia/Nemotron-Personas-India",basis:"synthetic records whose age, sex, place, education, occupation and language mix follow the 2011 Census of India"};
+const DS_URL="https://datasets-server.huggingface.co/filter?dataset=nvidia/Nemotron-Personas-India&config=default&split=en_IN";
+const IN_STATES=["Uttar Pradesh","Maharashtra","West Bengal","Bihar","Tamil Nadu","Madhya Pradesh","Karnataka","Rajasthan","Gujarat","Andhra Pradesh","Odisha","Kerala","Telangana","Jharkhand","Punjab","Assam","Haryana","Chhattisgarh","Delhi","Jammu & Kashmir","Uttarakhand","Himachal Pradesh","Tripura","Manipur","Meghalaya","Nagaland","Goa","Puducherry","Arunachal Pradesh","Chandigarh","Mizoram","Sikkim","Andaman & Nicobar Islands","Dadra & Nagar Haveli","Daman & Diu","Lakshadweep"];
+let LIST_OVERRIDE=null;
+const isIndia=()=>/\bindia\b|mumbai|delhi|bengaluru|bangalore|pune|chennai|hyderabad|kolkata|thane|ahmedabad|jaipur|lucknow|indore|kochi|gujarat|maharashtra|karnataka|kerala|tamil/i.test((S.brief?.region||"")+" "+(S.brief?.aud||""));
+function whereFrom(sp){const q=x=>"'"+String(x).replace(/'/g,"''")+"'";const parts=[];const st=(sp.states||[]).filter(x=>IN_STATES.includes(x));if(st.length)parts.push("("+st.map(x=>`"state"=${q(x)}`).join(" OR ")+")");
+  if(sp.zone==="Urban"||sp.zone==="Rural")parts.push(`"zone"=${q(sp.zone)}`);const a=Math.max(18,Math.round(num(sp.age_min,18))),b=Math.max(a,Math.min(100,Math.round(num(sp.age_max,75))));parts.push(`"age">=${a} AND "age"<=${b}`);
+  if(sp.sex==="Male"||sp.sex==="Female")parts.push(`"sex"=${q(sp.sex)}`);const oc=(sp.occupations||[]).map(x=>String(x).replace(/[^A-Za-z ,\-\/&]/g,"").trim()).filter(x=>x.length>=3).slice(0,8);
+  if(oc.length)parts.push("("+oc.map(o=>`"occupation" ILIKE ${q("%"+o+"%")}`).join(" OR ")+")");return parts.join(" AND ")}
+async function dsFetch(where,offset,length){let r;try{r=await fetch(DS_URL+"&where="+encodeURIComponent(where)+"&offset="+offset+"&length="+length)}catch{throw{code:"x",message:"Couldn't reach the India persona dataset from this page."+(ON_WEB?"":" It works on snehalpatel.dev/marketroom.")}}
+  if(!r.ok)throw{code:"x",message:"The India persona dataset didn't answer ("+r.status+")."};return r.json()}
+async function groundRows(sp,n){let w=whereFrom(sp),d=await dsFetch(w,0,1),total=d.num_rows_total||0;const dropped=[];
+  if(total<n&&(sp.occupations||[]).length){dropped.push("occupation");sp={...sp,occupations:[]};w=whereFrom(sp);d=await dsFetch(w,0,1);total=d.num_rows_total||0}
+  if(total<n&&(sp.zone==="Urban"||sp.zone==="Rural")){dropped.push("urban/rural");sp={...sp,zone:"Any"};w=whereFrom(sp);d=await dsFetch(w,0,1);total=d.num_rows_total||0}
+  if(!total)throw{code:"x",message:"No records in the India persona dataset match this audience."};
+  const per=Math.min(20,n),rows=[];for(let i=0;i<Math.ceil(n/per);i++){const off=Math.floor(Math.random()*Math.max(1,total-per));const r=await dsFetch(w,off,per);rows.push(...(r.rows||[]).map(x=>x.row))}
+  return{rows:rows.slice(0,n),total,where:w,dropped,spec:sp}}
+function rowLine(r){return`${r.sex}, ${r.age}, ${r.zone}, ${r.district} (${r.state}); education: ${r.education_level}; occupation: ${r.occupation}; ${r.marital_status}; speaks ${[r.first_language,r.second_language].filter(x=>x&&x!=="-").join(", ")}. ${String(r.persona||"").slice(0,200)}`}
+async function groundSpec(){const d=await askJSON(`Turn this target audience into a filter over India's adult population records. Use only what the brief implies; leave a field open when unsure.
+${briefLine()}
+States must come from this exact list: ${IN_STATES.join("; ")}.
+Occupations are job-title keywords in the style of India's National Classification of Occupations (e.g. "Dentist", "Merchant", "Salesperson", "Teacher", "Accountant", "Driver"); give 2 to 6 only when the buyer is defined by their job (business owners, professionals), else [].
+Reply with only JSON: {"states":[],"zone":"Urban|Rural|Any","age_min":18,"age_max":70,"sex":"Any|Male|Female","occupations":[],"why":"one line"}`,"quick");
+  return{states:Array.isArray(d?.states)?d.states.map(str):[],zone:["Urban","Rural"].includes(d?.zone)?d.zone:"Any",age_min:num(d?.age_min,18),age_max:num(d?.age_max,75),sex:["Male","Female"].includes(d?.sex)?d.sex:"Any",occupations:Array.isArray(d?.occupations)?d.occupations.map(str):[],why:str(d?.why)}}
+async function groundCast(){if(!(S.brief.ground&&isPro()&&isIndia()&&!(S.brief.list||"").trim()))return;
+  try{setLoading("Sampling people from India's population data…");log("grounding: turning the audience into a population filter…");const sp=await groundSpec();const G=await groundRows(sp,40);
+    S.groundRows=G.rows.map(rowLine);S.groundMeta={spec:G.spec,total:G.total,where:G.where,dropped:G.dropped,n:G.rows.length,why:sp.why};
+    log(`grounding: ${G.rows.length} records sampled from ${G.total.toLocaleString("en-IN")} matching people`+(G.dropped.length?` (loosened: ${G.dropped.join(", ")})`:""),"ok");setLoading("Casting your market from "+G.rows.length+" real-distribution records…")}
+  catch(e){if(e?.code==="cancelled")throw e;S.groundRows=null;S.groundMeta=null;log("grounding skipped: "+errCopy(e),"err");setLoading("Casting your market…")}}
 async function genPopulation(){
-  S.brief=readBrief();S.isSample=false;S.feed=[];S.report=null;S.duel=null;S.plans=null;S.audit=null;S.step=1;renderSteps();
+  S.brief=readBrief();clearForRun("Casting your market…");S.groundRows=null;S.groundMeta=null;S.step=1;renderSteps();
   setBusy(true,"Casting personas…");$("#runId").textContent="sim_"+Math.random().toString(16).slice(2,10);
   log("POST population · "+S.brief.name+" · "+fmtP(S.brief.price)+" "+billTxt());log("asking Claude to cast segments and personas (usually 20 to 60 s)…");
+  await groundCast();
   const prompt=castPrompt(0,1);
-  const data=await askJSON(prompt,"default");const pop=normPopulation(data);S.segments=pop.segments;S.personas=pop.personas;S.runPrice=S.probe=S.brief.price;S.prov={by:"Cast by Claude in this page",tier:"default",v:PROMPT_V,at:Date.now(),note:listRows().length?`built from your list of ${listRows().length} rows (${S.brief.listkind==="census"||S.brief.listkind==="random"?"segment shares follow the list":"segment shares from Claude, since the list may not be representative"})`:""};S.casts=null;S.critic=null;S.bandAlt=null;S.intent=null;S.editCount=0;S.lock=S.brief.bar>0||S.brief.decision?{decision:S.brief.decision,bar:S.brief.bar,guess:S.brief.guess,at:Date.now()}:null;
+  const data=await askJSON(prompt,"default");const pop=normPopulation(data);S.segments=pop.segments;S.personas=pop.personas;S.runPrice=S.probe=S.brief.price;S.prov={by:"Cast by Claude in this page"+(S.brief.blind?" (brand blinded)":""),tier:"default",v:PROMPT_V,at:Date.now(),note:S.groundMeta&&!(S.brief.list||"").trim()?`grounded in ${S.groundMeta.n} records from ${GROUND_SRC.name} (${GROUND_SRC.licence}) matching ${S.groundMeta.total.toLocaleString("en-IN")} people`+(S.groundMeta.dropped.length?`, filter loosened: ${S.groundMeta.dropped.join(", ")}`:""):listRows().length?`built from your list of ${listRows().length} rows (${S.brief.listkind==="census"||S.brief.listkind==="random"?"segment shares follow the list":"segment shares from Claude, since the list may not be representative"})`:""};S.casts=null;S.critic=null;S.bandAlt=null;S.intent=null;S.realism=null;S.editCount=0;S.lock=S.brief.bar>0||S.brief.decision?{decision:S.brief.decision,bar:S.brief.bar,guess:S.brief.guess,at:Date.now()}:null;
   buildPopulation();rescore();
   log(`population ready: ${S.segments.length} segments, ${S.personas.length} personas, ${S.agents.length} agents, ${S.edges.length} ties`,"ok");
   S.segments.forEach(s=>log(`  ├ ${s.name} · ${pct(s.share)}`));
@@ -1649,7 +1737,7 @@ Rules:
 - No marketing words, no hashtags, no tidy summaries, no thanking anyone. Nobody knows who made it.
 - Replies answer the specific post number given. Under 230 characters each.
 Reply with only JSON: {"posts":[{"by":"p3","text":"...","tag":"2 to 4 word reason"}]}`;
-    const data=await askJSON(prompt,"quick");
+    feedWait(true,`Round ${r} of ${S.brief.rounds}: ${th.short}. Writing what they say…`);let data;try{data=await askJSON(prompt,"quick")}finally{feedWait(false)}
     const got={};(Array.isArray(data?.posts)?data.posts:[]).forEach(x=>{got[str(x.by).toLowerCase().replace(/^@/,"")]=x});
     const posts=plan.map(x=>{const p=S.personas[x.pi];const g=got[p.id.toLowerCase()]||got[p.handle.toLowerCase()];if(!g||!str(g.text).trim())return null;return{pi:x.pi,by:p.id,text:str(g.text).slice(0,320),stance:x.stance,intent:x.intent,tag:str(g.tag).slice(0,32),reply_to:x.reply_to,round:r}}).filter(Boolean);
     log(`round ${r}: ${plan.length} speak, ${S.personas.length-plan.length} stay silent (R9); stances set by the model (R12)`);
@@ -1710,7 +1798,8 @@ Give 3 to 5 reasons_not_buy, 3 missed_objections, 3 messages, 3 to 5 landing_fix
   S.report={unknowns:A(r.unknowns).map(String),would_change:A(r.would_change).map(String),verdict:str(r.verdict),reasons_not_buy:A(r.reasons_not_buy).map(x=>({reason:str(x.reason),detail:str(x.detail),who:str(x.who),quote:str(x.quote)})),missed_objections:A(r.missed_objections).map(String),price_read:str(r.price_read),plans_read:str(r.plans_read),messages:A(r.messages).map(x=>({message:str(x.message),why:str(x.why),segment:str(x.segment)})),landing_fixes:A(r.landing_fixes).map(String),experiments:A(r.experiments).map(x=>({name:str(x.name),metric:str(x.metric),why:str(x.why)}))};
   log("report ready","ok");S.step=4;renderSteps();renderReport();switchTab("report");
 }
-async function runDuel(){
+let DUEL_FLIP=false;
+async function runDuel(){DUEL_FLIP=Math.random()<.5;
   const BB=readBrief();const bPitch=BB.bpitch,bPrice=BB.bprice,bSetup=BB.bsetup;
   if(!bPitch)throw{code:"x",message:"Add a variant B pitch in the brief under Message test."};
   const sA=S.brief.setup?` + ${fmtP(S.brief.setup)} one-time setup`:"",sB=bSetup?` + ${fmtP(bSetup)} one-time setup`:" (no setup fee)";
@@ -1718,22 +1807,21 @@ async function runDuel(){
   const prompt=`Each persona below sees two versions of the same product and picks the one they'd rather buy, or neither. Stay true to each persona's price ceiling, fit and objections. Be honest: "neither" is common.
 
 Product: ${S.brief.name}. Market: ${S.brief.region}.
-A: "${S.brief.pitch}" at ${fmtP(S.brief.price)} ${billTxt()}${sA}
-B: "${bPitch}" at ${fmtP(bPrice)} ${billTxt()}${sB}
+${(()=>{const a=`"${S.brief.pitch}" at ${fmtP(S.brief.price)} ${billTxt()}${sA}`,b=`"${bPitch}" at ${fmtP(bPrice)} ${billTxt()}${sB}`;return DUEL_FLIP?`Version 1: ${b}\nVersion 2: ${a}`:`Version 1: ${a}\nVersion 2: ${b}`})()}
 
 Personas:
 ${personaLines()}
 
 Reply with only JSON:
-{"votes":[{"by":"p1","pick":"A","confidence":"low","change":"what would make them switch or buy","reason":"one sentence in their voice"}],"summary":"2 sentences: which wins, by how much, and why, and what the loser still does better"}
-One vote per persona. pick is A, B or neither. confidence is low, mid or high: how sure they are. change is the one concrete thing that would flip their choice.`;
+{"votes":[{"by":"p1","pick":"1","confidence":"low","change":"what would make them switch or buy","reason":"one sentence in their voice"}],"summary":"2 sentences: which wins, by how much, and why, and what the loser still does better"}
+One vote per persona. pick is "1", "2" or "neither". confidence is low, mid or high: how sure they are. change is the one concrete thing that would flip their choice.`;
   const r=await askJSON(prompt,"default");const byId={};S.personas.forEach((p,i)=>byId[p.id.toLowerCase()]=i);
-  const votes=(Array.isArray(r.votes)?r.votes:[]).map(v=>({pi:byId[str(v.by).toLowerCase()],pick:["A","B"].includes(str(v.pick).toUpperCase())?str(v.pick).toUpperCase():"neither",reason:str(v.reason),conf:["low","mid","high"].includes(str(v.confidence))?str(v.confidence):"",change:str(v.change).slice(0,160)})).filter(v=>v.pi!=null);
+  const votes=(Array.isArray(r.votes)?r.votes:[]).map(v=>({pi:byId[str(v.by).toLowerCase()],pick:(()=>{const x=str(v.pick).trim();const n=x==="1"||/^version 1$/i.test(x)?1:x==="2"||/^version 2$/i.test(x)?2:0;return n?((n===1)!==DUEL_FLIP?"A":"B"):"neither"})(),reason:str(v.reason),conf:["low","mid","high"].includes(str(v.confidence))?str(v.confidence):"",change:str(v.change).slice(0,160)})).filter(v=>v.pi!=null);
   S.duel={B:{pitch:bPitch,price:bPrice,setup:bSetup},votes,summary:str(r.summary)};const c=votes.reduce((o,v)=>(o[v.pick]++,o),{A:0,B:0,neither:0});log(`duel: A ${c.A} · B ${c.B} · neither ${c.neither}`,"ok");renderDuel();
 }
 $("#btn-pop").onclick=()=>guard(genPopulation);
 $("#btn-run").onclick=()=>guard(runRounds);
-$("#btn-all").onclick=()=>guard(async()=>{await genPopulation();await runRounds();if($("#f-recast").checked){await runRecasts(6);await runCritic();await runIntent("price")}const j=S.brief.job;if(j==="pricing")await runPlans();if(j==="message"){await runDuel();if($("#f-recast").checked)await runIntent("duel")}await genReport()});
+$("#btn-all").onclick=()=>guard(async()=>{await genPopulation();await runRounds();if($("#f-recast").checked){await runRecasts(6);await runCritic();await runIntent("price");if(isIndia())await runRealism()}const j=S.brief.job;if(j==="pricing")await runPlans();if(j==="message"){await runDuel();if($("#f-recast").checked)await runIntent("duel")}await genReport()});
 
 /* ---------------- sample ---------------- */
 let replayAbort=false,SK="reviewsaathi";
@@ -1968,7 +2056,7 @@ function guessJob(q){q=q.toLowerCase();if(/chatgpt|ai agent|agent|gemini|perplex
 const JOBS={launch:"Who buys, who doesn't, and why. Personas react over several rounds; you get a fix list.",pricing:"Personas react, then split your features into plans and name the most they'd pay for each.",message:"Personas react, then choose between your pitch and a challenger (variant B).",agent:"How AI shopping agents pick between you and rivals, and what to fix. Opens its own page."};
 function setJob(j){$("#briefForm").dataset.job=j;setTimeout(caseCard,0);document.querySelectorAll(".jobs button").forEach(b=>b.setAttribute("aria-checked",String(b.dataset.job===j)));$("#jobhint").textContent=JOBS[j]||"";const ag=j==="agent";$("#main").hidden=ag;$("#agentPage").hidden=!ag;document.querySelector(".views").style.visibility=ag?"hidden":"";if(ag)renderShelf();else setTimeout(resize,30)}
 document.querySelectorAll(".jobs button").forEach(b=>b.onclick=()=>setJob(b.dataset.job));
-function fillForm(B){$("#f-name").value=B.name;$("#f-pitch").value=B.pitch;$("#f-price").value=B.price;$("#f-cur").value=B.cur;$("#f-bill").value=B.bill;$("#f-aud").value=B.aud;$("#f-region").value=B.region;$("#f-chan").value=B.chan;$("#f-pop").value=B.pop;$("#f-rounds").value=B.rounds;$("#f-setup").value=B.setup||0;$("#f-proof").value=B.proof||"none";$("#f-voices").value=B.voices||"";$("#f-tiers").value=B.tiers||"";$("#f-features").value=B.features||"";$("#f-bpitch").value=B.bpitch||"";$("#f-bprice").value=B.bprice??B.price;$("#f-bsetup").value=B.bsetup||0;$("#f-yearly").value=B.yearly||0;$("#f-buyer").value=B.buyer||"business";$("#f-bizsize").value=B.bizsize||"";$("#f-reach").value=B.reach||"both";$("#f-profile").value=B.profile||guessProfile(B);$("#f-channel").value=B.channel||guessChannel(B);$("#f-gates").value=B.gates||"";$("#f-listkind").value=B.listkind||"lead";$("#f-roi").checked=!!B.roi;$("#f-reng").value=B.reng||"";$("#f-rtrial").value=B.rtrial||"";$("#f-rpaid").value=B.rpaid||"";$("#f-churn").value=B.churn||"";$("#f-fee").value=B.fee||"";$("#f-refund").value=B.refund||"";$("#f-vcost").value=B.vcost||"";$("#f-cac").value=B.cac||"";$("#f-life").value=B.life||"";$("#f-spend").value=B.spend||0;$("#f-list").value=B.list||"";$("#f-decision").value=B.decision||"";$("#f-bar").value=B.bar||"";$("#f-guess").value=B.guess??"";setJob(B.job||"launch");$("#popv").textContent=B.pop}
+function fillForm(B){$("#f-name").value=B.name;$("#f-pitch").value=B.pitch;$("#f-price").value=B.price;$("#f-cur").value=B.cur;$("#f-bill").value=B.bill;$("#f-aud").value=B.aud;$("#f-region").value=B.region;$("#f-chan").value=B.chan;$("#f-pop").value=B.pop;$("#f-rounds").value=B.rounds;$("#f-setup").value=B.setup||0;$("#f-proof").value=B.proof||"none";$("#f-voices").value=B.voices||"";$("#f-tiers").value=B.tiers||"";$("#f-features").value=B.features||"";$("#f-bpitch").value=B.bpitch||"";$("#f-bprice").value=B.bprice??B.price;$("#f-bsetup").value=B.bsetup||0;$("#f-yearly").value=B.yearly||0;$("#f-buyer").value=B.buyer||"business";$("#f-bizsize").value=B.bizsize||"";$("#f-reach").value=B.reach||"both";$("#f-profile").value=B.profile||guessProfile(B);$("#f-channel").value=B.channel||guessChannel(B);$("#f-gates").value=B.gates||"";$("#f-ground").checked=B.ground??/\bindia\b|mumbai|delhi|bengaluru|bangalore|pune|chennai|hyderabad|kolkata|thane|ahmedabad|jaipur|lucknow|indore|kochi|gujarat|maharashtra|karnataka|kerala|tamil/i.test(B.region||"");$("#f-blind").checked=!!B.blind;$("#f-listkind").value=B.listkind||"lead";$("#f-roi").checked=!!B.roi;$("#f-reng").value=B.reng||"";$("#f-rtrial").value=B.rtrial||"";$("#f-rpaid").value=B.rpaid||"";$("#f-churn").value=B.churn||"";$("#f-fee").value=B.fee||"";$("#f-refund").value=B.refund||"";$("#f-vcost").value=B.vcost||"";$("#f-cac").value=B.cac||"";$("#f-life").value=B.life||"";$("#f-spend").value=B.spend||0;$("#f-list").value=B.list||"";$("#f-decision").value=B.decision||"";$("#f-bar").value=B.bar||"";$("#f-guess").value=B.guess??"";setJob(B.job||"launch");$("#popv").textContent=B.pop}
 $("#f-preset").addEventListener("change",e=>{fillForm(PRESETS[e.target.value]);if(SAMPLES[e.target.value]){SK=e.target.value;sampleInstant();$("#runId").textContent="sim_"+SK;renderAll()}log("brief loaded: "+(PRESETS[e.target.value].name||"blank"))});
 $("#f-pop").addEventListener("input",e=>$("#popv").textContent=e.target.value);
 function switchTab(t){document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.t===t)));document.querySelectorAll(".tabpane").forEach(p=>p.hidden=p.id!=="t-"+t);({feed:renderFeed,personas:renderPersonas,insights:renderInsights,plans:renderPlans,duel:renderDuel,report:renderReport,assume:renderAssume,track:renderTrack})[t]();try{localStorage.setItem("marketroom-tab",t)}catch{}}
@@ -2152,7 +2240,7 @@ document.querySelectorAll("[data-ex]").forEach(b=>b.onclick=()=>openExample(b.da
 
 
 /* ---------------- Lite / Pro ---------------- */
-let PLAN=(()=>{try{return localStorage.getItem("marketroom-plan")}catch{return null}})()||(window.claude?"pro":"lite");
+let PLAN=(()=>{try{return localStorage.getItem("marketroom-plan")}catch{return null}})()||"pro";
 const isPro=()=>PLAN==="pro";
 function proBadge(){return h("span",{class:"pro",title:"Pro feature"},"◆ Pro")}
 function lockCard(title,what){return h("div",{class:"block locked"},h("h4",null,title," ",proBadge()),h("p",{class:"sub",style:"margin:0"},what),h("div",null,h("button",{class:"btn sm",type:"button",onclick:()=>setPlan("pro")},"Try Pro (free during the beta)")))}
@@ -2179,6 +2267,16 @@ function codeUI(n){const inp=h("input",{type:"password",placeholder:"Tester acce
     h("div",{class:"codebox"},inp,h("button",{class:"btn sm primary",type:"button",onclick:()=>{const c=inp.value.trim();if(!c)return;try{localStorage.setItem("marketroom-code",c)}catch{}sampleFn=webSample(c);liveOn(n);setBusy(false);renderAll()}},"Unlock")))}
 function liveOn(n){n.replaceChildren(h("b",null,"Live runs on. "),ON_WEB?"Claude runs on the site's account with your tester code. A full run takes 6 to 8 minutes in Pro, about 3 in Lite. ":"A full run makes about 16 to 19 Claude calls on your own account in Pro (about 7 in Lite) and takes 3 to 8 minutes. You'll be asked to allow it once.",
   ON_WEB?h("button",{class:"btn sm ghost",type:"button",onclick:()=>{try{localStorage.removeItem("marketroom-code")}catch{}sampleFn=null;codeUI(n);setBusy(false);renderAll()}},"Forget code"):"");log("claude connected · live runs available","ok")}
+
+
+/* ---------------- loading state: no stale runs on screen ---------------- */
+function swarmOverlay(){let o=$("#swarmLoading");if(o)return o;const orb=h("div",{class:"orb"});for(let i=0;i<24;i++){const d=h("i");d.style.setProperty("--a",(i*15)+"deg");d.style.setProperty("--r",(48+(i%4)*14)+"px");d.style.background=`var(--s${i%6+1})`;d.style.animationDelay=(-(i*0.11)).toFixed(2)+"s";orb.append(d)}
+  o=h("div",{class:"swarm-loading",id:"swarmLoading",hidden:true},h("div",null,orb,h("p",{id:"swarmMsg"})));$("#cwrap").append(o);return o}
+function setLoading(msg){S.loading=msg||null;const o=swarmOverlay();o.hidden=!msg;if(msg)$("#swarmMsg").textContent=msg}
+function skelCard(lines){return h("div",{class:"skel","aria-hidden":"true"},h("div",{class:"row1"},h("i",{class:"sk av"}),h("i",{class:"sk",style:"width:40%"})),...(lines||[92,78,55]).map(w=>h("i",{class:"sk",style:`width:${w}%`})))}
+function skelList(n,note){return h("div",{class:"stack"},note?h("p",{class:"sub",style:"margin:0"},note):"",...Array.from({length:n},(_,i)=>skelCard([94-i*7,80-i*5,50+i*6])))}
+function feedWait(on,note){const list=$("#feedlist");const old=$("#feedwait");if(old)old.remove();if(!on)return;const w=h("div",{id:"feedwait",class:"stack"},h("p",{class:"sub",style:"margin:0"},note||"Writing what they say…"),skelCard(),skelCard([85,60]));if(list)list.prepend(w);else{$("#t-feed").replaceChildren(w)}}
+function clearForRun(msg){Object.assign(S,{segments:[],personas:[],agents:[],edges:[],adj:[],followers:[],feed:[],snapshots:[],viewRound:null,report:null,duel:null,plans:null,audit:null,casts:null,critic:null,intent:null,realism:null,bandAlt:null,isSample:false});ENS.key="";setLoading(msg);renderAll()}
 
 /* ---------------- boot ---------------- */
 markPro();planUI();$("#f-recast").addEventListener("change",e=>e.target.dataset.touched="1");

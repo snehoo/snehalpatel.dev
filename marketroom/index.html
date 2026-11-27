@@ -424,6 +424,13 @@ main:not([data-view="split"]) #btn-fold,main:not([data-view="split"]) #btn-mini{
 .ctab{width:100%;border-collapse:collapse;font-size:12.5px}
 .ctab th,.ctab td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line)}
 .ctab td.n,.ctab th.n{text-align:right;font-family:var(--f-mono)}
+
+/* patch20: calibration bench */
+.bench{position:fixed;inset:0;z-index:60;background:var(--bg);overflow:auto;padding:20px 16px 60px}
+.bench .wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.bench textarea{width:100%;min-height:180px;font-family:var(--f-mono);font-size:12px}
+.bench .ctab td,.bench .ctab th{vertical-align:top}
+.bench .ok{color:var(--buy,#2e9e6a)}.bench .bad{color:var(--reject)}
 </style>
 
 <div class="app">
@@ -483,6 +490,8 @@ main:not([data-view="split"]) #btn-fold,main:not([data-view="split"]) #btn-mini{
       </div>
     </div>
   </section>
+
+  <section class="bench" id="benchPage" hidden aria-label="Calibration bench"></section>
 
   <main id="main" data-view="split">
     <!-- BRIEF -->
@@ -1267,7 +1276,7 @@ function renderAssume(){const box=$("#t-assume");if(!box)return;if(!isPro()){box
 function funnelStages(st){const B=S.brief;const aw=Math.max(st.aware,.001);const e=(st.c+st.b)/aw;const t=(st.b+st.c*AS.consLift)/Math.max(st.b+st.c,.001);
   const st3=PROFILES[profKey()].stages;const R=[{n:st3[1],v:e,src:"engine"},{n:st3[2],v:t,src:"engine"},{n:st3[3],v:AS.r10Buy,src:"assumed for "+PROFILES[profKey()].label.toLowerCase()}];
   [B.reng,B.rtrial,B.rpaid].forEach((v,i)=>{if(v>0)R[i]={...R[i],v:Math.min(1,v/100),src:"your history"}});
-  return{R,interest:R.reduce((x,y)=>x*y.v,1)}}
+  if(window.__benchCap)window.__benchCap.push(R.map(x=>x.v));return{R,interest:R.reduce((x,y)=>x*y.v,1)}}
 function funnelPred(){const TA=S.agents.filter(isTarget);const st=stats(TA.map(a=>a.state));const la=likelyActual(st);const F=funnelStages(st);
   return{stages:PROFILES[profKey()].stages.map((n,i)=>({name:n,rate:i===0?1:F.R[i-1].v})),counts:[0,0,0,0],predicted:+(la.v*100).toFixed(1)}}
 function funnelBlock(st,la){const F=funnelStages(st);let run=1;const fc=funnelCal();const st0=PROFILES[profKey()].stages[0];
@@ -2427,6 +2436,83 @@ function setFold(on){$("#main").classList.toggle("fold",!!on);setTimeout(resize,
 $("#btn-mini").onclick=()=>setMini(!$("#main").classList.contains("mini"));
 $("#btn-fold").onclick=()=>setFold(true);$("#btn-unfold").onclick=()=>setFold(false);
 setMini((()=>{try{return localStorage.getItem("marketroom-mini")}catch{return null}})()!=="0");
+
+
+/* ---------------- calibration bench (#bench) ----------------
+   Runs real cases (with known outcomes) through the real engine, blinded,
+   and scores the predictions. Cases are pasted in; nothing private ships in the page. */
+const ENGINE_V="18";
+const BENCH_STAGE={reach_engaged:[0],engaged_tried:[1],tried_paid:[2],engaged_paid:[1,2],reach_paid:[0,1,2]};
+const BENCH_STAGE_TXT={reach_engaged:"engaged per person reached",engaged_tried:"tried per engaged",tried_paid:"paid per tried",engaged_paid:"paid per engaged",reach_paid:"paid per person reached"};
+const BENCH={running:false,stop:false,msg:"",results:(()=>{try{return JSON.parse(localStorage.getItem("marketroom-bench-results")||"[]")}catch{return[]}})()};
+function benchSave(){try{localStorage.setItem("marketroom-bench-results",JSON.stringify(BENCH.results))}catch{}}
+function lnFact(n){let s=0;for(let i=2;i<=n;i++)s+=Math.log(i);return s}
+function binomLog(k,n,p){p=Math.min(1-1e-9,Math.max(1e-9,p));return lnFact(n)-lnFact(k)-lnFact(n-k)+k*Math.log(p)+(n-k)*Math.log(1-p)}
+// baseline = knowing nothing: rate anywhere from 0.1% to 30%, equally likely on a log scale
+function baseLik(k,n){const G=240,a=Math.log(.001),b=Math.log(.3);let s=0;for(let i=0;i<G;i++){s+=Math.exp(binomLog(k,n,Math.exp(a+(b-a)*(i+.5)/G)))}return s/G}
+function wilson(k,n,z){const p=k/n,d=1+z*z/n,c=(p+z*z/(2*n))/d,h=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d;return[Math.max(0,c-h),Math.min(1,c+h)]}
+const benchQ=(A,f)=>A[Math.min(A.length-1,Math.max(0,Math.round(f*(A.length-1))))];
+function benchRate(R,st){return(BENCH_STAGE[st]||[]).reduce((x,i)=>x*R[i],1)}
+function benchScoreMetric(m,samples){const ps=samples.map(R=>benchRate(R,m.stage)).sort((a,b)=>a-b);const med=benchQ(ps,.5),lo=benchQ(ps,.1),hi=benchQ(ps,.9);const o={stage:m.stage,primary:m.primary!==false,med,lo,hi,note:m.note||""};
+  if(!(m.n>0)||m.k==null)return o;
+  const Lm=ps.reduce((s,p)=>s+Math.exp(binomLog(m.k,m.n,p)),0)/ps.length,Lb=baseLik(m.k,m.n),Lx=.95*Lm+.05*Lb;
+  const w=wilson(m.k,m.n,1.2816),sm=(m.k+.5)/(m.n+1);
+  return{...o,k:m.k,n:m.n,actual:m.k/m.n,alo:w[0],ahi:w[1],ratio:med/sm,hit:!(hi<w[0]||lo>w[1]),bits:Math.log2(Lx/Lb)}}
+function benchScore(c,samples){return(c.actual?.metrics||[]).map(m=>benchScoreMetric(m,samples))}
+function benchSamples(){const out=[];for(const c of(S.casts?.list||[])){if(!c.segsData)continue;for(const sd of[11,23,37]){window.__benchCap=[];simNumbers(c.segsData,c.persData,sd);const R=window.__benchCap[window.__benchCap.length-1];if(R)out.push(R.map(x=>+x.toFixed(5)))}}window.__benchCap=null;return out}
+function benchCases(){try{const t=$("#bench-cases").value.trim();const d=JSON.parse(t||"[]");return Array.isArray(d)?d:d.cases||[]}catch(e){throw{code:"x",message:"Cases aren't valid JSON: "+e.message}}}
+async function benchRunCase(c){
+  if(!c.brief?.pitch)throw{code:"x",message:c.id+": brief has no pitch"};
+  setPlan("pro");const B={...PRESETS.blank,...c.brief,blind:true,ground:false,reng:0,rtrial:0,rpaid:0,job:"launch",pop:c.brief.pop||240,rounds:c.brief.rounds||4,decision:c.brief.decision||"bench",bar:c.brief.bar||0};
+  fillForm(B);$("#f-recast").checked=true;S.brief=readBrief();const c0=COST.all.length;
+  await genPopulation();if(BENCH.stop)throw{code:"cancelled"};await runRounds();if(BENCH.stop)throw{code:"cancelled"};await runRecasts(6);setBusy(false);
+  const samples=benchSamples();if(!samples.length)throw{code:"x",message:c.id+": no casts to score"};
+  const cost=costSum(COST.all.slice(c0));
+  return{id:c.id,label:c.label||c.id,profile:profKey(),engine:ENGINE_V,model:COST.all[COST.all.length-1]?.model||"",at:new Date().toISOString(),casts:(S.casts?.list||[]).length,samples,scores:benchScore(c,samples),cost:{usd:+cost.usd.toFixed(4),calls:cost.n,est:cost.est}}}
+async function benchRun(only){if(BENCH.running||!sampleFn)return;let cases;try{cases=benchCases()}catch(e){BENCH.msg=e.message;renderBench();return}
+  try{localStorage.setItem("marketroom-bench-cases",$("#bench-cases").value)}catch{}
+  const todo=cases.filter(c=>c.status!=="needs_data"&&(!only||c.id===only));BENCH.running=true;BENCH.stop=false;
+  for(let i=0;i<todo.length;i++){const c=todo[i];BENCH.msg=`Running ${i+1} of ${todo.length}: ${c.label||c.id} (cast, rounds, 6 recasts; about 11 Claude calls)…`;renderBench();
+    try{const r=await benchRunCase(c);BENCH.results=BENCH.results.filter(x=>!(x.id===r.id&&x.engine===r.engine));BENCH.results.push(r);benchSave();log(`bench: ${c.id} done, ${usd(r.cost.usd)}`,"ok")}
+    catch(e){setBusy(false);setLoading(null);if(e?.code==="cancelled"){BENCH.msg="Stopped.";break}log("bench: "+c.id+" failed: "+errCopy(e),"err");BENCH.msg=c.id+" failed: "+errCopy(e)}}
+  BENCH.running=false;if(!BENCH.stop)BENCH.msg="Done.";renderBench()}
+function benchRescore(){let cases;try{cases=benchCases()}catch(e){BENCH.msg=e.message;renderBench();return}const by=Object.fromEntries(cases.map(c=>[c.id,c]));BENCH.results.forEach(r=>{if(by[r.id])r.scores=benchScore(by[r.id],r.samples)});benchSave();BENCH.msg="Rescored saved runs against the cases as pasted (no Claude calls).";renderBench()}
+function benchSummary(rs){const M=rs.flatMap(r=>r.scores.filter(s=>s.primary&&s.bits!=null).map(s=>({...s,profile:r.profile})));if(!M.length)return null;
+  const lr=M.map(m=>Math.abs(Math.log10(m.ratio))).sort((a,b)=>a-b);const by={};M.forEach(m=>{const k=m.stage;(by[k]=by[k]||[]).push(Math.log(m.ratio))});
+  return{n:M.length,bits:M.reduce((s,m)=>s+m.bits,0),hits:M.filter(m=>m.hit).length,medErr:Math.pow(10,benchQ(lr,.5)),stages:Object.entries(by).map(([k,L])=>({k,f:Math.exp(L.reduce((a,b)=>a+b,0)/L.length),n:L.length}))}}
+const benchPct=x=>x==null?"–":(x*100<1?(x*100).toFixed(2):(x*100).toFixed(1))+"%";
+function renderBench(){const box=$("#benchPage");if(!box||box.hidden)return;
+  const ta=h("textarea",{id:"bench-cases",spellcheck:"false","aria-label":"Cases JSON",placeholder:'[{"id":"...","label":"...","brief":{...},"actual":{"metrics":[{"stage":"engaged_paid","k":2,"n":206}]}}]'});
+  const prev=document.getElementById("bench-cases");ta.value=prev?prev.value:(()=>{try{return localStorage.getItem("marketroom-bench-cases")||""}catch{return""}})();
+  const rs=BENCH.results.slice().sort((a,b)=>a.at<b.at?1:-1);const latest=Object.values(rs.reduce((m,r)=>(m[r.id]=m[r.id]||r,m),{}));const sum=benchSummary(latest);
+  const dl=()=>{const b=new Blob([JSON.stringify({engine:ENGINE_V,exported:new Date().toISOString(),results:BENCH.results},null,1)],{type:"application/json"});const a=h("a",{href:URL.createObjectURL(b),download:"marketroom-bench-"+new Date().toISOString().slice(0,10)+".json"});document.body.append(a);a.click();a.remove()};
+  const rows=latest.flatMap(r=>r.scores.length?r.scores.map((s,i)=>h("tr",null,h("td",null,i?"":h("b",null,r.label),i?"":h("div",{class:"sub",style:"font-size:11.5px"},`${PROFILES[r.profile]?.label||r.profile} · engine v${r.engine} · ${r.casts} casts · ${usd(r.cost.usd)}`)),
+      h("td",null,BENCH_STAGE_TXT[s.stage]||s.stage,s.primary?"":h("div",{class:"sub",style:"font-size:11.5px"},"info only"),s.note?h("div",{class:"sub",style:"font-size:11.5px"},s.note):""),
+      h("td",{class:"n"},s.k!=null?`${s.k}/${s.n} = ${benchPct(s.actual)}`:"not yet",s.k!=null?h("div",{class:"sub",style:"font-size:11.5px"},`likely ${benchPct(s.alo)}–${benchPct(s.ahi)}`):""),
+      h("td",{class:"n"},benchPct(s.med),h("div",{class:"sub",style:"font-size:11.5px"},`${benchPct(s.lo)}–${benchPct(s.hi)}`)),
+      h("td",{class:"n"},s.ratio!=null?(s.ratio>=1?s.ratio.toFixed(1)+"× high":(1/s.ratio).toFixed(1)+"× low"):"–"),
+      h("td",{class:"n "+(s.hit==null?"":s.hit?"ok":"bad")},s.hit==null?"–":s.hit?"yes":"no"),
+      h("td",{class:"n "+(s.bits==null?"":s.bits>=0?"ok":"bad")},s.bits==null?"–":(s.bits>=0?"+":"")+s.bits.toFixed(2)))):[h("tr",null,h("td",null,h("b",null,r.label)),h("td",{colspan:"6"},"Prediction registered, no outcome yet."))]);
+  box.replaceChildren(h("div",{class:"wrap"},
+    h("div",{style:"display:flex;align-items:center;gap:10px;flex-wrap:wrap"},h("h2",{style:"margin:0;font-family:var(--f-display)"},"Calibration bench"),h("span",{class:"pill"},"engine v"+ENGINE_V),h("button",{class:"btn sm ghost",type:"button",style:"margin-left:auto",onclick:()=>{location.hash=""}},"Back to Marketroom")),
+    h("p",{class:"sub",style:"margin:0"},"Runs real cases with known outcomes through the real engine, brand blinded, and checks the predictions against what happened. Each case: cast, rounds and 6 recasts, about 11 Claude calls. A score above 0 bits means Marketroom beat knowing nothing (any rate from 0.1% to 30%). Cases stay in this browser; nothing private is stored in the page."),
+    sum?h("div",{style:"display:flex;gap:10px;flex-wrap:wrap"},
+      h("div",{class:"block",style:"flex:1;min-width:150px;margin:0"},h("span",{class:"eyebrow"},"Skill"),h("div",{style:"font-size:22px;font-weight:700;font-family:var(--f-display)",class:sum.bits>=0?"ok":"bad"},(sum.bits>=0?"+":"")+sum.bits.toFixed(2)+" bits"),h("div",{class:"sub",style:"font-size:12px"},`${sum.n} scored measures; above 0 beats knowing nothing`)),
+      h("div",{class:"block",style:"flex:1;min-width:150px;margin:0"},h("span",{class:"eyebrow"},"Inside the range"),h("div",{style:"font-size:22px;font-weight:700;font-family:var(--f-display)"},`${sum.hits} of ${sum.n}`),h("div",{class:"sub",style:"font-size:12px"},"predicted 10–90% range overlaps the real result's likely range")),
+      h("div",{class:"block",style:"flex:1;min-width:150px;margin:0"},h("span",{class:"eyebrow"},"Typical miss"),h("div",{style:"font-size:22px;font-weight:700;font-family:var(--f-display)"},sum.medErr.toFixed(1)+"×"),h("div",{class:"sub",style:"font-size:12px"},"median factor between prediction and reality"))):"",
+    sum?h("p",{class:"sub",style:"margin:0"},"What it suggests (not applied): "+sum.stages.map(x=>`${BENCH_STAGE_TXT[x.k]} runs ${x.f>=1?x.f.toFixed(1)+"× too high":(1/x.f).toFixed(1)+"× too low"} (${x.n} measure${x.n>1?"s":""})`).join("; ")+". With this few cases, treat it as a direction, not a correction."):"",
+    latest.length?h("div",{class:"block",style:"overflow:auto"},h("table",{class:"ctab"},h("tr",null,...["Case","Measure","Real","Predicted (10–90%)","Off by","In range","Skill"].map((t,i)=>h("th",{class:i>=2?"n":""},t))),...rows)):h("p",{class:"empty"},"No bench runs yet."),
+    h("div",{class:"block"},h("h4",null,"Cases"),ta,
+      h("div",{style:"display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center"},
+        h("button",{class:"btn primary",type:"button",disabled:BENCH.running||!sampleFn,onclick:()=>benchRun()},"Run all cases"),
+        h("button",{class:"btn",type:"button",disabled:BENCH.running,onclick:benchRescore},"Rescore saved runs"),
+        h("button",{class:"btn ghost",type:"button",disabled:!BENCH.running,onclick:()=>{BENCH.stop=true;ctl?.abort()}},"Stop"),
+        h("button",{class:"btn ghost",type:"button",disabled:!BENCH.results.length,onclick:dl},"Download results"),
+        h("button",{class:"btn ghost",type:"button",disabled:BENCH.running||!BENCH.results.length,onclick:()=>{if(confirm("Delete all saved bench runs in this browser?")){BENCH.results=[];benchSave();renderBench()}}},"Clear runs"),
+        h("span",{class:"sub",style:"font-size:12.5px"},!sampleFn?"Live runs "+liveHint()+".":BENCH.msg)))));
+}
+function benchRoute(){const on=location.hash==="#bench";const b=$("#benchPage");if(!b)return;b.hidden=!on;if(on)renderBench()}
+window.addEventListener("hashchange",benchRoute);setTimeout(benchRoute,0);
 
 /* ---------------- boot ---------------- */
 markPro();planUI();$("#f-recast").addEventListener("change",e=>e.target.dataset.touched="1");

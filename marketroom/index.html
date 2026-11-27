@@ -391,6 +391,39 @@ body.intake-on main, body.intake-on #agentPage, body.intake-on footer.log, body.
 .swarm-loading p{margin:16px 0 0;font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:center}
 @media (prefers-reduced-motion: reduce){.sk,.swarm-loading .orb i{animation:none}}
 @media (prefers-reduced-motion: reduce){ .post.new{animation:none} .pill.busy::before{animation:none} }
+
+/* patch19: mini swarm, foldable case panel, ask + cost tabs */
+.iconbtn{border:1px solid var(--line);background:var(--panel-2);color:var(--muted);border-radius:8px;padding:3px 9px;font-size:12px;cursor:pointer;line-height:1.4;flex:none}
+.iconbtn:hover{color:var(--ink)}
+.brief .rail{display:none}
+@media (min-width:1001px){
+  main[data-view="split"].fold{grid-template-columns:44px minmax(0,1fr) 410px}
+  main[data-view="split"].mini{grid-template-columns:300px minmax(0,1fr)}
+  main[data-view="split"].mini.fold{grid-template-columns:44px minmax(0,1fr)}
+  main[data-view="split"].fold .brief>:not(.rail){display:none}
+  main[data-view="split"].fold .brief .rail{display:flex;writing-mode:vertical-rl;align-items:center;gap:8px;padding:14px 0;width:100%;height:100%;border:0;background:none;color:var(--muted);font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+  main[data-view="split"].fold .brief .rail:hover{color:var(--ink)}
+  main[data-view="split"].mini .stage{position:fixed;right:16px;bottom:16px;width:min(340px,calc(100vw - 32px));height:220px;z-index:30;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+  main[data-view="split"].mini .stage .probe,main[data-view="split"].mini .stage .legend,main[data-view="split"].mini .stage .hud,main[data-view="split"].mini .stage .rounds{display:none}
+  main[data-view="split"].mini .side .scroll{padding-bottom:120px}
+  main[data-view="split"].mini .stage .ph{padding:6px 10px;flex-wrap:nowrap}
+  main[data-view="split"].mini #stageMeta{display:none}
+  main[data-view="split"].mini #btn-mini{margin-left:auto}
+  main[data-view="split"].mini .swarm-loading>div{display:flex;align-items:center;gap:10px;text-align:left;padding:0 12px}
+  main[data-view="split"].mini .swarm-loading .orb{zoom:.5;flex:none;margin:0}
+  main[data-view="split"].mini #swarmMsg{font-size:12.5px;margin:0}
+  main[data-view="split"].mini .swarm-loading{background:color-mix(in srgb,var(--panel) 90%,transparent)}
+}
+@media (max-width:1000px){#btn-fold,#btn-mini{display:none}}
+main:not([data-view="split"]) #btn-fold,main:not([data-view="split"]) #btn-mini{display:none}
+.ask-q{align-self:flex-end;background:var(--panel-2);border:1px solid var(--line);border-radius:12px 12px 2px 12px;padding:8px 11px;font-size:13.5px;max-width:90%}
+.ask-a{white-space:pre-wrap;font-size:13.5px;line-height:1.55;border-left:2px solid var(--line);padding:2px 0 2px 11px}
+.ask-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ask-chips button{border:1px solid var(--line);background:var(--panel-2);border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer;color:var(--ink)}
+.ask-chips button:disabled{opacity:.5;cursor:default}
+.ctab{width:100%;border-collapse:collapse;font-size:12.5px}
+.ctab th,.ctab td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line)}
+.ctab td.n,.ctab th.n{text-align:right;font-family:var(--f-mono)}
 </style>
 
 <div class="app">
@@ -454,7 +487,8 @@ body.intake-on main, body.intake-on #agentPage, body.intake-on footer.log, body.
   <main id="main" data-view="split">
     <!-- BRIEF -->
     <aside class="panel brief">
-      <div class="ph"><h2>Your case</h2><span class="eyebrow" style="margin-left:auto">what the market sees</span></div>
+      <button type="button" class="rail" id="btn-unfold" aria-label="Show your case">Your case ›</button>
+      <div class="ph"><h2>Your case</h2><span class="eyebrow" style="margin-left:auto">what the market sees</span><button class="iconbtn" type="button" id="btn-fold" title="Fold this panel to give the results more room" aria-label="Fold the case panel">‹</button></div>
       <form class="scroll" id="briefForm" autocomplete="off">
         <div class="casecard" id="caseCard"></div>
         <div class="field" hidden><label for="f-preset">Start from</label>
@@ -537,7 +571,7 @@ body.intake-on main, body.intake-on #agentPage, body.intake-on footer.log, body.
     <!-- STAGE -->
     <section class="panel stage">
       <div class="ph"><h2>Swarm</h2><span class="eyebrow" id="stageMeta"></span>
-        <div class="rounds" id="roundChips" aria-label="Show state after round"></div>
+        <div class="rounds" id="roundChips" aria-label="Show state after round"></div><button class="iconbtn" type="button" id="btn-mini">Shrink</button>
       </div>
       <div class="canvas-wrap" id="cwrap">
         <canvas id="cv" aria-label="Network of simulated buyers coloured by purchase intent"></canvas>
@@ -561,8 +595,10 @@ body.intake-on main, body.intake-on #agentPage, body.intake-on footer.log, body.
         <button role="tab" data-t="plans" aria-selected="false">Plans</button>
         <button role="tab" data-t="duel" aria-selected="false">Duel</button>
         <button role="tab" data-t="report" aria-selected="false">Report</button>
+        <button role="tab" data-t="ask" aria-selected="false">Ask</button>
         <button role="tab" data-t="assume" aria-selected="false">Assumptions</button>
         <button role="tab" data-t="track" aria-selected="false">Track record<span class="count" id="c-track"></span></button>
+        <button role="tab" data-t="cost" aria-selected="false">API cost<span class="count" id="c-cost"></span></button>
       </div>
       <div class="scroll" style="flex:1">
         <div class="tabpane" id="t-feed"></div>
@@ -571,8 +607,10 @@ body.intake-on main, body.intake-on #agentPage, body.intake-on footer.log, body.
         <div class="tabpane" id="t-plans" hidden></div>
         <div class="tabpane" id="t-duel" hidden></div>
         <div class="tabpane" id="t-report" hidden></div>
+        <div class="tabpane" id="t-ask" hidden></div>
         <div class="tabpane" id="t-assume" hidden></div>
         <div class="tabpane" id="t-track" hidden></div>
+        <div class="tabpane" id="t-cost" hidden></div>
       </div>
     </section>
   </main>
@@ -1528,7 +1566,7 @@ function planCards(prop){return h("div",{class:"plancards"},...prop.map((p,i)=>h
 function wtpTable(agg){const T=S.plans.tiers;return h("div",{class:"chart-wrap"},h("table",{class:"ptable"},h("thead",null,h("tr",null,h("th",null,"Segment"),...T.map(t=>h("th",{class:"n"},t)))),h("tbody",null,...agg.bySeg.map(r=>h("tr",null,h("td",null,h("span",{style:"display:inline-flex;gap:6px;align-items:center"},h("i",{class:"dot",style:"background:"+segColor(S.segments.indexOf(r.s))}),r.s.name+(r.s.target===false?" (bystanders)":""))),...T.map(t=>h("td",{class:"n"},r[t]?fmtP(r[t]):"won't buy")))))))}
 function featureBars(agg){const n=S.plans.votes.length||1;return h("div",{class:"bars"},...Object.entries(agg.feat).sort((a,b)=>(b[1].must-b[1].drop)-(a[1].must-a[1].drop)).map(([f,c])=>h("div",{class:"fbar"},h("span",null,f),h("div",{class:"tr"},h("i",{style:`width:${Math.max(2,c.must/n*100)}%;background:var(--buy)`}),h("i",{style:`width:${Math.max(2,c.drop/n*100)}%;background:var(--unaware)`}),h("small",null,`must ${c.must} · drop ${c.drop}`)))))}
 function renderPlans(){
-  const box=$("#t-plans");if(!isPro()){box.replaceChildren(lockCard("Plans and price poll","Personas pick a plan, name the most they'd pay, and say which features they need. Shown against the engine's price band."));return}const P=S.plans;
+  const box=$("#t-plans");if(!isPro()){box.replaceChildren(lockCard("Plans and price poll","Personas pick a plan, name the most they'd pay, and say which features they need. Shown against the engine's price band."));return}if(S.plansBusy){box.replaceChildren(skelList(4,`Asking ${S.personas.length} personas which plan they'd pick, the most they'd pay and what they can't do without…`));return}const P=S.plans;
   const btn=h("button",{class:"btn primary",type:"button",disabled:!sampleFn||!S.personas.length||S.busy,onclick:()=>guard(runPlans)},P?"Ask the swarm again":"Ask the swarm for plans");
   if(!P){box.replaceChildren(h("p",{class:"empty"},S.personas.length?"Pick Pricing & plans. With one plan name, personas say if they'd pay your price and the most they would. With two or more, they also split your features into plans.":"Generate a population first."),btn);return}
   const agg=plansAgg();
@@ -1549,7 +1587,7 @@ async function runPlans(){
   const B=readBrief();const tiers=B.tiers.length?B.tiers:[B.name||"Plan"];const one=tiers.length===1;const features=B.features;
   if(!S.personas.length)throw{code:"nopop"};
   if(!one&&features.length<2)throw{code:"x",message:"List at least two features in the brief to shape two or more plans."};
-  setBusy(true,"Polling plans…");log(`plans: asking ${S.personas.length} personas to shape ${tiers.join(" / ")} from ${features.length} features…`);
+  setBusy(true,"Polling plans…");S.plansBusy=true;setLoading("Asking the swarm about plans…");switchTab("plans");log(`plans: asking ${S.personas.length} personas to shape ${tiers.join(" / ")} from ${features.length} features…`);
   const said=S.feed.slice(-14).map(p=>`@${S.personas[p.pi].handle}: ${p.text}`).join("\n")||"(none)";
   const prompt=`You are polling a synthetic market about how to package a product into plans. Stay true to each persona's price ceiling, fit and objections. Budget holders think about value per month; staff think about their workload. Be honest: some will want neither.
 
@@ -1571,7 +1609,7 @@ Reply with only JSON. Use feature names exactly as listed.
 {"votes":[{"by":"p1","pick":"${tiers[0]}","max":{${tiers.map(t=>`"${t}":0`).join(",")}},"yearly":false,"must":["..."],"drop":["..."],"reason":"..."}],"proposal":[{"tier":"${tiers[0]}","price":0,"limit":"...","features":["..."],"who":"who it is for"}],"summary":"2 to 3 sentences"}`;
   const d=await askJSON(prompt,"default");S.plans=normPlans(d,tiers,features);
   plansAgg().tiers.forEach(t=>log(`  ├ ${t.t}: ${t.n} pick it · revenue peak ${t.best?fmtP(t.best.p):"–"} · median ceiling ${fmtP(t.med)}`));
-  log("plans ready","ok");switchTab("plans");
+  S.plansBusy=false;setLoading(null);log("plans ready","ok");switchTab("plans");
 }
 
 /* ---------------- interview ---------------- */
@@ -1612,7 +1650,7 @@ async function sendChat(q){
 let sampleFn=null,ctl=null;
 function errCopy(e){return({bad_code:"That tester code wasn't accepted. Check it, or use Forget code and enter it again.",live_off:"Live runs aren't switched on for this site yet. The examples still work.",not_granted:"Claude access wasn't allowed for this page. Live runs are off; the sample still works.",sampling_disabled:"Claude isn't available on this account.",rate_limited:"Too many requests just now. Wait a minute, then try again.",session_expired:"Your session expired. Sign in again, then retry.",invalid_json:"Claude's answer wasn't in the expected shape. Try again.",refused:"Claude declined this brief. Rephrase the pitch and try again.",prompt_too_large:"The brief is too long. Shorten the pitch.",cancelled:"Stopped.",nopop:"Generate a population first."})[e?.code]||e?.message||"Something went wrong talking to Claude. Try again."}
 function setBusy(b,label){S.busy=b;["#btn-all","#btn-pop","#btn-run","#btn-replay","#f-preset"].forEach(s=>$(s).disabled=b||(!sampleFn&&s!=="#btn-replay"&&s!=="#f-preset"));if(!b&&!S.personas.length)$("#btn-run").disabled=true;$("#btn-stop").disabled=!b;setStatus(b?label:(S.isSample?"Sample run":"Ready"),b?"busy":sampleFn?"":"off");if(!$("#t-duel").hidden)renderDuel();if(!$("#t-plans").hidden)renderPlans();if(!$("#agentPage").hidden)renderShelfResults();if(!$("#t-report").hidden)renderReport()}
-async function guard(fn){if(S.busy)return;try{await fn()}catch(e){if(e?.code==="cancelled"||e?.name==="AbortError"){log("stopped by you");}else{log("error: "+errCopy(e)+(e?.code?" ("+e.code+")":""),"err");console.error(e)}}finally{ctl=null;setLoading(null);setBusy(false)}}
+async function guard(fn){if(S.busy)return;try{await fn()}catch(e){if(e?.code==="cancelled"||e?.name==="AbortError"){log("stopped by you");}else{log("error: "+errCopy(e)+(e?.code?" ("+e.code+")":""),"err");console.error(e)}}finally{ctl=null;S.plansBusy=false;setLoading(null);setBusy(false)}}
 $("#btn-stop").onclick=()=>{ctl?.abort();replayAbort=true};
 
 const BLIND_ALIAS="Brand Kestrel";
@@ -1840,7 +1878,7 @@ One vote per persona. pick is "1", "2" or "neither". confidence is low, mid or h
 }
 $("#btn-pop").onclick=()=>guard(genPopulation);
 $("#btn-run").onclick=()=>guard(runRounds);
-$("#btn-all").onclick=()=>guard(async()=>{await genPopulation();await runRounds();if($("#f-recast").checked){await runRecasts(6);await runCritic();await runIntent("price");if(isIndia()&&S.brief.buyer==="household")await runRealism()}const j=S.brief.job;if(j==="pricing")await runPlans();if(j==="message"){await runDuel();if($("#f-recast").checked)await runIntent("duel")}await genReport()});
+$("#btn-all").onclick=()=>guard(async()=>{await genPopulation();await runRounds();if($("#f-recast").checked){await runRecasts(6);await runCritic();await runIntent("price");if(isIndia()&&S.brief.buyer==="household")await runRealism()}const j=S.brief.job;if(j==="pricing")await runPlans();if(j==="message"){await runDuel();if($("#f-recast").checked)await runIntent("duel")}await genReport();costDone()});
 
 /* ---------------- sample ---------------- */
 let replayAbort=false,SK="reviewsaathi";
@@ -2080,10 +2118,10 @@ $("#f-preset").addEventListener("change",e=>{fillForm(PRESETS[e.target.value]);i
 $("#f-pop").addEventListener("input",e=>$("#popv").textContent=e.target.value);
 $("#f-bar").addEventListener("input",barHint);$("#f-profile").addEventListener("change",barHint);
 $("#f-buyer").addEventListener("change",e=>{$("#f-ground").checked=e.target.value==="household"&&INDIA_RE.test($("#f-region").value)});
-function switchTab(t){document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.t===t)));document.querySelectorAll(".tabpane").forEach(p=>p.hidden=p.id!=="t-"+t);({feed:renderFeed,personas:renderPersonas,insights:renderInsights,plans:renderPlans,duel:renderDuel,report:renderReport,assume:renderAssume,track:renderTrack})[t]();try{localStorage.setItem("marketroom-tab",t)}catch{}}
+function switchTab(t){document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.t===t)));document.querySelectorAll(".tabpane").forEach(p=>p.hidden=p.id!=="t-"+t);({feed:renderFeed,personas:renderPersonas,insights:renderInsights,plans:renderPlans,duel:renderDuel,report:renderReport,assume:renderAssume,ask:renderAsk,cost:renderCost,track:renderTrack})[t]();try{localStorage.setItem("marketroom-tab",t)}catch{}}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
 document.querySelectorAll(".views button").forEach(b=>b.onclick=()=>{$("#main").dataset.view=b.dataset.v;document.querySelectorAll(".views button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));setTimeout(resize,30)});
-function renderAll(){renderSteps();try{caseCard()}catch{}renderStage();const t=document.querySelector(".tabs [aria-selected=true]")?.dataset.t||"feed";renderFeed();renderPersonas();({insights:renderInsights,plans:renderPlans,duel:renderDuel,report:renderReport,assume:renderAssume,track:renderTrack})[t]?.();$("#c-pers").textContent=S.personas.length||""}
+function renderAll(){renderSteps();try{caseCard()}catch{}renderStage();const t=document.querySelector(".tabs [aria-selected=true]")?.dataset.t||"feed";renderFeed();renderPersonas();({insights:renderInsights,plans:renderPlans,duel:renderDuel,report:renderReport,assume:renderAssume,ask:renderAsk,cost:renderCost,track:renderTrack})[t]?.();$("#c-pers").textContent=S.personas.length||""}
 
 
 /* ---------------- intake: tell -> fill gaps -> room ---------------- */
@@ -2283,7 +2321,7 @@ document.querySelectorAll(".planswitch button").forEach(b=>b.onclick=()=>setPlan
 /* ---------------- website: live runs through the site's server function ---------------- */
 const ON_WEB=!window.claude;
 function webSample(code){const call=async(body,signal)=>{let r;try{r=await fetch("/api/marketroom",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({...body,code}),signal})}catch(e){if(e?.name==="AbortError")throw{code:"cancelled"};throw{code:"x",message:"Couldn't reach the server. Check your connection and try again."}}
-    const d=await r.json().catch(()=>({}));if(!r.ok)throw{code:r.status===401?"bad_code":r.status===429?"rate_limited":r.status===503?"live_off":r.status===422?"invalid_json":"x",message:d.error||"Server error "+r.status};return d};
+    const d=await r.json().catch(()=>({}));if(!r.ok)throw{code:r.status===401?"bad_code":r.status===429?"rate_limited":r.status===503?"live_off":r.status===422?"invalid_json":"x",message:d.error||"Server error "+r.status};meterWeb(body,d);return d};
   const f=async(messages,opts={})=>{const d=await call({mode:"text",messages,tier:opts.modelTier||"default"},opts.signal);opts.onText?.({text:d.text||""});return{text:d.text||""}};
   f.json=async(prompt,opts={})=>{const d=await call({mode:"json",prompt,tier:opts.modelTier||"default"},opts.signal);return d.json};return f}
 function liveHint(){return ON_WEB?"needs a tester code":"open in Claude"}
@@ -2301,7 +2339,94 @@ function setLoading(msg){S.loading=msg||null;const o=swarmOverlay();o.hidden=!ms
 function skelCard(lines){return h("div",{class:"skel","aria-hidden":"true"},h("div",{class:"row1"},h("i",{class:"sk av"}),h("i",{class:"sk",style:"width:40%"})),...(lines||[92,78,55]).map(w=>h("i",{class:"sk",style:`width:${w}%`})))}
 function skelList(n,note){return h("div",{class:"stack"},note?h("p",{class:"sub",style:"margin:0"},note):"",...Array.from({length:n},(_,i)=>skelCard([94-i*7,80-i*5,50+i*6])))}
 function feedWait(on,note){const list=$("#feedlist");const old=$("#feedwait");if(old)old.remove();if(!on)return;const w=h("div",{id:"feedwait",class:"stack"},h("p",{class:"sub",style:"margin:0"},note||"Writing what they say…"),skelCard(),skelCard([85,60]));if(list)list.prepend(w);else{$("#t-feed").replaceChildren(w)}}
-function clearForRun(msg){Object.assign(S,{segments:[],personas:[],agents:[],edges:[],adj:[],followers:[],feed:[],snapshots:[],viewRound:null,report:null,duel:null,plans:null,audit:null,casts:null,critic:null,intent:null,realism:null,bandAlt:null,isSample:false,runPrice:S.brief.price||0,probe:S.brief.price||0});ENS.key="";setLoading(msg);renderAll();renderProbe()}
+function clearForRun(msg){Object.assign(S,{segments:[],personas:[],agents:[],edges:[],adj:[],followers:[],feed:[],snapshots:[],viewRound:null,report:null,duel:null,plans:null,audit:null,casts:null,critic:null,intent:null,realism:null,bandAlt:null,isSample:false,runPrice:S.brief.price||0,probe:S.brief.price||0});ENS.key="";COST.run=[];COST.runAt=Date.now();S.askLog=[];setFold(true);setLoading(msg);renderAll();renderProbe()}
+
+
+/* ---------------- API cost meter ---------------- */
+// $ per 1M tokens [input, output], Anthropic API list prices (Nov 2026)
+const PRICE_MT={"claude-opus-5-5":[4,20],"claude-haiku-5-5":[0.1,0.5],"claude-opus-5":[5,25],"claude-opus-4-8":[5,25],"claude-sonnet-5-5":[2,10],"claude-sonnet-5":[2,10],"claude-fable-5-2":[8,40]};
+const COST={run:[],all:[],runAt:null,rate:(()=>{try{return +localStorage.getItem("marketroom-inr")||88}catch{return 88}})()};
+function costModel(m,tier){if(PRICE_MT[m])return m;const k=Object.keys(PRICE_MT).find(x=>m&&m.startsWith(x));return k||(tier==="quick"?"claude-haiku-5-5":"claude-opus-5-5")}
+function meterAdd(o){o.model=costModel(o.model,o.tier);const p=PRICE_MT[o.model];o.usd=(o.in*p[0]+o.out*p[1])/1e6;o.step=S.asking?"Questions (Ask tab)":S.busy?($("#status")?.textContent||"").replace(/…$/,"")||"Other":"Other";o.at=Date.now();COST.run.push(o);COST.all.push(o);
+  const R=costSum(COST.run);const c=$("#c-cost");if(c)c.textContent=R.n?usd(R.usd):"";if(!$("#t-cost").hidden)renderCost()}
+const tok=x=>Math.ceil(String(x||"").length/4);
+function meterWeb(body,d){const u=d.usage;meterAdd({model:d.model||"",tier:body.tier,in:u?(u.input_tokens||0)+(u.cache_creation_input_tokens||0)+(u.cache_read_input_tokens||0):tok(JSON.stringify(body.messages||body.prompt)),out:u?u.output_tokens||0:tok(d.text??JSON.stringify(d.json)),est:!u})}
+function meterWrap(fn){if(!fn)return null;const f=async(m,o={})=>{const r=await fn(m,o);meterAdd({tier:o.modelTier,in:tok(JSON.stringify(m)),out:tok(r?.text),est:true});return r};
+  f.json=async(p,o={})=>{const r=await fn.json(p,o);meterAdd({tier:o.modelTier,in:tok(p),out:tok(JSON.stringify(r)),est:true});return r};return f}
+function costSum(L){return L.reduce((a,c)=>({n:a.n+1,in:a.in+c.in,out:a.out+c.out,usd:a.usd+c.usd,est:a.est||c.est}),{n:0,in:0,out:0,usd:0,est:false})}
+function usd(x){return"$"+(x<0.1?x.toFixed(3):x.toFixed(2))}
+function inr(x){return"₹"+(x*COST.rate<10?(x*COST.rate).toFixed(1):Math.round(x*COST.rate).toLocaleString("en-IN"))}
+const kfmt=n=>n>=1000?(n/1000).toFixed(n>=10000?0:1)+"k":String(n);
+function costDone(){const R=costSum(COST.run);if(R.n)log(`API cost this run: ${usd(R.usd)} (${inr(R.usd)}) over ${R.n} Claude calls${R.est?", estimated":""}`,"ok");renderCost()}
+function renderCost(){const box=$("#t-cost");if(!box)return;const R=costSum(COST.run),A=costSum(COST.all);
+  if(!A.n){box.replaceChildren(h("p",{class:"empty"},"No Claude calls yet in this session. After a live run, this shows what the run cost on the API, step by step."));return}
+  const groups={};COST.run.forEach(c=>{(groups[c.step]=groups[c.step]||[]).push(c)});
+  const models={};COST.run.forEach(c=>{(models[c.model]=models[c.model]||[]).push(c)});
+  const row=(k,L)=>{const t=costSum(L);return h("tr",null,h("td",null,k),h("td",{class:"n"},t.n),h("td",{class:"n"},kfmt(t.in)),h("td",{class:"n"},kfmt(t.out)),h("td",{class:"n"},usd(t.usd)))};
+  const head=h("tr",null,h("th",null,""),h("th",{class:"n"},"Calls"),h("th",{class:"n"},"In"),h("th",{class:"n"},"Out"),h("th",{class:"n"},"Cost"));
+  const rate=h("input",{type:"number",min:"1",step:"0.5",style:"width:80px","aria-label":"Rupees per dollar",onchange:e=>{COST.rate=Math.max(1,num(e.target.value,88));try{localStorage.setItem("marketroom-inr",COST.rate)}catch{}renderCost()}});rate.value=COST.rate;
+  const tile=(l,v,sub)=>h("div",{class:"block",style:"flex:1;min-width:130px;margin:0"},h("span",{class:"eyebrow"},l),h("div",{style:"font-family:var(--f-display);font-size:22px;font-weight:700"},v),h("div",{style:"font-size:12px;color:var(--muted)"},sub));
+  box.replaceChildren(h("div",{class:"stack"},
+    h("div",{style:"display:flex;gap:10px;flex-wrap:wrap"},
+      tile("This run",R.n?usd(R.usd):"–",R.n?`${inr(R.usd)} · ${R.n} calls · ${kfmt(R.in)} in / ${kfmt(R.out)} out`:"no live run yet"),
+      tile("This session",usd(A.usd),`${inr(A.usd)} · ${A.n} calls, including questions and re-asks`)),
+    R.n?h("div",{class:"block"},h("h4",null,"By step"),h("table",{class:"ctab"},head,...Object.entries(groups).map(([k,L])=>row(k,L)))):"",
+    R.n?h("div",{class:"block"},h("h4",null,"By model"),h("table",{class:"ctab"},head.cloneNode(true),...Object.entries(models).map(([k,L])=>row(k,L)))):"",
+    h("p",{class:"sub",style:"margin:0;font-size:12.5px"},
+      (R.est||A.est?(ON_WEB?"Some figures are estimated from text length (about 4 characters a token). ":"In Claude this run uses your Claude plan, not API billing. The figures show what it would cost on the API, estimated from text length (about 4 characters a token), and leave out Claude's thinking, so the real API figure would be higher. "):"Token counts come from the API's own usage report and include Claude's thinking. ")+
+      "Prices per million tokens: Opus 5.5 $4 in, $20 out; Haiku 5.5 $0.10 in, $0.50 out. If Opus declines a step and a fallback model answers, that call is priced at the fallback's rate. Rupees at ",rate," per dollar.")));
+}
+
+/* ---------------- Ask: free questions over the finished run ---------------- */
+const ASK_CHIPS=["Is my price right?","What other ideas could work?","Would a combination of changes work?","Who buys first, and why?","What should I test first in real life?"];
+function renderAsk(){const box=$("#t-ask");if(!box)return;S.askLog=S.askLog||[];
+  const ready=S.feed.length>0;const can=!!sampleFn&&ready&&!S.busy&&!S.asking;
+  const ta=h("textarea",{rows:"2",placeholder:ready?"e.g. Would ₹3,999 with a free first month do better than ₹4,999?":"Run the market first","aria-label":"Your question",onkeydown:e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();go()}}});ta.disabled=!can;
+  const go=()=>{const q=ta.value.trim();if(q)askRun(q)};
+  const hist=S.askLog.flatMap(x=>[h("div",{class:"ask-q"},x.q),x.a==null?skelList(1):h("div",{class:"ask-a"},x.a)]);
+  box.replaceChildren(h("div",{class:"stack"},
+    h("p",{class:"sub",style:"margin:0"},ready?"Ask anything about this run: price, other ideas, combinations. Answers use only this run's personas, posts, numbers and report, and say when something wasn't tested.":"Ask questions here once a run has finished (or on the example run)."),
+    h("div",{class:"ask-chips"},...ASK_CHIPS.map(c=>{const b=h("button",{type:"button",onclick:()=>askRun(c)},c);b.disabled=!can;return b})),
+    ...hist,
+    h("div",{class:"stack",style:"gap:6px"},ta,h("div",{style:"display:flex;gap:8px;align-items:center"},h("button",{class:"btn primary",type:"button",disabled:!can,onclick:go},S.asking?"Thinking…":"Ask"),!sampleFn?h("span",{class:"sub",style:"font-size:12.5px"},"Live answers "+liveHint()+"."):S.askLog.length?h("button",{class:"btn sm ghost",type:"button",onclick:()=>{S.askLog=[];renderAsk()}},"Clear"):""))));
+  if(S.askLog.length)box.closest(".scroll").scrollTop=box.closest(".scroll").scrollHeight;
+}
+function askContext(){const B=S.brief;const L=[];
+  try{const V=verdictCalc();if(V)L.push(`Verdict against the founder's bar (${V.bar}% of people reached buy): ${V.label}, ${Math.round(V.p*100)}% of ${V.n} simulated scenarios clear it.`)}catch{}
+  try{const la=likelyActual(stats(S.agents.filter(isTarget).map(a=>a.state)));if(la)L.push(`Simulation centre for target buyers: ${pct(la.v)} buy (range ${pct(la.lo)} to ${pct(la.hi)}).`)}catch{}
+  try{const pb=priceBand();if(pb)L.push(`Price where ${pb.kind} peaks across ${pb.n} casts: ${fmtP(pb.lo)} to ${fmtP(pb.hi)}, middle ${fmtP(pb.mid)}. Founder's price: ${fmtP(B.price)}.`)}catch{}
+  if(S.plans?.proposal?.length)L.push("Plans the swarm proposed: "+S.plans.proposal.map(p=>`${p.tier} at ${fmtP(p.price)}${p.limit?" ("+p.limit+")":""}: ${p.features.join(", ")}`).join("; ")+(S.plans.summary?". "+S.plans.summary:""));
+  if(S.critic?.summary)L.push("Cast check: "+S.critic.summary);
+  if(S.duel)try{L.push("Message duel result: "+(S.duel.summary||JSON.stringify(S.duel).slice(0,600)))}catch{}
+  const per=S.personas.map(p=>`- ${p.name} (${p.target===false?"bystander":"target"}, ${p.role}; will pay up to ${fmtP(p.wtp)}; fit ${p.fit}; objections: ${(p.objections||[]).join("; ")||"none"}${p.uses?"; uses today: "+p.uses:""})`).slice(0,16).join("\n");
+  const posts=S.feed.slice(-18).map(p=>`@${S.personas[p.pi]?.handle||"?"} (round ${p.round}): ${p.text}`).join("\n");
+  const rep=S.report?reportText(S.report).slice(0,7000):"(no written report yet)";
+  return `${briefLine()}\n\nNUMBERS\n${L.join("\n")||"(not computed)"}\n\nPERSONAS\n${per}\n\nRECENT POSTS\n${posts||"(none)"}\n\nREPORT\n${rep}`}
+async function askRun(q){q=String(q).trim().slice(0,600);if(!q||!sampleFn||S.asking||S.busy)return;S.askLog=S.askLog||[];
+  const prev=S.askLog.filter(x=>x.a).slice(-3).map(x=>`Q: ${x.q}\nA: ${x.a}`).join("\n\n");
+  S.askLog.push({q,a:null});S.asking=true;switchTab("ask");
+  const prompt=`A founder ran a simulated market for their product and now asks a question about the result. Answer from the evidence below only.
+
+How to answer:
+- Plain English, 80 to 180 words, no headings. Use up to 4 short bullet points only if a list really helps.
+- Lead with the direct answer, then the evidence from this run (name personas or numbers).
+- If the question is about a price, a change or a combination the run didn't test, say so plainly, give your best read from the evidence, and name the cheapest real-world test that would settle it.
+- These are simulated people. Never present a simulated number as real demand.
+
+${askContext()}
+${prev?`\nEARLIER QUESTIONS IN THIS CONVERSATION\n${prev}\n`:""}
+QUESTION
+${q}`;
+  try{const{text}=await sampleFn([{role:"user",content:blindIn(prompt)}],{modelTier:isPro()?"default":"quick",cache:false});S.askLog[S.askLog.length-1].a=String(blindOut(text||"")).trim()||"No answer came back. Try again."}
+  catch(e){S.askLog[S.askLog.length-1].a="Couldn't answer: "+errCopy(e)}
+  finally{S.asking=false;renderAsk()}}
+
+/* ---------------- layout: mini swarm, foldable case ---------------- */
+function setMini(on){const m=$("#main");m.classList.toggle("mini",on);const b=$("#btn-mini");b.textContent=on?"⤢ Expand":"Shrink";b.title=on?"Make the swarm big again":"Shrink the swarm to a corner so the results get more room";try{localStorage.setItem("marketroom-mini",on?"1":"0")}catch{}setTimeout(resize,40)}
+function setFold(on){$("#main").classList.toggle("fold",!!on);setTimeout(resize,40)}
+$("#btn-mini").onclick=()=>setMini(!$("#main").classList.contains("mini"));
+$("#btn-fold").onclick=()=>setFold(true);$("#btn-unfold").onclick=()=>setFold(false);
+setMini((()=>{try{return localStorage.getItem("marketroom-mini")}catch{return null}})()!=="0");
 
 /* ---------------- boot ---------------- */
 markPro();planUI();$("#f-recast").addEventListener("change",e=>e.target.dataset.touched="1");
@@ -2312,7 +2437,7 @@ log("hover the swarm, drag the price probe, or click a persona to interview them
 renderAll();let t0="feed";try{t0=localStorage.getItem("marketroom-tab")||"feed"}catch{}switchTab(t0);
 setBusy(false);showIntake(1);
 (async()=>{try{const [db,user]=await Promise.all([window.claude?.use?.("db"),window.claude?.use?.("user")]);if(db&&user){const id=await user.id();if(id){DB=db;UID=id}}}catch{DB=null}await outLoad();renderTrack();log(DB?"track record: "+OUT.length+" saved predictions":"track record: saving in this browser")})();
-(async()=>{try{sampleFn=await window.claude?.use?.("sample")||null}catch{sampleFn=null}
+(async()=>{try{sampleFn=meterWrap(await window.claude?.use?.("sample")||null)}catch{sampleFn=null}
   const n=$("#ainote");
   if(!sampleFn&&ON_WEB){let c=null;try{c=localStorage.getItem("marketroom-code")}catch{}if(c)sampleFn=webSample(c)}
   if(sampleFn){liveOn(n)}

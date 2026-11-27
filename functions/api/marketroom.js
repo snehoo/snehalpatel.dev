@@ -73,11 +73,12 @@ export async function onRequest(context) {
   if (data.stop_reason === 'refusal') return reply({ error: 'Claude declined this brief. Rephrase it and try again.' }, 422);
 
   const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
-  if (body.mode !== 'json') return reply({ text });
+  const meta = { usage: data.usage, model: data.model };
+  if (body.mode !== 'json') return reply({ text, ...meta });
 
   const parsed = parseJSON(text);
   if (parsed === undefined) return reply({ error: "Claude's answer wasn't in the expected shape. Try again." }, 422);
-  return reply({ json: parsed });
+  return reply({ json: parsed, ...meta });
 }
 
 function parseJSON(t) {

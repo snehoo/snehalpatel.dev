@@ -853,8 +853,8 @@ const PROFILES={
  b2b_out:{label:"Business buyer, you contact them",a:{wFit:.5,wPrice:.4,wSoc:.15,soc:.3,negBoost:1,r10Buy:.3,consLift:.1,tau:.12},cast:"Kind of purchase: a business buys it after the seller contacts them. For each persona think about who uses it, who pays and who can block it, the size of the business, and the tool or habit it replaces. Many are too busy to engage at all.",stages:["Contacted","Replied","Demo, trial or sample","Paid"]},
  b2b_in:{label:"Business buyer, they find you",a:{wFit:.45,wPrice:.4,wSoc:.3,soc:.5,negBoost:1.15,r10Buy:.35,consLift:.11,tau:.12},cast:"Kind of purchase: a business finds it through search, ads, reviews or peers. Vary company size, the tool they use now, who approves spend, and how much a switch would disrupt them.",stages:["Visited","Signed up or replied","Trial or demo","Paid"]},
  local:{label:"Local service",a:{wFit:.45,wPrice:.4,wSoc:.45,r10Buy:.35,consLift:.11,tau:.1,penTrustNone:.45,penTrustSome:.2},cast:"Kind of purchase: a local service bought by people nearby. Vary neighbourhood, how they find services (word of mouth, Google, WhatsApp groups, walking past), how urgent the need is, and who in the household decides.",stages:["Saw it","Enquired","Visited or booked","Paid"]},
- considered:{label:"Consumer, thought-through purchase",a:{},cast:"Kind of purchase: a considered consumer purchase (expensive, long-lasting, a subscription or education). Vary life stage, household budget, who else in the family has a say, and what they compare it with.",stages:["Reached","Clicked","Asked or added to cart","Paid"]},
- impulse:{label:"Consumer, cheap or impulse buy",a:{wFit:.35,wPrice:.35,wSoc:.6,soc:.8,decay:.7,r10Buy:.5,consLift:.16,tau:.06,penSwitch:.3,penTrustNone:.25,penTrustSome:.1,noise:.25},cast:"Kind of purchase: cheap or impulse, decided in seconds. Vary age, mood, what they scroll, spare cash this month, and how much they copy friends. Few read details.",stages:["Saw it","Clicked","Added to cart","Paid"]},
+ considered:{label:"Consumer, thought-through purchase",a:{r10Buy:.12,tryX:.6},cast:"Kind of purchase: a considered consumer purchase (expensive, long-lasting, a subscription or education). Vary life stage, household budget, who else in the family has a say, and what they compare it with.",stages:["Reached","Clicked","Asked or added to cart","Paid"]},
+ impulse:{label:"Consumer, cheap or impulse buy",a:{wFit:.35,wPrice:.35,wSoc:.6,soc:.8,decay:.7,r10Buy:.15,consLift:.16,tryX:.6,tau:.06,penSwitch:.3,penTrustNone:.25,penTrustSome:.1,noise:.25},cast:"Kind of purchase: cheap or impulse, decided in seconds. Vary age, mood, what they scroll, spare cash this month, and how much they copy friends. Few read details.",stages:["Saw it","Clicked","Added to cart","Paid"]},
  regulated:{label:"High-trust or regulated",a:{wFit:.5,wPrice:.35,wSoc:.35,soc:.5,r10Buy:.3,consLift:.1,tau:.12,penTrustNone:.7,penTrustSome:.35,trustAll:1},cast:"Kind of purchase: high trust, where a wrong choice hurts (health, money, children, legal). Every persona says in their objections what evidence they need before buying (certification, a professional's advice, regulator approval, references) and who they would ask first.",stages:["Reached","Asked questions","Consultation or trial","Paid"]}};
 const CHANNELS={
  feed:{label:"Social feed or ads",a:{}},
@@ -865,7 +865,11 @@ const CHANNELS={
  direct:{label:"Direct outreach (calls, DMs, visits)",a:{}}};
 function chanKey(){if(S.brief?.reach==="outbound")return"direct";if(CHANNELS[S.brief?.channel])return S.brief.channel;return S.brief?guessChannel(S.brief):"feed"}
 function guessChannel(b){if(b.reach==="outbound")return"direct";const t=[b.chan,b.pitch].join(" ").toLowerCase();if(/whatsapp group|society|community|forum|groups/.test(t))return"groups";if(/referr|word of mouth|recommend/.test(t))return"referral";if(/google|search|seo/.test(t))return"search";if(/amazon|flipkart|marketplace|store shelf|retail|supermarket|kirana shelf/.test(t))return"retail";return"feed"}
-const A_DEF={tau:.08,fFollow:.85,fNeigh:.2,fHop:.22,posBoost:1,wFit:.45,wPrice:.45,wSoc:.5,buyT:.3,rejT:-.12,soc:.6,decay:.8,reachIn:.13,reachOut:.3,negBoost:1.3,noise:.18,pen_payer:.1,pen_gatekeeper:.5,pen_user:.65,pen_influencer:.8,penSwitch:.5,penTrustNone:.55,penTrustSome:.25,trustAll:0,penExtra:.35,penCap:.8,penFloor:.05,r10Buy:.4,consLift:.125,gateFloor:.01,roiX:3,r1House:.05,r1Biz:.04,spendX:2};
+// engine v19 (27 Nov 2026): calibration bench run 1 showed v18 predicting 8–11× too many buyers on 2 real consumer search campaigns.
+const CALIBRATED={considered:"27 Nov 2026",impulse:"27 Nov 2026"};
+// uncertainty in the fixed assumptions: log-normal, sigma 0.6, at 5 quantiles
+const SPREAD_M=[-1.28,-.52,0,.52,1.28].map(z=>+Math.exp(z*.6).toFixed(3));
+const A_DEF={tau:.08,fFollow:.85,fNeigh:.2,fHop:.22,posBoost:1,wFit:.45,wPrice:.45,wSoc:.5,buyT:.3,rejT:-.12,soc:.6,decay:.8,reachIn:.13,reachOut:.3,negBoost:1.3,noise:.18,pen_payer:.1,pen_gatekeeper:.5,pen_user:.65,pen_influencer:.8,penSwitch:.5,penTrustNone:.55,penTrustSome:.25,trustAll:0,penExtra:.35,penCap:.8,penFloor:.05,r10Buy:.4,consLift:.125,tryX:1,gateFloor:.01,roiX:3,r1House:.05,r1Biz:.04,spendX:2};
 const A_INFO={
  wFit:["Score weight: how well it fits them","score"],wPrice:["Score weight: price against their ceiling","score"],wSoc:["Score weight: what others said","score"],
  buyT:["Score where buying is a coin flip","score"],tau:["How sharp the buy line is (smaller = sharper)","score"],rejT:["Score below this = rejects","score"],
@@ -873,7 +877,7 @@ const A_INFO={
  pen_payer:["Authority penalty: pays, others decide","penalties"],pen_gatekeeper:["Authority penalty: can block it","penalties"],pen_user:["Authority penalty: uses it, someone else pays","penalties"],pen_influencer:["Authority penalty: only advises","penalties"],
  penSwitch:["Switching penalty: already uses something else","penalties"],penTrustNone:["Trust penalty with no proof","penalties"],penTrustSome:["Trust penalty with some proof","penalties"],trustAll:["Trust penalty applies to everyone (1) or only risk-averse roles (0)","penalties"],
  penExtra:["Each extra objection counts this much of itself","penalties"],penCap:["Most that objections can take off","penalties"],penFloor:["Lowest buying chance for anyone in your target","penalties"],
- consLift:["Of those still considering, share who go on to try","conversion"],r10Buy:["Of those who try or say yes, share who pay","conversion"],gateFloor:["Buying chance when a must-have isn't met","penalties"],roiX:["How far the spend cap lifts when it replaces several tools or paid labour","ceilings"],
+ consLift:["Of those still considering, share who go on to try","conversion"],tryX:["Of those who would try, share who actually do after real friction (sign-up, checkout). Calibrated: 0.6 for consumer purchases","conversion"],r10Buy:["Of those who try or say yes, share who pay","conversion"],gateFloor:["Buying chance when a must-have isn't met","penalties"],roiX:["How far the spend cap lifts when it replaces several tools or paid labour","ceilings"],
  r1House:["Ceiling cap: share of monthly household income","ceilings"],r1Biz:["Ceiling cap: share of monthly business revenue","ceilings"],spendX:["Ceiling cap: times what they spend today on the alternative","ceilings"]};
 let AX={};try{AX=JSON.parse(localStorage.getItem("marketroom-assume")||"{}")||{}}catch{AX={}}
 let AS={...A_DEF};
@@ -963,7 +967,7 @@ const CALIB_MIN=5;
 function calibCount(){return OUT.filter(o=>o.kind==="rate"&&o.actual!=null&&o.predicted>0).length}
 function calib(job){const rs=OUT.filter(o=>o.kind==="rate"&&o.job===job&&o.actual!=null&&o.predicted>0);if(rs.length<CALIB_MIN)return null;const f=rs.map(o=>o.actual/o.predicted).sort((a,b)=>a-b);return{f:f[Math.floor(f.length/2)],n:rs.length}}
 function likelyActual(st){const rb=st.b/Math.max(st.aware,.001),rc=st.c/Math.max(st.aware,.001);const fc=funnelCal();if(fc&&fc.n>=20)return{v:fc.mean,lo:Math.max(0,fc.mean-1.28*fc.sd),hi:fc.mean+1.28*fc.sd,how:`blended with ${fc.n} real contacts`};const c=calib("launch");const ens=ensemble();const R=robust();
-  const v=c?rb*c.f:funnelStages(st).interest;const f=v/Math.max(rb,.0001);let lo=ens?ens.b[0]*f:v*.6,hi=ens?ens.b[2]*f:v*1.5;if(R){lo=Math.min(lo,R.lo);hi=Math.max(hi,R.hi)}if(!c){lo=lo*.5;hi=hi*1.6}
+  const v=c?rb*c.f:funnelStages(st).interest;const f=v/Math.max(rb,.0001);let lo=ens?ens.b[0]*f:v*.6,hi=ens?ens.b[2]*f:v*1.5;if(R){lo=Math.min(lo,R.lo);hi=Math.max(hi,R.hi)}if(!c){lo=lo*SPREAD_M[0];hi=hi*SPREAD_M[SPREAD_M.length-1]}
   return{v,lo,hi,how:c?`calibrated on ${c.n} of your outcomes (×${c.f.toFixed(2)})`:"under assumed conversion · unvalidated"}}
 function unvalidatedNote(){const n=calibCount();const fc=funnelCal();if(fc&&fc.n>=20)return h("p",{class:"note",style:"border-color:var(--buy)"},h("b",null,"Partly calibrated. "),`Stage rates blend the simulation with ${fc.n} real contacts for ${S.brief.name}.`);return n>=CALIB_MIN?"":h("p",{class:"note",style:"border-color:var(--consider)"},h("b",null,"Unvalidated simulation. "),`Use it to find objections and form hypotheses, not to forecast. ${n} of ${CALIB_MIN} real outcomes logged in Track record.`)}
 
@@ -1218,7 +1222,7 @@ function verdictCalc(){const L=S.lock;if(!L||!(L.bar>0))return null;const R=robu
   const vals=R.L.flatMap(x=>x.vals||[{i:x.interest,rb:x.rb}]);const cal=funnelCal();const c=calib("launch");let scen,conf;
   if(cal&&cal.n>=20){const med=R.im||1e-6;scen=vals.flatMap(v=>[-1.28,-.52,0,.52,1.28].map(z=>Math.max(0,(cal.mean+z*cal.sd)*(v.i/med))));conf=`Partly calibrated: ${cal.n} real contacts for this product`}
   else if(c){scen=vals.flatMap(v=>[.8,.9,1,1.1,1.2].map(m=>v.rb*c.f*m));conf=`Calibrated on ${c.n} of your real outcomes`}
-  else{scen=vals.flatMap(v=>[.5,.75,1,1.3,1.6].map(m=>v.i*m));conf="Model probability only, not yet checked against real results"}
+  else{scen=vals.flatMap(v=>SPREAD_M.map(m=>v.i*m));conf="Model probability only, not yet checked against real results"}
   const p=scen.filter(x=>x>=bar).length/scen.length;
   const label=p>=.75?"Likely yes":p>=.5?"Leaning yes":p>=.25?"Leaning no":"Likely no";const col=p>=.5?"var(--buy)":p>=.25?"var(--consider)":"var(--reject)";
   const pk=x=>hasCost()&&x.ppeak!=null?x.ppeak:x.peak;const below=R.L.filter(x=>pk(x)<S.brief.price*.9).length;const loss=hasCost()&&unitProfit(S.brief.price)<0;
@@ -1230,6 +1234,7 @@ function verdictCard(){const V=verdictCalc();const L=S.lock;
     h("div",{style:"display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"},h("b",{style:"font-family:var(--f-display);font-size:24px;color:"+V.col},V.label),h("span",{style:"font-size:15px;font-weight:600"},Math.round(V.p*100)+"% of "+V.n+" simulated scenarios clear your bar")),
     h("p",{style:"margin:6px 0 0;font-size:13px"},`Bar: at least ${V.bar}% of people reached buy.`+(L.decision?` Decision: ${L.decision}.`:"")+(L.guess!=null?` Your guess: ${L.guess}%.`:"")+(la?` Simulation centre: ${pct(la.v)}.`:"")),
     (()=>{const b=barNote(V.bar,profKey());return b.warn?h("p",{style:"margin:4px 0 0;font-size:13px;color:var(--reject)"},b.warn):""})(),
+    h("p",{style:"margin:4px 0 0;font-size:12.5px;color:var(--muted)"},CALIBRATED[profKey()]?`Calibrated: the try and pay steps for this kind of purchase were corrected on ${CALIBRATED[profKey()]} against 2 real search campaigns (engine v19). Two cases is a start, not proof.`:"Not yet checked against real results for this kind of purchase. On real consumer search campaigns the previous engine predicted 8 to 11 times too many buyers, so read this as optimistic."),
     V.below?h("p",{style:"margin:4px 0 0;font-size:13px"},`In ${V.below} of ${V.casts} casts ${hasCost()?"profit":"revenue"} peaks below your price.`):"",
     V.loss?h("p",{style:"margin:4px 0 0;font-size:13px;color:var(--reject)"},`At your price each customer loses money: ${fmtP(unitProfit(S.brief.price))} after ${lifeOf()} periods.`):"",
     h("p",{class:"sub",style:"margin:4px 0 0"},V.conf+". Scenarios = "+V.casts+" casts × 3 crowd runs × 5 conversion assumptions."+(L.example?" Bar set for this example.":L.at?" Bar locked "+new Date(L.at).toLocaleString()+", before results.":"")),
@@ -1273,8 +1278,8 @@ function renderAssume(){const box=$("#t-assume");if(!box)return;if(!isPro()){box
       h("button",{class:"btn sm",type:"button",disabled:!S.personas.length||S.busy,onclick:e=>{e.target.textContent="Running…";setTimeout(()=>{runWhatIf();log("what-if scenarios done","ok")},30)}},"Run what-ifs")));
 }
 
-function funnelStages(st){const B=S.brief;const aw=Math.max(st.aware,.001);const e=(st.c+st.b)/aw;const t=(st.b+st.c*AS.consLift)/Math.max(st.b+st.c,.001);
-  const st3=PROFILES[profKey()].stages;const R=[{n:st3[1],v:e,src:"engine"},{n:st3[2],v:t,src:"engine"},{n:st3[3],v:AS.r10Buy,src:"assumed for "+PROFILES[profKey()].label.toLowerCase()}];
+function funnelStages(st){const B=S.brief;const aw=Math.max(st.aware,.001);const e=(st.c+st.b)/aw;const t=Math.min(1,(st.b+st.c*AS.consLift)/Math.max(st.b+st.c,.001)*(AS.tryX??1));
+  const st3=PROFILES[profKey()].stages;const R=[{n:st3[1],v:e,src:"engine"},{n:st3[2],v:t,src:"engine"},{n:st3[3],v:AS.r10Buy,src:(CALIBRATED[profKey()]?"calibrated on real campaigns for ":"assumed for ")+PROFILES[profKey()].label.toLowerCase()}];
   [B.reng,B.rtrial,B.rpaid].forEach((v,i)=>{if(v>0)R[i]={...R[i],v:Math.min(1,v/100),src:"your history"}});
   if(window.__benchCap)window.__benchCap.push(R.map(x=>x.v));return{R,interest:R.reduce((x,y)=>x*y.v,1)}}
 function funnelPred(){const TA=S.agents.filter(isTarget);const st=stats(TA.map(a=>a.state));const la=likelyActual(st);const F=funnelStages(st);
@@ -2441,7 +2446,7 @@ setMini((()=>{try{return localStorage.getItem("marketroom-mini")}catch{return nu
 /* ---------------- calibration bench (#bench) ----------------
    Runs real cases (with known outcomes) through the real engine, blinded,
    and scores the predictions. Cases are pasted in; nothing private ships in the page. */
-const ENGINE_V="18";
+const ENGINE_V="19";
 const BENCH_STAGE={reach_engaged:[0],engaged_tried:[1],tried_paid:[2],engaged_paid:[1,2],reach_paid:[0,1,2]};
 const BENCH_STAGE_TXT={reach_engaged:"engaged per person reached",engaged_tried:"tried per engaged",tried_paid:"paid per tried",engaged_paid:"paid per engaged",reach_paid:"paid per person reached"};
 const BENCH={running:false,stop:false,msg:"",results:(()=>{try{return JSON.parse(localStorage.getItem("marketroom-bench-results")||"[]")}catch{return[]}})()};
@@ -2453,12 +2458,12 @@ function baseLik(k,n){const G=240,a=Math.log(.001),b=Math.log(.3);let s=0;for(le
 function wilson(k,n,z){const p=k/n,d=1+z*z/n,c=(p+z*z/(2*n))/d,h=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d;return[Math.max(0,c-h),Math.min(1,c+h)]}
 const benchQ=(A,f)=>A[Math.min(A.length-1,Math.max(0,Math.round(f*(A.length-1))))];
 function benchRate(R,st){return(BENCH_STAGE[st]||[]).reduce((x,i)=>x*R[i],1)}
-function benchScoreMetric(m,samples){const ps=samples.map(R=>benchRate(R,m.stage)).sort((a,b)=>a-b);const med=benchQ(ps,.5),lo=benchQ(ps,.1),hi=benchQ(ps,.9);const o={stage:m.stage,primary:m.primary!==false,med,lo,hi,note:m.note||""};
+function benchScoreMetric(m,samples,mult){const ps=samples.flatMap(R=>(mult||[1]).map(x=>benchRate(R,m.stage)*x)).sort((a,b)=>a-b);const med=benchQ(ps,.5),lo=benchQ(ps,.1),hi=benchQ(ps,.9);const o={stage:m.stage,primary:m.primary!==false,med,lo,hi,note:m.note||""};
   if(!(m.n>0)||m.k==null)return o;
   const Lm=ps.reduce((s,p)=>s+Math.exp(binomLog(m.k,m.n,p)),0)/ps.length,Lb=baseLik(m.k,m.n),Lx=.95*Lm+.05*Lb;
   const w=wilson(m.k,m.n,1.2816),sm=(m.k+.5)/(m.n+1);
   return{...o,k:m.k,n:m.n,actual:m.k/m.n,alo:w[0],ahi:w[1],ratio:med/sm,hit:!(hi<w[0]||lo>w[1]),bits:Math.log2(Lx/Lb)}}
-function benchScore(c,samples){return(c.actual?.metrics||[]).map(m=>benchScoreMetric(m,samples))}
+function benchScore(c,samples,mult){return(c.actual?.metrics||[]).map(m=>benchScoreMetric(m,samples,mult))}
 function benchSamples(){const out=[];for(const c of(S.casts?.list||[])){if(!c.segsData)continue;for(const sd of[11,23,37]){window.__benchCap=[];simNumbers(c.segsData,c.persData,sd);const R=window.__benchCap[window.__benchCap.length-1];if(R)out.push(R.map(x=>+x.toFixed(5)))}}window.__benchCap=null;return out}
 function benchCases(){try{const t=$("#bench-cases").value.trim();const d=JSON.parse(t||"[]");return Array.isArray(d)?d:d.cases||[]}catch(e){throw{code:"x",message:"Cases aren't valid JSON: "+e.message}}}
 async function benchRunCase(c){
@@ -2468,7 +2473,7 @@ async function benchRunCase(c){
   await genPopulation();if(BENCH.stop)throw{code:"cancelled"};await runRounds();if(BENCH.stop)throw{code:"cancelled"};await runRecasts(6);setBusy(false);
   const samples=benchSamples();if(!samples.length)throw{code:"x",message:c.id+": no casts to score"};
   const cost=costSum(COST.all.slice(c0));
-  return{id:c.id,label:c.label||c.id,profile:profKey(),engine:ENGINE_V,model:COST.all[COST.all.length-1]?.model||"",at:new Date().toISOString(),casts:(S.casts?.list||[]).length,samples,scores:benchScore(c,samples),cost:{usd:+cost.usd.toFixed(4),calls:cost.n,est:cost.est}}}
+  return{id:c.id,label:c.label||c.id,profile:profKey(),engine:ENGINE_V,model:COST.all[COST.all.length-1]?.model||"",at:new Date().toISOString(),casts:(S.casts?.list||[]).length,samples,spread:SPREAD_M,scores:benchScore(c,samples,SPREAD_M),cost:{usd:+cost.usd.toFixed(4),calls:cost.n,est:cost.est}}}
 async function benchRun(only){if(BENCH.running||!sampleFn)return;let cases;try{cases=benchCases()}catch(e){BENCH.msg=e.message;renderBench();return}
   try{localStorage.setItem("marketroom-bench-cases",$("#bench-cases").value)}catch{}
   const todo=cases.filter(c=>c.status!=="needs_data"&&(!only||c.id===only));BENCH.running=true;BENCH.stop=false;
@@ -2476,7 +2481,7 @@ async function benchRun(only){if(BENCH.running||!sampleFn)return;let cases;try{c
     try{const r=await benchRunCase(c);BENCH.results=BENCH.results.filter(x=>!(x.id===r.id&&x.engine===r.engine));BENCH.results.push(r);benchSave();log(`bench: ${c.id} done, ${usd(r.cost.usd)}`,"ok")}
     catch(e){setBusy(false);setLoading(null);if(e?.code==="cancelled"){BENCH.msg="Stopped.";break}log("bench: "+c.id+" failed: "+errCopy(e),"err");BENCH.msg=c.id+" failed: "+errCopy(e)}}
   BENCH.running=false;if(!BENCH.stop)BENCH.msg="Done.";renderBench()}
-function benchRescore(){let cases;try{cases=benchCases()}catch(e){BENCH.msg=e.message;renderBench();return}const by=Object.fromEntries(cases.map(c=>[c.id,c]));BENCH.results.forEach(r=>{if(by[r.id])r.scores=benchScore(by[r.id],r.samples)});benchSave();BENCH.msg="Rescored saved runs against the cases as pasted (no Claude calls).";renderBench()}
+function benchRescore(){let cases;try{cases=benchCases()}catch(e){BENCH.msg=e.message;renderBench();return}const by=Object.fromEntries(cases.map(c=>[c.id,c]));BENCH.results.forEach(r=>{if(by[r.id])r.scores=benchScore(by[r.id],r.samples,r.spread)});benchSave();BENCH.msg="Rescored saved runs against the cases as pasted (no Claude calls).";renderBench()}
 function benchSummary(rs){const M=rs.flatMap(r=>r.scores.filter(s=>s.primary&&s.bits!=null).map(s=>({...s,profile:r.profile})));if(!M.length)return null;
   const lr=M.map(m=>Math.abs(Math.log10(m.ratio))).sort((a,b)=>a-b);const by={};M.forEach(m=>{const k=m.stage;(by[k]=by[k]||[]).push(Math.log(m.ratio))});
   return{n:M.length,bits:M.reduce((s,m)=>s+m.bits,0),hits:M.filter(m=>m.hit).length,medErr:Math.pow(10,benchQ(lr,.5)),stages:Object.entries(by).map(([k,L])=>({k,f:Math.exp(L.reduce((a,b)=>a+b,0)/L.length),n:L.length}))}}

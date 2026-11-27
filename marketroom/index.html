@@ -1706,7 +1706,9 @@ function normPopulation(d,_rows){resolveA();
     return{id,name,handle:(str(p.handle)||name).toLowerCase().replace(/[^a-z0-9_]/g,"").slice(0,18)||"user"+i,segment:segs.some(s=>s.id===str(p.segment))?str(p.segment):segs[i%segs.length].id,age:num(p.age,null),role:str(p.role,"").slice(0,80),bio:str(p.bio,"").slice(0,200),wtp:Math.max(0,num(p.wtp,0)),fit:clamp(num(p.fit,0),-1,1),skepticism:clamp(num(p.skepticism,.5),0,1),influence:clamp(num(p.influence,.5),0,1),motivations:arr(p.motivations),objections:arr(p.objections),voice:str(p.voice,"").slice(0,80),sex:["female","male"].includes(str(p.sex).toLowerCase())?str(p.sex).toLowerCase():"",city:str(p.city).toLowerCase().slice(0,12),income:str(p.income).toLowerCase().slice(0,12),decides:str(p.decides).toLowerCase().slice(0,12),workplace:str(p.workplace).slice(0,60),family:str(p.family).slice(0,60),digital:str(p.digital).toLowerCase().slice(0,6),pressure:str(p.pressure).toLowerCase().slice(0,6),uses:str(p.uses).slice(0,60),quote:str(p.quote).slice(0,240),row:p.row,gates:p.gates,buys_as:["business","household"].includes(str(p.buys_as))?str(p.buys_as):"",bizsize:["micro","small","mid","large"].includes(str(p.bizsize))?str(p.bizsize):"",target:p.target===false||p.target==="false"?false:true}});P.forEach(p=>{const sg=segs.find(x=>x.id===p.segment);if(sg&&sg.target===false)p.target=false;if(S.brief.reach==="outbound")p.target=true});
   const vz=(S.brief.voices||"").toLowerCase().replace(/\s+/g," ");P.forEach(p=>{const q=p.quote.toLowerCase().replace(/\s+/g," ").replace(/^["“]|["”]$/g,"").slice(0,48);p.grounded=!!q&&q.length>12&&vz.includes(q);if(!p.grounded)p.quote="";p.raw=rawOf(p);applyRules(p)});
   {const LR=_rows||listRows();P.forEach(p=>{const r=num(p.row,0);p.row=r>=1&&r<=LR.length?r:0;p.rowText=p.row?LR[p.row-1]:"";const GR=gateRows();p.gates=(Array.isArray(p.gates)?p.gates:[]).map(Number).filter(g=>g>=1&&g<=GR.length);if(p.raw)p.raw.gates=p.gates});const tot=segs.reduce((t,x)=>t+x.rows.length,0);if((["census","random"].includes(S.brief.listkind)||_rows||grounded())&&LR.length&&tot>=LR.length*.6&&segs.every(x=>x.rows.length)){segs.forEach(x=>x.share=x.rows.length/tot)}}
-  if(P.length<4)throw{code:"invalid_json"};return{segments:segs,personas:P};
+  if(P.length<4)throw{code:"invalid_json"};
+  if(placeMode()==="metro"){const off=P.filter(p=>p.city&&p.city!=="metro"&&p.city!=="abroad");if(off.length)log(`place check: ${off.length} of ${P.length} personas came back outside metro cities (${off.slice(0,3).map(p=>p.name).join(", ")}); recast if that matters`,"err")}
+  return{segments:segs,personas:P};
 }
 
 
@@ -1719,6 +1721,21 @@ function listTxt(){const L=listRows();if(!L.length)return"";if(grounded())return
 function castBase(){const B=S.brief;
   if(B.reach==="outbound")return`The founder chooses who to contact, so cast ONLY people inside the target audience. Create 4 segments that split the target in useful ways (size, how they get customers today, what they use now, who decides), all with "target": true, and 14 distinct personas across them. Every persona must fit the target buyer exactly${B.notfor?`; nobody who is: ${B.notfor}`:""}. Include at least 3 clear non-buyers (price, fit, happy with what they do now), 2 influential skeptics, and at most 3 enthusiasts.`;
   return`Create 4 segments: 3 inside the target audience ("target": true) and 1 segment of bystanders who would come across it${B.reach==="both"?" through ads or forwards":""} but are not who it is for ("target": false, share no more than 0.25). The 3 target segments must fit the target buyer exactly${B.notfor?`; people who are "${B.notfor}" go only in the bystander segment`:""}. Then 14 distinct personas across them, at most 3 of them bystanders. Include at least 4 clear non-buyers, 2 or 3 influential skeptics, and only 1 or 2 genuine enthusiasts.`}
+
+/* ---------------- place rule: metro by default ---------------- */
+// Towns, tier-2/3 or rural only when the brief says so. A named city keeps everyone in that city.
+const TOWNS_RE=/\b(tier[- ]?(?:2|3|ii|iii|two|three)|small(?:er)? (?:towns?|cities)|towns?|rural|villages?|semi[- ]urban|mofussil|non[- ]metros?|pan[- ]india|all over india|across india|nationwide|countrywide)\b/i;
+const COUNTRY_WORDS=/\b(india|indian|usa|u\.s\.a?|us|united states|america|uk|u\.k|united kingdom|britain|england|canada|australia|uae|singapore|global|worldwide|international|unspecified|the|and|of|in|across|country|market)\b/gi;
+const IN_METRO_DISTRICTS=["Mumbai","Mumbai Suburban","Thane","Pune","Bangalore","Hyderabad","Rangareddy","Chennai","Kolkata","Ahmadabad","Gurgaon","Gautam Buddha Nagar","Ghaziabad","Faridabad"];
+function placeMode(){const B=S.brief||{};const reg=String(B.region||"").trim();const t=reg+" "+(B.aud||"");
+  if(TOWNS_RE.test(t))return"towns";
+  const rest=reg.replace(COUNTRY_WORDS," ").replace(/[^A-Za-zऀ-ॿ]+/g," ").trim();
+  return rest.length>=3?"named":"metro"}
+function placeRule(){const m=placeMode(),reg=S.brief?.region||"the market";const ind=/\bindia/i.test(reg)||isIndia();
+  if(m==="towns")return`Place: the brief explicitly includes smaller towns or rural areas, so mix city types (metro, tier2, tier3, rural) the way the brief describes.`;
+  if(m==="named")return`Place: every persona, target or bystander, lives or works in ${reg}. Do not add people from other cities, towns or villages.`;
+  return`Place: the brief names no towns, so cast only people who live or work in ${ind?"India's major metro cities (Mumbai, Delhi NCR, Bengaluru, Hyderabad, Chennai, Kolkata, Pune, Ahmedabad)":"the country's major metropolitan areas"}. Every persona's city is "metro". No tier-2 or tier-3 towns, no rural people.`}
+function placeShort(){const m=placeMode();return m==="towns"?"a mix of cities and towns, as your brief says":m==="named"?"people in "+(S.brief?.region||"your market"):"people in major metro cities only (name towns in the market to include them)"}
 function castPrompt(k,N,_rows){LIST_OVERRIDE=_rows||null;try{return castPromptInner(k,N)}finally{LIST_OVERRIDE=null}}
 function castPromptInner(k,N){return `You are building a synthetic market to stress-test a product before launch. Founders are too optimistic, so be realistic: most real people ignore, distrust or reject a new product, and many already use an alternative.
 
@@ -1743,7 +1760,7 @@ Fields:
 - buys_as: "business" if they would pay from a business, "household" if from personal money. bizsize: for business buyers, the business's monthly revenue band: micro, small, mid or large; "" otherwise.
 - quote: ${S.brief.voices?"a verbatim sentence from the real voices below that this persona is built from, or \"\" if invented":"\"\""}.
 
-Base rates: ${S.brief.reach==="outbound"?"even on a hand-picked list, most people say no to a cold approach: about half start indifferent or negative, at most 3 are enthusiasts":"in a real market about half of these people start indifferent or negative, and at most 2 are enthusiasts"}. Vary age, sex, city, income and role realistically for this market.
+Base rates: ${S.brief.reach==="outbound"?"even on a hand-picked list, most people say no to a cold approach: about half start indifferent or negative, at most 3 are enthusiasts":"in a real market about half of these people start indifferent or negative, and at most 2 are enthusiasts"}. Vary age, sex, income and role realistically for this market. ${placeRule()}
 ${S.brief.voices?`\nReal voices from this market. Build as many personas as you can from these actual people and copy a sentence verbatim into "quote":\n"""\n${S.brief.voices}\n"""\n`:""}
 
 Reply with only JSON in this shape:
@@ -1756,7 +1773,8 @@ const IN_STATES=["Uttar Pradesh","Maharashtra","West Bengal","Bihar","Tamil Nadu
 let LIST_OVERRIDE=null;
 const isIndia=()=>/\bindia\b|mumbai|delhi|bengaluru|bangalore|pune|chennai|hyderabad|kolkata|thane|ahmedabad|jaipur|lucknow|indore|kochi|gujarat|maharashtra|karnataka|kerala|tamil/i.test((S.brief?.region||"")+" "+(S.brief?.aud||""));
 function whereFrom(sp){const q=x=>"'"+String(x).replace(/'/g,"''")+"'";const parts=[];const st=(sp.states||[]).filter(x=>IN_STATES.includes(x));if(st.length)parts.push("("+st.map(x=>`"state"=${q(x)}`).join(" OR ")+")");
-  if(sp.zone==="Urban"||sp.zone==="Rural")parts.push(`"zone"=${q(sp.zone)}`);const a0=Math.round(num(sp.age_min,0)),b0=Math.round(num(sp.age_max,0));const a=a0>=18&&a0<=90?a0:18,b=b0>a&&b0<=100?b0:Math.max(a+10,75);parts.push(`"age">=${a} AND "age"<=${b}`);
+  if(placeMode()==="metro"&&!sp.loosePlace){parts.push(`"zone"='Urban'`);parts.push("("+[...IN_METRO_DISTRICTS.map(d=>`"district"=${q(d)}`),`"state"='Delhi'`].join(" OR ")+")")}
+  else if(sp.zone==="Urban"||sp.zone==="Rural")parts.push(`"zone"=${q(sp.zone)}`);const a0=Math.round(num(sp.age_min,0)),b0=Math.round(num(sp.age_max,0));const a=a0>=18&&a0<=90?a0:18,b=b0>a&&b0<=100?b0:Math.max(a+10,75);parts.push(`"age">=${a} AND "age"<=${b}`);
   if(sp.sex==="Male"||sp.sex==="Female")parts.push(`"sex"=${q(sp.sex)}`);const oc=(sp.occupations||[]).map(x=>String(x).replace(/[^A-Za-z ,\-\/&]/g,"").trim()).filter(x=>x.length>=3).slice(0,8);
   if(oc.length)parts.push("("+oc.map(o=>`"occupation" ILIKE ${q("%"+o+"%")}`).join(" OR ")+")");return parts.join(" AND ")}
 async function dsFetch(where,offset,length){let r;try{r=await fetch(DS_URL+"&where="+encodeURIComponent(where)+"&offset="+offset+"&length="+length)}catch{throw{code:"x",message:"Couldn't reach the India persona dataset from this page."+(ON_WEB?"":" It works on snehalpatel.dev/marketroom.")}}
@@ -2313,7 +2331,7 @@ function openRoom(){
 function caseCard(){
   const c=$("#caseCard");if(!c)return;const B={name:$("#f-name").value||"Untitled",job:$("#briefForm").dataset.job||"launch"};
   c.replaceChildren(h("span",{class:"eyebrow"},"Finding out"),h("b",null,GOALTXT[B.job]+" · "+B.name),
-    h("p",null,(IK.mine&&!sampleFn?(ON_WEB?"Live runs need a tester code (see the note under the run buttons), so the graph still shows the example run. ":"Live runs are off here, so the graph still shows the example run. Open this page in Claude to run your case. "):IK.mine&&S.isSample&&!S.busy?"The graph shows the example run until yours finishes. ":"")+`This run assumes: ${PROFILES[profKey()].label.toLowerCase()}, found through ${CHANNELS[chanKey()].label.toLowerCase()}. If that's wrong, change it in the brief or the Assumptions tab; it changes how much price, proof and word of mouth count.`),
+    h("p",null,(IK.mine&&!sampleFn?(ON_WEB?"Live runs need a tester code (see the note under the run buttons), so the graph still shows the example run. ":"Live runs are off here, so the graph still shows the example run. Open this page in Claude to run your case. "):IK.mine&&S.isSample&&!S.busy?"The graph shows the example run until yours finishes. ":"")+`This run assumes: ${PROFILES[profKey()].label.toLowerCase()}, found through ${CHANNELS[chanKey()].label.toLowerCase()}, cast from ${placeShort()}. If that's wrong, change it in the brief or the Assumptions tab; it changes how much price, proof and word of mouth count.`),
     h("div",{class:"row"},h("button",{class:"btn sm",type:"button",onclick:()=>showIntake(IK.v&&Object.keys(IK.v).length?2:1)},"Edit case"),h("button",{class:"btn sm ghost",type:"button",onclick:newCase},"New case")));
 }
 function newCase(){$("#ik-text").value="";IK.v={};IK.found={};showIntake(1)}

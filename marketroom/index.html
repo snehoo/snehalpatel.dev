@@ -431,6 +431,18 @@ main:not([data-view="split"]) #btn-fold,main:not([data-view="split"]) #btn-mini{
 .bench textarea{width:100%;min-height:180px;font-family:var(--f-mono);font-size:12px}
 .bench .ctab td,.bench .ctab th{vertical-align:top}
 .bench .ok{color:var(--buy,#2e9e6a)}.bench .bad{color:var(--reject)}
+
+/* patch22: what-if */
+.wi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px 14px}
+.wi-grid label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}
+.wi-grid input[type=number],.wi-grid select{width:100%}
+.wi-cmp{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px 14px;font-size:13px;align-items:baseline}
+.wi-cmp .h{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.wi-cmp b{font-family:var(--f-display);font-size:18px}
+.wi-up{color:var(--buy)}.wi-down{color:var(--reject)}
+.wi-tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:1px 7px;color:var(--muted);white-space:nowrap}
+.wi-bar{height:6px;border-radius:3px;background:var(--line);position:relative;overflow:hidden;min-width:60px}
+.wi-bar i{position:absolute;top:0;bottom:0;left:0;background:var(--accent)}
 </style>
 
 <div class="app">
@@ -605,6 +617,7 @@ main:not([data-view="split"]) #btn-fold,main:not([data-view="split"]) #btn-mini{
         <button role="tab" data-t="duel" aria-selected="false">Duel</button>
         <button role="tab" data-t="report" aria-selected="false">Report</button>
         <button role="tab" data-t="ask" aria-selected="false">Ask</button>
+        <button role="tab" data-t="whatif" aria-selected="false">What if</button>
         <button role="tab" data-t="assume" aria-selected="false">Assumptions</button>
         <button role="tab" data-t="track" aria-selected="false">Track record<span class="count" id="c-track"></span></button>
         <button role="tab" data-t="cost" aria-selected="false">API cost<span class="count" id="c-cost"></span></button>
@@ -617,6 +630,7 @@ main:not([data-view="split"]) #btn-fold,main:not([data-view="split"]) #btn-mini{
         <div class="tabpane" id="t-duel" hidden></div>
         <div class="tabpane" id="t-report" hidden></div>
         <div class="tabpane" id="t-ask" hidden></div>
+        <div class="tabpane" id="t-whatif" hidden></div>
         <div class="tabpane" id="t-assume" hidden></div>
         <div class="tabpane" id="t-track" hidden></div>
         <div class="tabpane" id="t-cost" hidden></div>
@@ -938,7 +952,7 @@ function applyRules(p){
   p.cap=1;if(p.uses){p.cap=.6;pen.switching=AS.penSwitch;tr.push("R5 uses "+p.uses+" · −"+AS.penSwitch)}
   if((AS.trustAll||p.buys_as!=="household"&&/doctor|medical|hospital|clinic|director|cfo|finance|trust/i.test(p.role+" "+p.workplace)||p.buys_as==="household"&&/\b(?:parent|mother|father)\b|\b(?:one|two|three|\d) (?:school|young|small)?[- ]?(?:age )?kids?\b|\bchild(?:ren)?\b/i.test(p.role+" "+p.family)&&!/\bno kids\b/i.test(p.family))&&S.brief.proof!=="strong"){const none=S.brief.proof!=="some";p.cap=Math.min(p.cap,none?.6:.8);pen.trust=none?AS.penTrustNone:AS.penTrustSome;tr.push("R6 wants proof · −"+pen.trust)}
   const pv=[pen.authority,pen.switching,pen.trust].sort((a,b)=>b-a);const tot=Math.min(AS.penCap,pv[0]+AS.penExtra*(pv[1]+pv[2]));p.pen=pen;p.buyMult=Math.max(p.target===false?.02:AS.penFloor,1-tot);if(tot>0)tr.push("buy chance ×"+p.buyMult.toFixed(2));
-  if(p.gates?.length){const G=gateRows();const g=p.gates.filter(i=>G[i-1]);if(g.length){p.buyMult=Math.min(p.buyMult,AS.gateFloor);p.cap=Math.min(p.cap??1,.2);tr.push("Gate: needs "+g.map(i=>G[i-1]).join(", "))}}
+  if(p.gates?.length){const G=gateRows();const g=p.gates.filter(i=>G[i-1]&&!(S.brief.gatesMet||[]).includes(i));if(g.length){p.buyMult=Math.min(p.buyMult,AS.gateFloor);p.cap=Math.min(p.cap??1,.2);tr.push("Gate: needs "+g.map(i=>G[i-1]).join(", "))}}
   p.trace=tr;return p;
 }
 function voiceSpec(p){const v=[];if(p.pressure==="high")v.push("very short, under 90 characters");if(p.digital==="low"||(p.age||0)>=60)v.push("plain words, may mention asking family, small typos are fine");if(p.city==="tier2"||p.city==="tier3"||p.city==="rural")v.push("may mix in Hindi or the local language in Latin script");if(p.decides==="influencer")v.push("speaks as an adviser to others");if(p.decides==="user")v.push("not the one who pays");return v.join("; ")||"natural"}
@@ -2132,10 +2146,10 @@ $("#f-preset").addEventListener("change",e=>{fillForm(PRESETS[e.target.value]);i
 $("#f-pop").addEventListener("input",e=>$("#popv").textContent=e.target.value);
 $("#f-bar").addEventListener("input",barHint);$("#f-profile").addEventListener("change",barHint);
 $("#f-buyer").addEventListener("change",e=>{$("#f-ground").checked=e.target.value==="household"&&INDIA_RE.test($("#f-region").value)});
-function switchTab(t){document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.t===t)));document.querySelectorAll(".tabpane").forEach(p=>p.hidden=p.id!=="t-"+t);({feed:renderFeed,personas:renderPersonas,insights:renderInsights,plans:renderPlans,duel:renderDuel,report:renderReport,assume:renderAssume,ask:renderAsk,cost:renderCost,track:renderTrack})[t]();try{localStorage.setItem("marketroom-tab",t)}catch{}}
+function switchTab(t){document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.t===t)));document.querySelectorAll(".tabpane").forEach(p=>p.hidden=p.id!=="t-"+t);({feed:renderFeed,personas:renderPersonas,insights:renderInsights,plans:renderPlans,duel:renderDuel,report:renderReport,assume:renderAssume,ask:renderAsk,whatif:renderWhatIf,cost:renderCost,track:renderTrack})[t]();try{localStorage.setItem("marketroom-tab",t)}catch{}}
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
 document.querySelectorAll(".views button").forEach(b=>b.onclick=()=>{$("#main").dataset.view=b.dataset.v;document.querySelectorAll(".views button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));setTimeout(resize,30)});
-function renderAll(){renderSteps();try{caseCard()}catch{}renderStage();const t=document.querySelector(".tabs [aria-selected=true]")?.dataset.t||"feed";renderFeed();renderPersonas();({insights:renderInsights,plans:renderPlans,duel:renderDuel,report:renderReport,assume:renderAssume,ask:renderAsk,cost:renderCost,track:renderTrack})[t]?.();$("#c-pers").textContent=S.personas.length||""}
+function renderAll(){renderSteps();try{caseCard()}catch{}renderStage();const t=document.querySelector(".tabs [aria-selected=true]")?.dataset.t||"feed";renderFeed();renderPersonas();({insights:renderInsights,plans:renderPlans,duel:renderDuel,report:renderReport,assume:renderAssume,ask:renderAsk,whatif:renderWhatIf,cost:renderCost,track:renderTrack})[t]?.();$("#c-pers").textContent=S.personas.length||""}
 
 
 /* ---------------- intake: tell -> fill gaps -> room ---------------- */
@@ -2353,7 +2367,7 @@ function setLoading(msg){S.loading=msg||null;const o=swarmOverlay();o.hidden=!ms
 function skelCard(lines){return h("div",{class:"skel","aria-hidden":"true"},h("div",{class:"row1"},h("i",{class:"sk av"}),h("i",{class:"sk",style:"width:40%"})),...(lines||[92,78,55]).map(w=>h("i",{class:"sk",style:`width:${w}%`})))}
 function skelList(n,note){return h("div",{class:"stack"},note?h("p",{class:"sub",style:"margin:0"},note):"",...Array.from({length:n},(_,i)=>skelCard([94-i*7,80-i*5,50+i*6])))}
 function feedWait(on,note){const list=$("#feedlist");const old=$("#feedwait");if(old)old.remove();if(!on)return;const w=h("div",{id:"feedwait",class:"stack"},h("p",{class:"sub",style:"margin:0"},note||"Writing what they say…"),skelCard(),skelCard([85,60]));if(list)list.prepend(w);else{$("#t-feed").replaceChildren(w)}}
-function clearForRun(msg){Object.assign(S,{segments:[],personas:[],agents:[],edges:[],adj:[],followers:[],feed:[],snapshots:[],viewRound:null,report:null,duel:null,plans:null,audit:null,casts:null,critic:null,intent:null,realism:null,bandAlt:null,isSample:false,runPrice:S.brief.price||0,probe:S.brief.price||0});ENS.key="";COST.run=[];COST.runAt=Date.now();S.askLog=[];setFold(true);setLoading(msg);renderAll();renderProbe()}
+function clearForRun(msg){Object.assign(S,{segments:[],personas:[],agents:[],edges:[],adj:[],followers:[],feed:[],snapshots:[],viewRound:null,report:null,duel:null,plans:null,audit:null,casts:null,critic:null,intent:null,realism:null,bandAlt:null,isSample:false,runPrice:S.brief.price||0,probe:S.brief.price||0});ENS.key="";WI.key="";COST.run=[];COST.runAt=Date.now();S.askLog=[];setFold(true);setLoading(msg);renderAll();renderProbe()}
 
 
 /* ---------------- API cost meter ---------------- */
@@ -2411,6 +2425,7 @@ function askContext(){const B=S.brief;const L=[];
   try{const pb=priceBand();if(pb)L.push(`Price where ${pb.kind} peaks across ${pb.n} casts: ${fmtP(pb.lo)} to ${fmtP(pb.hi)}, middle ${fmtP(pb.mid)}. Founder's price: ${fmtP(B.price)}.`)}catch{}
   if(S.plans?.proposal?.length)L.push("Plans the swarm proposed: "+S.plans.proposal.map(p=>`${p.tier} at ${fmtP(p.price)}${p.limit?" ("+p.limit+")":""}: ${p.features.join(", ")}`).join("; ")+(S.plans.summary?". "+S.plans.summary:""));
   if(S.critic?.summary)L.push("Cast check: "+S.critic.summary);
+  if(WI.best?.length)L.push("What-if search (same casts re-scored, no new Claude calls), best combinations: "+WI.best.slice(0,3).map(x=>`${wiDiff(x.sc).map(c=>c[0]).join(" + ")||"the brief as is"} gives ${pct(x.r.med)} buying${x.r.p!=null?`, ${Math.round(x.r.p*100)}% chance of clearing the bar`:""}`).join("; ")+".");
   if(S.duel)try{L.push("Message duel result: "+(S.duel.summary||JSON.stringify(S.duel).slice(0,600)))}catch{}
   const per=S.personas.map(p=>`- ${p.name} (${p.target===false?"bystander":"target"}, ${p.role}; will pay up to ${fmtP(p.wtp)}; fit ${p.fit}; objections: ${(p.objections||[]).join("; ")||"none"}${p.uses?"; uses today: "+p.uses:""})`).slice(0,16).join("\n");
   const posts=S.feed.slice(-18).map(p=>`@${S.personas[p.pi]?.handle||"?"} (round ${p.round}): ${p.text}`).join("\n");
@@ -2518,6 +2533,104 @@ function renderBench(){const box=$("#benchPage");if(!box||box.hidden)return;
 }
 function benchRoute(){const on=location.hash==="#bench";const b=$("#benchPage");if(!b)return;b.hidden=!on;if(on)renderBench()}
 window.addEventListener("hashchange",benchRoute);setTimeout(benchRoute,0);
+
+
+/* ---------------- What if: same casts, changed levers, no Claude calls ---------------- */
+const WI={sc:null,key:"",base:null,singles:null,best:null,busy:false,prog:0};
+function wiDefaults(){const B=S.brief;return{price:B.price,setup:B.setup||0,yearly:B.yearly||0,proof:B.proof||"none",spend:B.spend||0,roi:!!B.roi,gatesMet:[],channel:chanKey(),tryM:1,payM:1}}
+function wiKey(){return aKey()+"|"+(S.casts?.list?.length||0)}
+function wiEval(sc,seeds){seeds=seeds||[11,23,37];const B0=S.brief,AS0=AS,rk=rng;const ints=[],stg=[],pks=[];
+  try{S.brief={...B0,price:sc.price,setup:sc.setup,yearly:sc.yearly,proof:sc.proof,spend:sc.spend,roi:sc.roi,gatesMet:sc.gatesMet,channel:B0.reach==="outbound"?B0.channel:sc.channel};
+    AS={...profDefaults(),...AX};AS.tryX=(AS.tryX??1)*sc.tryM;AS.r10Buy=Math.min(1,AS.r10Buy*sc.payM);
+    let ci=0;for(const c of(S.casts?.list||[])){ci++;if(!c.segsData)continue;const pers=reRule(c.persData);for(const sd of seeds){rng=mulberry32(hashStr("wi|"+ci+"|"+sd));window.__benchCap=[];const x=simNumbers(c.segsData,pers,sd);const R=window.__benchCap[window.__benchCap.length-1];ints.push(x.interest);pks.push(x.peak);if(R)stg.push(R)}}}
+  finally{window.__benchCap=null;S.brief=B0;AS=AS0;rng=rk}
+  const all=ints.flatMap(v=>SPREAD_M.map(m=>v*m)).sort((a,b)=>a-b);const Q=(A,f)=>A.length?A[Math.min(A.length-1,Math.round(f*(A.length-1)))]:0;const sorted=[...ints].sort((a,b)=>a-b);
+  const bar=(S.lock?.bar||S.brief.bar||0)/100;const med=Q(sorted,.5);
+  return{med,lo:Q(all,.1),hi:Q(all,.9),p:bar>0?all.filter(v=>v>=bar).length/all.length:null,rev:med*sc.price,peak:Q([...pks].sort((a,b)=>a-b),.5),stages:[0,1,2].map(i=>Q(stg.map(r=>r[i]).sort((a,b)=>a-b),.5)),n:ints.length}}
+const wiNice=v=>v>=1000?Math.round(v/50)*50:v>=100?Math.round(v/10)*10:Math.round(v);
+function wiDiff(sc){const d=wiDefaults(),out=[];
+  if(sc.price!==d.price)out.push(["Price "+fmtP(sc.price),"free to change"]);
+  if(sc.setup!==d.setup)out.push([sc.setup?"Setup fee "+fmtP(sc.setup):"No setup fee","free to change"]);
+  if(sc.yearly!==d.yearly)out.push([sc.yearly?"Yearly "+fmtP(sc.yearly):"No yearly plan","free to change"]);
+  if(sc.proof!==d.proof)out.push([{some:"Some proof (a few customers or reviews)",strong:"Strong proof (known references, many reviews)",none:"No proof"}[sc.proof],"needs real customers"]);
+  if(sc.spend!==d.spend||sc.roi!==d.roi)out.push([`Framed against ${fmtP(sc.spend)} they spend today${sc.roi?" (paid labour)":""}`,"needs proof of the saving"]);
+  const G=gateRows();sc.gatesMet.forEach(i=>out.push(["Offer: "+G[i-1],"needs building"]));
+  if(sc.channel!==d.channel&&S.brief.reach!=="outbound")out.push(["Found through "+CHANNELS[sc.channel].label.toLowerCase(),"new channel"]);
+  if(sc.tryM!==1)out.push([`Try step ×${sc.tryM}`,"your assumption"]);
+  if(sc.payM!==1)out.push([`Pay step ×${sc.payM}`,"your assumption"]);
+  return out}
+function wiSingles(){const d=wiDefaults(),L=[];const add=(ch)=>L.push({...d,...ch});
+  [.8,.9,1.1,1.25].forEach(f=>add({price:wiNice(d.price*f)}));if(d.setup>0)add({setup:0});
+  ["some","strong"].filter(x=>(x==="some"&&d.proof==="none")||(x==="strong"&&d.proof!=="strong")).forEach(x=>add({proof:x}));
+  gateRows().forEach((_,i)=>add({gatesMet:[i+1]}));
+  if(S.brief.reach!=="outbound")Object.keys(CHANNELS).filter(k=>k!==d.channel&&k!=="direct").forEach(k=>add({channel:k}));
+  WI.base1=wiEval(d,[11]);return L.map(sc=>({sc,r:wiEval(sc,[11])}))}
+async function wiSearch(){if(WI.busy)return;WI.busy=true;WI.prog=0;WI.best=null;renderWhatIf();const d=wiDefaults();
+  const prices=[.8,.9,1,1.1,1.2].map(f=>wiNice(d.price*f)),setups=d.setup>0?[d.setup,0]:[d.setup],proofs=d.proof==="none"?["none","some","strong"]:d.proof==="some"?["some","strong"]:["strong"];
+  const G=gateRows(),gates=G.length?[[],G.map((_,i)=>i+1)]:[[]],chans=S.brief.reach==="outbound"?[d.channel]:[...new Set([d.channel,"referral","groups","search"])];
+  const grid=[];for(const price of prices)for(const setup of setups)for(const proof of proofs)for(const gatesMet of gates)for(const channel of chans)grid.push({...d,price,setup,proof,gatesMet,channel});
+  const res=[];for(let i=0;i<grid.length;i++){res.push({sc:grid[i],r:wiEval(grid[i],[11])});if(i%8===7){WI.prog=(i+1)/grid.length;renderWhatIfProg();await new Promise(r=>setTimeout(r,0))}}
+  const score=x=>x.r.p!=null?x.r.p*1000+x.r.rev/Math.max(1,d.price):x.r.rev;res.sort((a,b)=>score(b)-score(a));
+  WI.best=res.slice(0,6).map(x=>({sc:x.sc,r:wiEval(x.sc)}));WI.best.sort((a,b)=>score(b)-score(a));WI.gridN=grid.length;WI.busy=false;renderWhatIf()}
+function renderWhatIfProg(){const e=document.getElementById("wi-prog");if(e)e.style.width=Math.round(WI.prog*100)+"%"}
+function wiFmt(r){return`${pct(r.med)} (${pct(r.lo)}–${pct(r.hi)})`}
+function renderWhatIf(){const box=$("#t-whatif");if(!box)return;
+  if(!isPro()){box.replaceChildren(lockCard("What if","Change price, setup fee, proof, must-haves or channel and see how the same simulated market responds, instantly and with no extra Claude calls. Finds the best combination for you."));return}
+  if(!S.agents.length||!S.personas.length){box.replaceChildren(h("p",{class:"empty"},S.loading?"Casting… the what-if calculator opens when the market is ready.":"Run the market first (or open an example), then try changes here."));return}
+  robust();const k=wiKey();if(WI.key!==k){WI.key=k;WI.sc=wiDefaults();WI.base=wiEval(WI.sc);WI.singles=null;WI.best=null}
+  const sc=WI.sc,base=wiEval(wiDefaults()),cur=wiEval(sc);WI.base=base;const bar=S.lock?.bar||S.brief.bar||0;const per=billTxt();
+  const set=(k,v)=>{WI.sc={...WI.sc,[k]:v};renderWhatIf()};
+  const numIn=(k,label,step)=>{const x=h("input",{type:"number",min:"0",step:step||"1",onchange:e=>set(k,Math.max(0,num(e.target.value,0)))});x.value=sc[k];return h("label",null,label,x)};
+  const selIn=(k,label,opts)=>{const x=h("select",{onchange:e=>set(k,e.target.value)},...opts.map(([v,l])=>h("option",{value:v,selected:sc[k]===v},l)));return h("label",null,label,x)};
+  const sl=(k,label)=>{const v=h("span",null,"×"+sc[k].toFixed(2));const x=h("input",{type:"range",min:"0.5",max:"2",step:"0.05",oninput:e=>{v.textContent="×"+(+e.target.value).toFixed(2)},onchange:e=>set(k,+e.target.value)});x.value=sc[k];return h("label",null,h("span",null,label," ",v),x)};
+  const G=gateRows();
+  const delta=(a,b,fmt)=>{const d=b-a;if(Math.abs(d)<1e-9)return h("span",{class:"sub"},"same");return h("span",{class:d>0?"wi-up":"wi-down"},(d>0?"▲ ":"▼ ")+fmt(Math.abs(d)))};
+  const cmpRow=(l,a,b,fa,fd)=>[h("span",null,l),h("span",null,fa(a)),h("span",null,fa(b)," ",delta(a,b,fd||fa))];
+  const changes=wiDiff(sc);
+  if(!WI.singles)WI.singles=wiSingles();
+  const b1=WI.base1;const sing=WI.singles.map(x=>({...x,d:x.r.med-b1.med,dp:x.r.p!=null&&b1.p!=null?x.r.p-b1.p:null,dr:x.r.rev-b1.rev})).sort((a,b)=>(b.dp??0)-(a.dp??0)||b.dr-a.dr);
+  const maxAbs=Math.max(...sing.map(x=>Math.abs(x.d)),1e-6);
+  box.replaceChildren(h("div",{class:"stack"},
+    h("p",{class:"sub",style:"margin:0"},"Change one thing or several and see how the same simulated market responds. Same personas and posts, re-scored under the new rules across every cast. Instant, no Claude calls."),
+    h("div",{class:"block"},h("h4",null,"Levers"),h("div",{class:"wi-grid"},
+      numIn("price","Price ("+per+")"),numIn("setup","One-time setup fee"),S.brief.bill==="month"?numIn("yearly","Yearly price (0 = none)"):"",
+      selIn("proof","Proof you can show",[["none","None yet"],["some","Some (a few customers or reviews)"],["strong","Strong (references, many reviews)"]]),
+      numIn("spend","What they spend today on what it replaces"),
+      h("label",{style:"flex-direction:row;align-items:center;gap:8px"},(()=>{const c=h("input",{type:"checkbox",style:"width:auto",onchange:e=>set("roi",e.target.checked)});c.checked=sc.roi;return c})(),"It replaces paid labour or several tools"),
+      S.brief.reach!=="outbound"?selIn("channel","Where buyers first come across it",Object.entries(CHANNELS).filter(([k])=>k!=="direct").map(([k,v])=>[k,v.label])):"",
+      ...G.map((g,i)=>h("label",{style:"flex-direction:row;align-items:center;gap:8px"},(()=>{const c=h("input",{type:"checkbox",style:"width:auto",onchange:e=>set("gatesMet",e.target.checked?[...sc.gatesMet,i+1]:sc.gatesMet.filter(x=>x!==i+1))});c.checked=sc.gatesMet.includes(i+1);return c})(),"We could offer: "+g))),
+      h("details",{style:"margin-top:10px"},h("summary",{style:"cursor:pointer;font-size:12.5px;color:var(--muted)"},"Your own assumptions (free trial, discount, guarantee, better onboarding)"),
+        h("p",{class:"sub",style:"font-size:12.5px;margin:6px 0"},"The engine can't simulate these. If you believe a free trial gets 30% more people to try, set the try step to ×1.3. Results using these are your guess, and are labelled that way."),
+        h("div",{class:"wi-grid"},sl("tryM","Try step"),sl("payM","Pay step"))),
+      h("div",{style:"margin-top:10px"},h("button",{class:"btn sm ghost",type:"button",onclick:()=>{WI.sc=wiDefaults();renderWhatIf()}},"Reset to the brief"))),
+    h("div",{class:"block"},h("h4",null,changes.length?"This scenario against your brief":"Your brief (change a lever above)"),
+      changes.length?h("div",{style:"display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"},...changes.map(([t,tag])=>h("span",{style:"font-size:12.5px;display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:3px 8px"},t,h("span",{class:"wi-tag"},tag)))):"",
+      h("div",{class:"wi-cmp"},h("span",null,""),h("span",{class:"h"},"Brief"),h("span",{class:"h"},"Scenario"),
+        ...cmpRow("Buy, of people reached",base.med,cur.med,pct),
+        h("span",{class:"sub",style:"font-size:12px"},"likely range"),h("span",{class:"sub",style:"font-size:12px"},`${pct(base.lo)}–${pct(base.hi)}`),h("span",{class:"sub",style:"font-size:12px"},`${pct(cur.lo)}–${pct(cur.hi)}`),
+        ...(bar>0?cmpRow(`Chance of clearing your ${bar}% bar`,base.p,cur.p,x=>Math.round(x*100)+"%",x=>Math.round(x*100)+" pts"):[]),
+        ...cmpRow("Revenue per 100 people reached",base.rev*100,cur.rev*100,x=>fmtP(Math.round(x))+" "+per),
+        ...cmpRow("Price where revenue peaks",base.peak,cur.peak,x=>fmtP(x)),
+        ...["Engaged","Tried","Paid"].flatMap((l,i)=>cmpRow(l+" (step)",base.stages[i],cur.stages[i],pct)))),
+    h("div",{class:"block"},h("h4",null,"One change at a time"),h("p",{class:"sub",style:"font-size:12.5px"},"Each row changes only that lever. Tap a row to load it."),
+      h("table",{class:"ctab"},h("tr",null,h("th",null,"Change"),h("th",null,""),h("th",{class:"n"},"Buy"),bar>0?h("th",{class:"n"},"Bar chance"):"",h("th",{class:"n"},"Revenue / 100")),
+        ...sing.map(x=>h("tr",{style:"cursor:pointer",onclick:()=>{WI.sc={...x.sc};renderWhatIf()}},
+          h("td",null,wiDiff(x.sc).map(c=>c[0]).join(", "),h("div",null,...wiDiff(x.sc).map(c=>h("span",{class:"wi-tag"},c[1])))),
+          h("td",null,h("div",{class:"wi-bar"},h("i",{style:`width:${Math.round(Math.abs(x.d)/maxAbs*100)}%;background:${x.d>=0?"var(--buy)":"var(--reject)"}`}))),
+          h("td",{class:"n"},pct(x.r.med),h("div",null,delta(b1.med,x.r.med,pct))),
+          bar>0?h("td",{class:"n"},x.r.p!=null?Math.round(x.r.p*100)+"%":"–",h("div",null,x.dp!=null?delta(b1.p,x.r.p,v=>Math.round(v*100)+" pts"):"")):"",
+          h("td",{class:"n"},fmtP(Math.round(x.r.rev*100)),h("div",null,delta(b1.rev*100,x.r.rev*100,v=>fmtP(Math.round(v))))))))),
+    h("div",{class:"block"},h("h4",null,"Best combinations"),
+      h("p",{class:"sub",style:"font-size:12.5px"},`Tries every combination of price (±20%), setup fee, proof, must-haves${S.brief.reach!=="outbound"?" and channel":""}, then ranks them by ${bar>0?"chance of clearing your bar, then revenue":"revenue per person reached"}. Your own assumptions stay as set above and aren't searched.`),
+      WI.busy?h("div",{class:"wi-bar",style:"height:8px"},h("i",{id:"wi-prog",style:`width:${Math.round(WI.prog*100)}%`})):h("button",{class:"btn primary",type:"button",onclick:wiSearch},WI.best?"Search again":"Find the best combinations"),
+      WI.best?h("table",{class:"ctab",style:"margin-top:10px"},h("tr",null,h("th",null,"#"),h("th",null,"What changes"),h("th",{class:"n"},"Buy"),bar>0?h("th",{class:"n"},"Bar chance"):"",h("th",{class:"n"},"Revenue / 100"),h("th",null,"")),
+        ...WI.best.map((x,i)=>{const dd=wiDiff(x.sc);return h("tr",null,h("td",null,String(i+1)),
+          h("td",null,dd.length?dd.map(c=>c[0]).join(" + "):"Keep the brief as it is",h("div",null,...dd.map(c=>h("span",{class:"wi-tag"},c[1])))),
+          h("td",{class:"n"},wiFmt(x.r)),bar>0?h("td",{class:"n"},Math.round(x.r.p*100)+"%"):"",h("td",{class:"n"},fmtP(Math.round(x.r.rev*100))),
+          h("td",null,h("button",{class:"btn sm",type:"button",onclick:()=>{WI.sc={...x.sc};renderWhatIf();$("#t-whatif").closest(".scroll").scrollTop=0}},"Load")))})):"",
+      WI.best?h("p",{class:"sub",style:"font-size:12px;margin:8px 0 0"},`${WI.gridN} combinations tried; the top 6 were re-checked with 3 seeds per cast.`):""),
+    h("p",{class:"sub",style:"font-size:12px;margin:0"},"This shows how the simulated market responds, not what real buyers will do. "+(CALIBRATED[profKey()]?"The try and pay steps for this kind of purchase are calibrated on 2 real campaigns.":"This kind of purchase isn't calibrated yet, so absolute numbers are probably optimistic; the comparison between scenarios is the useful part."))));
+}
 
 /* ---------------- boot ---------------- */
 markPro();planUI();$("#f-recast").addEventListener("change",e=>e.target.dataset.touched="1");

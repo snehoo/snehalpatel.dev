@@ -443,6 +443,17 @@ main:not([data-view="split"]) #btn-fold,main:not([data-view="split"]) #btn-mini{
 .wi-tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:1px 7px;color:var(--muted);white-space:nowrap}
 .wi-bar{height:6px;border-radius:3px;background:var(--line);position:relative;overflow:hidden;min-width:60px}
 .wi-bar i{position:absolute;top:0;bottom:0;left:0;background:var(--accent)}
+
+/* patch25: staff-time calculator */
+.sc{display:flex;flex-direction:column;gap:8px;margin-top:8px;font-size:12.5px}
+.sc table{width:100%;border-collapse:collapse}
+.sc td{padding:3px 4px 3px 0;vertical-align:middle}
+.sc td input{width:100%}
+.sc .sc-n{width:52px}
+.sc td input[type=number]{padding-left:4px;padding-right:2px}
+.sc .sc-out{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;line-height:1.5}
+.sc .sc-sets{display:flex;flex-wrap:wrap;gap:6px}
+.sc .sc-sets button{border:1px solid var(--line);background:var(--panel-2);border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer;color:var(--ink)}
 </style>
 
 <div class="app">
@@ -549,6 +560,7 @@ main:not([data-view="split"]) #btn-fold,main:not([data-view="split"]) #btn-mini{
         <div class="row"><div class="field"><label for="f-reng">Your real rate: engaged, %</label><input id="f-reng" type="number" min="0" max="100" step="0.1"></div><div class="field"><label for="f-rtrial">tried or met, %</label><input id="f-rtrial" type="number" min="0" max="100" step="0.1"></div><div class="field"><label for="f-rpaid">paid, %</label><input id="f-rpaid" type="number" min="0" max="100" step="0.1"></div></div>
         <div class="field"><label for="f-profile">Kind of purchase</label><select id="f-profile"><option value="b2b_out">Business buyer, you contact them</option><option value="b2b_in">Business buyer, they find you</option><option value="local">Local service</option><option value="considered">Consumer, thought-through purchase</option><option value="impulse">Consumer, cheap or impulse buy</option><option value="regulated">High-trust or regulated (health, money, children, legal)</option></select></div>
         <div class="field"><label for="f-replaces">What it replaces, and what that costs them (a person's hours, a tool, an agency)</label><input id="f-replaces" placeholder="e.g. a receptionist's follow-up calls, about ₹15,000 a month"></div>
+        <details class="field" id="sc-brief"><summary style="cursor:pointer;font-size:12.5px;color:var(--muted)">Work it out from staff time</summary><div id="sc-brief-body"></div></details>
         <div class="field"><label for="f-spend">What buyers spend today on what this replaces (same billing, 0 if nothing; filled from the line above if left at 0)</label><input id="f-spend" type="number" min="0" step="1"></div>
         <div class="field"><label for="f-list">Real customer or prospect list (optional, one per line)</label><textarea id="f-list" rows="3" placeholder="Type of buyer, size, notes. Business details only, no phone numbers."></textarea></div>
         <label class="field" style="flex-direction:row;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--muted)"><input type="checkbox" id="f-ground" style="width:auto;margin-top:2px"> <span>Ground personas in India's population data: each one starts from a real-distribution record (Nemotron-Personas-India, census-aligned) <span class="pro">◆ Pro</span></span></label>
@@ -2297,6 +2309,7 @@ function needRow(n,opt){
   else inp=h("input",{placeholder:n.ph||"",oninput:e=>set(e.target.value)});
   if((n.t==="area"||n.t==="text"||n.t==="num")&&IK.v[n.k]!=null)inp.value=IK.v[n.k];
   if(n.t==="area"&&n.ph)inp.placeholder=n.ph;
+  if(n.k==="replaces"){const body=h("div");const d=h("details",{style:"margin-top:4px"},h("summary",{style:"cursor:pointer;font-size:12.5px;color:var(--muted)"},"Work it out from staff time"),body);d.addEventListener("toggle",()=>{if(d.open&&!body.childNodes.length)body.append(staffCalc({cur:()=>IK.v.cur||"₹",bill:()=>IK.v.bill||"month",price:()=>num(IK.v.price,0),onUse:(t,sp)=>{IK.v.replaces=t;IK.v.spend=sp;IK.v.roi=true;renderNeeds()}}))});inp=h("div",{class:"stack",style:"gap:4px"},inp,d)}
   if(n.k==="bar")inp=h("div",{class:"stack",style:"gap:4px"},inp,h("div",{id:"ik-barwarn",style:"font-size:12.5px;color:var(--muted)"}));
   const tag=ok?(IK.found[n.k]?"found in what you wrote":"done"):opt?"optional":"needed";
   row.append(h("span",{class:"dot","aria-hidden":"true"},ok?"✓":opt?"+":"?"),h("div",{class:"body"},h("div",{class:"q"},n.q,h("small",null,n.hint?n.hint+" · "+tag:tag)),inp));
@@ -2323,7 +2336,7 @@ function refreshNeeds(){
   $("#ik-gonote").textContent=left?"":sampleFn&&IK.job!=="agent"?"Opens the room and starts the run: about 16 to 19 Claude calls (cast, 4 rounds, 6 recasts, a cast check, an intent check, plans or duel, report), 6 to 8 minutes. Untick recasting in the brief to halve that.":IK.job==="agent"?"Runs instantly.":"Live runs are off here, so the room opens with your case filled in and the example run on screen.";
 }
 function caseToBrief(){
-  const v=IK.v;return{...PRESETS.blank,name:str(v.name),pitch:str(v.pitch),price:num(v.price,0),cur:v.cur||"₹",bill:v.bill||"month",setup:num(v.setup,0),aud:str(v.aud),notfor:str(v.notfor),replaces:str(v.replaces),region:str(v.region),chan:str(v.chan),proof:v.proof||"none",voices:str(v.voices),job:IK.job,tiers:IK.job==="pricing"&&v.planMode==="many"?str(v.tiers):str(v.name)||"Plan",features:str(v.features),bpitch:str(v.bpitch),bprice:num(v.price,0),bsetup:num(v.setup,0),yearly:num(v.yearly,0),buyer:v.buyer||"business",bizsize:v.bizsize||"",reach:v.reach||"both",profile:v.profile||guessProfile(v),channel:v.channel||guessChannel(v),vcost:num(v.vcost,0),cac:num(v.cac,0),life:num(v.life,0),churn:num(v.churn,0),gates:str(v.gates),listkind:v.listkind||"lead",spend:num(v.spend,0),list:str(v.list),decision:str(v.decision),bar:num(v.bar,0),guess:String(v.guess??"").trim()===""?null:num(v.guess,0),pop:240,rounds:4};
+  const v=IK.v;return{...PRESETS.blank,name:str(v.name),pitch:str(v.pitch),price:num(v.price,0),cur:v.cur||"₹",bill:v.bill||"month",setup:num(v.setup,0),aud:str(v.aud),notfor:str(v.notfor),replaces:str(v.replaces),region:str(v.region),chan:str(v.chan),proof:v.proof||"none",voices:str(v.voices),job:IK.job,tiers:IK.job==="pricing"&&v.planMode==="many"?str(v.tiers):str(v.name)||"Plan",features:str(v.features),bpitch:str(v.bpitch),bprice:num(v.price,0),bsetup:num(v.setup,0),yearly:num(v.yearly,0),buyer:v.buyer||"business",bizsize:v.bizsize||"",reach:v.reach||"both",profile:v.profile||guessProfile(v),channel:v.channel||guessChannel(v),vcost:num(v.vcost,0),cac:num(v.cac,0),life:num(v.life,0),churn:num(v.churn,0),gates:str(v.gates),listkind:v.listkind||"lead",spend:num(v.spend,0),roi:!!v.roi,list:str(v.list),decision:str(v.decision),bar:num(v.bar,0),guess:String(v.guess??"").trim()===""?null:num(v.guess,0),pop:240,rounds:4};
 }
 function openRoom(){
   IK.mine=true;const B=caseToBrief();fillForm(B);log("new case: "+B.name+" · "+GOALTXT[IK.job],"ok");
@@ -2654,6 +2667,49 @@ function renderWhatIf(){const box=$("#t-whatif");if(!box)return;
       WI.best?h("p",{class:"sub",style:"font-size:12px;margin:8px 0 0"},`${WI.gridN} combinations tried; the top 6 were re-checked with 3 seeds per cast.`):""),
     h("p",{class:"sub",style:"font-size:12px;margin:0"},"This shows how the simulated market responds, not what real buyers will do. "+(CALIBRATED[profKey()]?"The try and pay steps for this kind of purchase are calibrated on 2 real campaigns.":"This kind of purchase isn't calibrated yet, so absolute numbers are probably optimistic; the comparison between scenarios is the useful part."))));
 }
+
+
+/* ---------------- staff-time calculator: what a routine costs in people's time ---------------- */
+// Wages: Maharashtra minimum (semi-skilled, Zone I, Jul–Dec 2026, via compliance sites); Payscale Mumbai averages. Hours: 26 days x 8 h.
+const SC_HOURS=208;
+const SC_WAGES=[{k:"floor",l:"Cheapest legal staff, Mumbai/Pune (₹14,990 a month)",m:14990,role:"minimum-wage staff"},{k:"recep",l:"Receptionist (about ₹17,600 a month)",m:17600,role:"receptionist"},{k:"med",l:"Hospital front desk or patient relations (about ₹37,500 a month)",m:37500,role:"patient-relations executive"},{k:"owner",l:"The owner's own time (set ₹ per hour)",m:null,role:"the owner's own"},{k:"custom",l:"Someone else (set monthly pay)",m:null,role:"staff"}];
+const SC_SETS={reviews:{l:"Review replies",rows:[["Reply to a Google review",40,4],["Google page post",4,30],["Monthly review check",1,120]]},
+  salon:{l:"Bookings and reminders",rows:[["Appointment reminder",780,1.5],["Booking by phone or WhatsApp",390,2],["After-visit feedback message",780,1],["Win-back call to a lapsed client",100,3],["Weekly report",4,60]]},
+  hospital:{l:"Patient feedback",rows:[["Discharge feedback call, with retries and logging",300,5.6],["Complaint follow-up",30,15],["Monthly report",1,240]]},
+  blank:{l:"Start blank",rows:[["",0,0]]}};
+function staffCalc(ctx){const st={rows:SC_SETS.reviews.rows.map(r=>[...r]),wage:"floor",ownerRate:500,customM:20000,full:false};const box=h("div",{class:"sc"});
+  const money=v=>{const c=ctx.cur()==="₹"?"₹":ctx.cur();return c+Math.round(v).toLocaleString(c==="₹"?"en-IN":"en-US")};
+  const rate=()=>{const w=SC_WAGES.find(x=>x.k===st.wage);return w.k==="owner"?st.ownerRate:w.k==="custom"?st.customM/SC_HOURS:w.m/SC_HOURS};
+  const monthly=()=>{const w=SC_WAGES.find(x=>x.k===st.wage);return w.k==="owner"?st.ownerRate*SC_HOURS:w.k==="custom"?st.customM:w.m};
+  const hours=()=>st.rows.reduce((a,r)=>a+num(r[1],0)*num(r[2],0)/60,0);
+  const perBill=m=>{const b=ctx.bill();return b==="year"?m*12:b==="one-time"?m*12:m};
+  function draw(){const H=hours(),R=rate(),cost=st.full?monthly():H*R,price=ctx.price(),w=SC_WAGES.find(x=>x.k===st.wage);
+    const rowsEl=st.rows.map((r,i)=>h("tr",null,
+      h("td",null,(()=>{const x=h("input",{placeholder:"Task",oninput:e=>{r[0]=e.target.value}});x.value=r[0];return x})()),
+      h("td",{class:"sc-n"},(()=>{const x=h("input",{type:"number",min:"0",title:"Times a month",onchange:e=>{r[1]=num(e.target.value,0);draw()}});x.value=r[1];return x})()),
+      h("td",{class:"sc-n"},(()=>{const x=h("input",{type:"number",min:"0",step:"0.5",title:"Minutes each",onchange:e=>{r[2]=num(e.target.value,0);draw()}});x.value=r[2];return x})()),
+      h("td",{style:"width:24px"},h("button",{type:"button",class:"btn sm ghost","aria-label":"Remove task",onclick:()=>{st.rows.splice(i,1);if(!st.rows.length)st.rows.push(["",0,0]);draw()}},"×"))));
+    const wageSel=h("select",{onchange:e=>{st.wage=e.target.value;draw()}},...SC_WAGES.filter(x=>ctx.cur()==="₹"||x.k==="owner"||x.k==="custom").map(x=>h("option",{value:x.k,selected:st.wage===x.k},x.l)));
+    const extra=st.wage==="owner"?h("label",{style:"display:flex;gap:6px;align-items:center"},"Owner's time, per hour",(()=>{const x=h("input",{type:"number",min:"0",style:"width:100px",onchange:e=>{st.ownerRate=num(e.target.value,0);draw()}});x.value=st.ownerRate;return x})()):st.wage==="custom"?h("label",{style:"display:flex;gap:6px;align-items:center"},"Monthly pay",(()=>{const x=h("input",{type:"number",min:"0",style:"width:110px",onchange:e=>{st.customM=num(e.target.value,0);draw()}});x.value=st.customM;return x})()):"";
+    const full=h("label",{style:"display:flex;gap:6px;align-items:center"},(()=>{const c=h("input",{type:"checkbox",style:"width:auto",onchange:e=>{st.full=e.target.checked;draw()}});c.checked=st.full;return c})(),"They would hire a dedicated person for this (compare with a whole salary)");
+    const need=R>0&&price>0?price/R:0;
+    const text=st.full?`a dedicated ${w.role.replace("the owner's own","owner")}, about ${money(monthly())} a month`:`about ${Math.round(H)} hours a month of ${w.role} time (${st.rows.filter(r=>r[0]&&r[1]>0).map(r=>r[0].charAt(0).toLowerCase()+r[0].slice(1)).slice(0,3).join(", ")}), about ${money(H*R)} a month`;
+    box.replaceChildren(
+      h("p",{class:"sub",style:"margin:0"},"Pick a starting list, then change the counts and minutes to fit the business. The minutes are rough estimates; real ones are better."),
+      h("div",{class:"sc-sets"},...Object.entries(SC_SETS).map(([k,v])=>h("button",{type:"button",onclick:()=>{st.rows=v.rows.map(r=>[...r]);draw()}},v.l))),
+      h("table",null,h("tr",null,h("td",{class:"sub"},"Task"),h("td",{class:"sub sc-n"},"A month"),h("td",{class:"sub sc-n"},"Minutes"),h("td",null,"")),...rowsEl),
+      h("div",null,h("button",{type:"button",class:"btn sm ghost",onclick:()=>{st.rows.push(["",0,0]);draw()}},"+ Add a task")),
+      h("label",{style:"display:flex;flex-direction:column;gap:4px"},"Who would do it",wageSel),extra,full,
+      h("div",{class:"sc-out"},
+        st.full?h("div",null,h("b",null,money(monthly())+" a month")," for a dedicated person, against ",h("b",null,Math.round(H)+" hours")," of actual work (",(H/SC_HOURS*100).toFixed(0),"% of their month)."):
+        h("div",null,h("b",null,Math.round(H)+" hours a month")," = ",h("b",null,money(H*R)+" a month")," at "+money(R)+" an hour (",(H/SC_HOURS*100).toFixed(0),"% of a full-time person)."),
+        price>0&&need?h("div",{style:"margin-top:4px"},`At your price of ${money(price)}, it takes about ${Math.round(need)} hours of this person's time a month to pay for itself (${(need/SC_HOURS*100).toFixed(0)}% of a full-time person). `,
+          h("b",{style:"color:"+(cost>=price?"var(--buy)":"var(--reject)")},cost>=price?"Time saved covers the price.":`Time saved covers ${Math.round(cost/price*100)}% of the price, so the rest has to come from something else (the owner's time, missed work, revenue).`)):""),
+      h("button",{type:"button",class:"btn sm primary",onclick:()=>ctx.onUse(text,Math.round(perBill(cost)))},"Use this as what it replaces"),
+      ctx.bill()!=="month"?h("p",{class:"sub",style:"margin:0;font-size:12px"},ctx.bill()==="year"?"Your price is yearly, so this fills in 12 months of the cost.":"Your price is one-time, so this fills in a year of the cost to compare against."):"");}
+  draw();return box}
+function scBriefInit(){const d=document.getElementById("sc-brief");if(!d)return;d.addEventListener("toggle",()=>{const b=document.getElementById("sc-brief-body");if(d.open&&!b.childNodes.length)b.append(staffCalc({cur:()=>$("#f-cur").value,bill:()=>$("#f-bill").value,price:()=>num($("#f-price").value,0),onUse:(t,sp)=>{$("#f-replaces").value=t;$("#f-spend").value=sp;$("#f-roi").checked=true;log("what it replaces: "+t,"ok")}}))})}
+scBriefInit();
 
 /* ---------------- boot ---------------- */
 markPro();planUI();$("#f-recast").addEventListener("change",e=>e.target.dataset.touched="1");

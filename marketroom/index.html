@@ -860,7 +860,8 @@ function applyPost(post,animate){
 function roundExposure(){const ob=S.brief.reach==="outbound";for(const a of S.agents){a.social*=AS.decay;if(!a.hub&&!a.aware&&rng()<(ob?AS.reachOut:AS.reachIn))a.aware=true}rescore()}
 
 /* ---------------- persona rulebook ---------------- */
-const INCOME={"₹":{low:15000,"lower-mid":35000,mid:80000,"upper-mid":200000,high:600000},"$":{low:2000,"lower-mid":3500,mid:6500,"upper-mid":12000,high:30000}};
+// monthly household income per band. ₹ anchored to PLFS 2025 metro earnings and PRICE ICE 360 classes (27 Nov 2026)
+const INCOME={"₹":{low:15000,"lower-mid":35000,mid:80000,"upper-mid":200000,high:300000},"$":{low:2000,"lower-mid":3500,mid:6500,"upper-mid":12000,high:30000}};
 
 /* ---------------- purchase-type profiles and the assumptions ledger ---------------- */
 const PROFILES={
@@ -1751,7 +1752,8 @@ Fields:
 - motivations and objections: 1 to 3 short phrases each, concrete, in plain words.
 - voice: how they write online, a few words.
 - sex: female, male or unspecified. It shapes only the name and voice, never preferences.
-- city: metro, tier2, tier3, rural or abroad. income: low, lower-mid, mid, upper-mid or high (household).
+- city: metro, tier2, tier3, rural or abroad.
+- income: ${incomeTxt()}
 - decides: their role in buying this: decider, payer, user, influencer or gatekeeper.
 - workplace: where they spend their day. family: e.g. "two school-age kids", "single", "elderly parents".
 - digital: low, mid or high comfort with apps. pressure: low, mid or high time pressure.
@@ -1771,6 +1773,9 @@ const GROUND_SRC={name:"Nemotron-Personas-India",by:"NVIDIA",licence:"CC BY 4.0"
 const DS_URL="https://datasets-server.huggingface.co/filter?dataset=nvidia/Nemotron-Personas-India&config=default&split=en_IN";
 const IN_STATES=["Uttar Pradesh","Maharashtra","West Bengal","Bihar","Tamil Nadu","Madhya Pradesh","Karnataka","Rajasthan","Gujarat","Andhra Pradesh","Odisha","Kerala","Telangana","Jharkhand","Punjab","Assam","Haryana","Chhattisgarh","Delhi","Jammu & Kashmir","Uttarakhand","Himachal Pradesh","Tripura","Manipur","Meghalaya","Nagaland","Goa","Puducherry","Arunachal Pradesh","Chandigarh","Mizoram","Sikkim","Andaman & Nicobar Islands","Dadra & Nagar Haveli","Daman & Diu","Lakshadweep"];
 let LIST_OVERRIDE=null;
+function incomeTxt(){const cur=S.brief?.cur==="₹"?"₹":"$";const I=INCOME[cur];const f=v=>cur==="₹"?(v>=100000?"₹"+(v/100000)+" lakh":"₹"+v.toLocaleString("en-IN")):"$"+v.toLocaleString("en-US");
+  const bands=`low (about ${f(I.low)}), lower-mid (about ${f(I["lower-mid"])}), mid (about ${f(I.mid)}), upper-mid (about ${f(I["upper-mid"])}) or high (${f(I.high)} or more)`;
+  return`monthly household income band: ${bands}.`+(cur==="₹"&&(isIndia()||placeMode()!=="towns")?` For scale (PLFS 2025): the average salaried employee in Mumbai, Bengaluru, Hyderabad, Pune and Chennai earns ₹29,000 to ₹36,000 a month and a casual worker about ₹16,000 to ₹20,000. So a one-earner metro household is usually lower-mid; mid usually means two earners or a senior professional; upper-mid and high are a small minority.`:"")}
 const isIndia=()=>/\bindia\b|mumbai|delhi|bengaluru|bangalore|pune|chennai|hyderabad|kolkata|thane|ahmedabad|jaipur|lucknow|indore|kochi|gujarat|maharashtra|karnataka|kerala|tamil/i.test((S.brief?.region||"")+" "+(S.brief?.aud||""));
 function whereFrom(sp){const q=x=>"'"+String(x).replace(/'/g,"''")+"'";const parts=[];const st=(sp.states||[]).filter(x=>IN_STATES.includes(x));if(st.length)parts.push("("+st.map(x=>`"state"=${q(x)}`).join(" OR ")+")");
   if(placeMode()==="metro"&&!sp.loosePlace){parts.push(`"zone"='Urban'`);parts.push("("+[...IN_METRO_DISTRICTS.map(d=>`"district"=${q(d)}`),`"state"='Delhi'`].join(" OR ")+")")}
@@ -2479,7 +2484,7 @@ setMini((()=>{try{return localStorage.getItem("marketroom-mini")}catch{return nu
 /* ---------------- calibration bench (#bench) ----------------
    Runs real cases (with known outcomes) through the real engine, blinded,
    and scores the predictions. Cases are pasted in; nothing private ships in the page. */
-const ENGINE_V="19";
+const ENGINE_V="19.3";
 const BENCH_STAGE={reach_engaged:[0],engaged_tried:[1],tried_paid:[2],engaged_paid:[1,2],reach_paid:[0,1,2]};
 const BENCH_STAGE_TXT={reach_engaged:"engaged per person reached",engaged_tried:"tried per engaged",tried_paid:"paid per tried",engaged_paid:"paid per engaged",reach_paid:"paid per person reached"};
 const BENCH={running:false,stop:false,msg:"",results:(()=>{try{return JSON.parse(localStorage.getItem("marketroom-bench-results")||"[]")}catch{return[]}})()};

@@ -1215,16 +1215,16 @@ function perturbCasts(N){const out=[];const rk=rng;rng=mulberry32(hashStr(S.brie
 async function runRecasts(N){if(!isPro())throw{code:"x",message:"Recasting is a Pro feature."};
   if(!sampleFn)throw{code:"x",message:(ON_WEB?"Recasting needs live runs: enter a tester code.":"Recasting needs Claude. Open this page in Claude.")};
   S.brief=S.brief.name?S.brief:readBrief();setBusy(true,`Recasting ${N} times…`);log(`robustness: asking Claude for ${N} independent casts (parallel, 3 at a time)…`);
-  const res=[{k:0,...avgRuns(S.segments,S.personas),main:true}];let next=1,done=0;
+  const res=[{k:0,model:"opus",...avgRuns(S.segments,S.personas),main:true}];let next=1,done=0;
   const worker=async()=>{while(next<=N){const k=next++;try{let rows=null;if(S.groundMeta&&!(S.brief.list||"").trim()){try{rows=(await groundRows(S.groundMeta.spec,40)).rows.map(rowLine)}catch(eg){if(eg?.code==="cancelled")throw eg;rows=S.groundRows}}
-        let pop;try{pop=normPopulation(await askJSON(castPrompt(k,N+1,rows),"default"),rows)}catch(e1){if(e1?.code==="cancelled")throw e1;log(`  ├ cast ${k}: odd answer, retrying once`);pop=normPopulation(await askJSON(castPrompt(k,N+1,rows),"default"),rows)}res.push({k,...avgRuns(pop.segments,pop.personas)});log(`  ├ cast ${k}: interest ${pct(res[res.length-1].interest)} · peak ${fmtP(res[res.length-1].peak)}`)}catch(e){if(e?.code==="cancelled")throw e;log(`  ├ cast ${k} failed: ${errCopy(e)}`,"err")}done++;setStatus(`Recasting ${done}/${N}…`,"busy")}};
+        let tier=k%2===0?"alt":"default",pop;try{pop=normPopulation(await askJSON(castPrompt(k,N+1,rows),tier),rows)}catch(e1){if(e1?.code==="cancelled")throw e1;if(tier==="alt"){log(`  ├ cast ${k}: second model unavailable or odd answer, using the main model`);tier="default"}else log(`  ├ cast ${k}: odd answer, retrying once`);pop=normPopulation(await askJSON(castPrompt(k,N+1,rows),tier),rows)}res.push({k,model:tier==="alt"?"sonnet":"opus",...avgRuns(pop.segments,pop.personas)});log(`  ├ cast ${k} (${tier==="alt"?"Sonnet":"Opus"}): interest ${pct(res[res.length-1].interest)} · peak ${fmtP(res[res.length-1].peak)}`)}catch(e){if(e?.code==="cancelled")throw e;log(`  ├ cast ${k} failed: ${errCopy(e)}`,"err")}done++;setStatus(`Recasting ${done}/${N}…`,"busy")}};
   await Promise.all([worker(),worker(),worker()]);
   S.casts={src:"claude",key:S.brief.name+S.personas.length+S.brief.price+aKey(),list:res.sort((a,b)=>a.k-b.k),at:Date.now()};log(`robustness: ${res.length} casts compared`,"ok");setBusy(false);switchTab("insights");
 }
 function robust(){
   if(!S.personas.length||!S.agents.length)return null;
   const ck=S.brief.name+S.personas.length+S.brief.price+aKey();
-  if(!S.casts||S.casts.key!==ck){if(S.casts?.src==="claude"){S.casts={...S.casts,key:ck,list:S.casts.list.map(x=>x.main?{k:0,...avgRuns(S.segments,S.personas),main:true}:{k:x.k,...avgRuns(x.segsData,reRule(x.persData))})}}else S.casts={src:"perturbed",key:ck,list:[{k:0,...avgRuns(S.segments,S.personas),main:true},...perturbCasts(8)]}}
+  if(!S.casts||S.casts.key!==ck){if(S.casts?.src==="claude"){S.casts={...S.casts,key:ck,list:S.casts.list.map(x=>x.main?{k:0,model:"opus",...avgRuns(S.segments,S.personas),main:true}:{k:x.k,model:x.model,...avgRuns(x.segsData,reRule(x.persData))})}}else S.casts={src:"perturbed",key:ck,list:[{k:0,...avgRuns(S.segments,S.personas),main:true},...perturbCasts(8)]}}
   const L=S.casts.list;const q=(a,f)=>{const x=[...a].sort((m,n)=>m-n);return x[Math.round(f*(x.length-1))]};
   const I=L.map(x=>x.interest),Pk=L.map(x=>x.peak);const im=q(I,.5),pm=q(Pk,.5);
   const band=[pm*.8,pm*1.25];const inBand=Pk.filter(p=>p>=band[0]&&p<=band[1]).length;
@@ -1235,14 +1235,15 @@ function robust(){
 }
 function robustBlock(){const R=robust();if(!R)return"";const n=R.L.length;
   return h("div",{class:"block"},h("h4",null,"Across "+n+(R.src==="claude"?" model-generated casts":" perturbed copies of this cast")),
-    h("p",{class:"sub"},R.src==="claude"?"Claude cast the market again from the same brief, independently. Each cast is replayed 3 times. These findings survive a different cast from the same model, which is not the same as surviving a different real market: see the cast check below.":"The same cast with every ceiling, fit, skepticism and segment share redrawn (±30%). Weaker than real recasts: it can't invent a segment Claude missed."+(sampleFn?" Use 'Recast with Claude' for the real test.":"")),
+    h("p",{class:"sub"},R.src==="claude"?"Claude cast the market again from the same brief, independently, alternating two models (Opus 5.5 and Sonnet 5.5) so one model's habits can't pass as a finding. Each cast is replayed 3 times. Surviving a different cast is still not the same as surviving a real market: see the cast check below.":"The same cast with every ceiling, fit, skepticism and segment share redrawn (±30%). Weaker than real recasts: it can't invent a segment Claude missed."+(sampleFn?" Use 'Recast with Claude' for the real test.":"")),
     R.disagree?h("p",{class:"note",style:"border-color:var(--reject)"},h("b",null,"The casts disagree. "),"Treat the numbers as rough and lean on the findings that repeat below."):"",
+    replicationBlock(R),
     h("div",{class:"stack"},
       h("div",{class:"why"},h("b",null,"Simulated interest: "),`median ${pct(R.im)}, from ${pct(R.lo)} to ${pct(R.hi)} across casts.`),
       h("div",{class:"why"},h("b",null,"Revenue peak: "),`${R.inBand} of ${n} casts put it between ${fmtP(R.band[0])} and ${fmtP(R.band[1])}.`+(R.inBand<n?` The rest: ${R.L.map(x=>x.peak).filter(p=>p<R.band[0]||p>R.band[1]).map(fmtP).join(", ")}.`:"")+(hasCost()?" This is revenue; the price band above uses contribution profit.":" Revenue only: no costs, churn or sales effort.")),
       h("div",{class:"why"},h("b",null,"Blockers that repeat: "),R.holds.slice(0,3).map(([t,c])=>`${t[0].toLowerCase()+t.slice(1)} (${c} of ${n})`).join("; ")+"."),
       h("div",{class:"why"},h("b",null,R.src==="claude"?"Most-buying segment in each cast: ":"Most-buying segment: "),R.src==="claude"?R.L.map(x=>x.top).join("; ")+". Names differ between casts, so look for the same kind of buyer.":R.tops.slice(0,3).map(([t,c])=>`${t} (${c} of ${n})`).join("; ")+".")),
-    h("div",{class:"chart-wrap"},h("table",{class:"ptable"},h("thead",null,h("tr",null,h("th",null,"Cast"),h("th",null,"Segments"),h("th",{class:"n"},"Interest"),h("th",{class:"n"},"Peak"))),h("tbody",null,...R.L.map(x=>h("tr",null,h("td",null,x.main?"this one":"#"+x.k),h("td",{style:"font-size:11.5px;color:var(--muted)"},x.segs.join(", ").slice(0,90)),h("td",{class:"n"},pct(x.interest)),h("td",{class:"n"},fmtP(x.peak))))))),
+    h("div",{class:"chart-wrap"},h("table",{class:"ptable"},h("thead",null,h("tr",null,h("th",null,"Cast"),h("th",null,"Segments"),h("th",{class:"n"},"Interest"),h("th",{class:"n"},"Peak"))),h("tbody",null,...R.L.map(x=>h("tr",null,h("td",null,(x.main?"this one":"#"+x.k)+(R.src==="claude"?(x.model==="sonnet"?" · Sonnet":" · Opus"):"")),h("td",{style:"font-size:11.5px;color:var(--muted)"},x.segs.join(", ").slice(0,90)),h("td",{class:"n"},pct(x.interest)),h("td",{class:"n"},fmtP(x.peak))))))),
     h("div",{class:"row"},h("button",{class:"btn sm",type:"button",disabled:!sampleFn||S.busy,onclick:()=>guard(()=>runRecasts(6))},sampleFn?"Recast with Claude (6 calls)":"Recast with Claude ("+liveHint()+")")))}
 
 function verdictCalc(){const L=S.lock;if(!L||!(L.bar>0))return null;const R=robust();if(!R)return null;const bar=L.bar/100;
@@ -1695,7 +1696,10 @@ async function guard(fn){if(S.busy)return;try{await fn()}catch(e){if(e?.code==="
 $("#btn-stop").onclick=()=>{ctl?.abort();replayAbort=true};
 
 const BLIND_ALIAS="Brand Kestrel";
-function blindIn(t){const B=S.brief;if(!B?.blind||!B.name||typeof t!=="string")return t;return t.replace(new RegExp(B.name.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"gi"),BLIND_ALIAS)}
+const PII_RE=[[/(?:\+?91[\s-]?)?\b[6-9]\d{4}[\s-]?\d{5}\b/g,"[phone]"],[/\b0\d{2,4}[\s-]\d{6,8}\b/g,"[phone]"],[/\b[\w.+-]+@[\w-]+(?:\.[\w-]+)+\b/g,"[email]"],[/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g,"[ID number]"],[/\b[A-Z]{5}\d{4}[A-Z]\b/g,"[ID number]"]];
+let PII_SEEN=0,PII_LOGGED=0;
+function scrubPII(t){if(typeof t!=="string")return t;let n=0;for(const[re,r]of PII_RE)t=t.replace(re,()=>{n++;return r});if(n){PII_SEEN+=n;const now=Date.now();if(now-PII_LOGGED>30000){PII_LOGGED=now;log(`privacy: removed ${n} phone number${n>1?"s":""}, email${n>1?"s":""} or ID number${n>1?"s":""} before sending to Claude`)}}return t}
+function blindIn(t){t=scrubPII(t);const B=S.brief;if(!B?.blind||!B.name||typeof t!=="string")return t;return t.replace(new RegExp(B.name.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"gi"),BLIND_ALIAS)}
 function blindOut(d){const B=S.brief;if(!B?.blind||!B.name)return d;try{return JSON.parse(JSON.stringify(d).split(BLIND_ALIAS).join(B.name.replace(/\\/g,"\\\\").replace(/"/g,'\\"')))}catch{return d}}
 async function askJSON(prompt,tier){ctl=new AbortController();return blindOut(await sampleFn.json(blindIn(prompt),{modelTier:tier,cache:false,signal:ctl.signal}))}
 function readBrief(){const B={name:$("#f-name").value.trim()||"Untitled product",pitch:$("#f-pitch").value.trim(),price:Math.max(0,num($("#f-price").value,0)),setup:Math.max(0,num($("#f-setup").value,0)),cur:$("#f-cur").value,bill:$("#f-bill").value,aud:$("#f-aud").value.trim(),notfor:$("#f-notfor").value.trim().slice(0,400),replaces:$("#f-replaces").value.trim().slice(0,400),region:$("#f-region").value.trim()||"unspecified",chan:$("#f-chan").value.trim(),pop:+$("#f-pop").value,rounds:+$("#f-rounds").value,preset:$("#f-preset").value,proof:$("#f-proof").value,voices:$("#f-voices").value.trim().slice(0,8000),job:$("#briefForm").dataset.job||"launch",tiers:$("#f-tiers").value.split(",").map(x=>x.trim()).filter(Boolean).slice(0,3),features:$("#f-features").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,16),bpitch:$("#f-bpitch").value.trim(),bsetup:Math.max(0,num($("#f-bsetup").value,0)),yearly:Math.max(0,num($("#f-yearly").value,0)),buyer:$("#f-buyer").value,bizsize:$("#f-bizsize").value,reach:$("#f-reach").value,profile:$("#f-profile").value,channel:$("#f-channel").value,ground:$("#f-ground").checked,blind:$("#f-blind").checked,gates:$("#f-gates").value.trim().slice(0,1500),listkind:$("#f-listkind").value,roi:$("#f-roi").checked,reng:num($("#f-reng").value,0),rtrial:num($("#f-rtrial").value,0),rpaid:num($("#f-rpaid").value,0),churn:num($("#f-churn").value,0),fee:num($("#f-fee").value,0),refund:num($("#f-refund").value,0),vcost:Math.max(0,num($("#f-vcost").value,0)),cac:Math.max(0,num($("#f-cac").value,0)),life:Math.max(0,num($("#f-life").value,0)),spend:Math.max(0,num($("#f-spend").value,0)),list:$("#f-list").value.trim().slice(0,6000),decision:$("#f-decision").value.trim(),bar:Math.max(0,num($("#f-bar").value,0)),guess:$("#f-guess").value===""?null:Math.max(0,num($("#f-guess").value,0))};B.bprice=Math.max(0,num($("#f-bprice").value,B.price));applyReplaces(B);if(!B.pitch)throw{code:"brief",message:"Add a pitch first."};return B}
@@ -2135,7 +2139,7 @@ async function outLoad(){if(DB){try{const sn=await DB.collection("data/users/"+U
 async function outPut(o){if(DB){const {id,...body}=o;await DB.collection("data/users/"+UID).doc(id).set(JSON.parse(JSON.stringify(body)))}else lsSave()}
 async function outDel(o){OUT=OUT.filter(x=>x!==o);if(DB)await DB.collection("data/users/"+UID).doc(o.id).delete();else lsSave()}
 function predBtn(pred){if(!isPro()&&(pred.kind==="funnel"||OUT.length>=1))return h("span",{class:"sub"},pred.kind==="funnel"?"Funnel tracking is ":"Lite saves one prediction. More is ",proBadge());const b=h("button",{class:"btn sm ghost",type:"button",title:"Save this so you can enter what really happened later and score the swarm"},"Save as prediction");
-  b.onclick=async()=>{b.disabled=true;try{const o={id:"o"+Date.now().toString(36),...pred,product:S.brief.name,at:Date.now(),actual:null,prov:provTxt()};OUT.unshift(o);await outPut(o);b.textContent="Saved to Track record";log("prediction saved: "+pred.label,"ok");$("#c-track").textContent=OUT.filter(x=>x.actual==null).length||""}catch(e){b.disabled=false;b.textContent="Couldn't save, try again";log("couldn't save prediction","err")}};return b}
+  b.onclick=async()=>{b.disabled=true;try{const o={id:"o"+Date.now().toString(36),...pred,product:S.brief.name,at:Date.now(),actual:null,prov:provTxt(),...(pred.kind==="funnel"?{brief:caseBrief(S.brief)}:{})};OUT.unshift(o);await outPut(o);b.textContent="Saved to Track record";log("prediction saved: "+pred.label,"ok");$("#c-track").textContent=OUT.filter(x=>x.actual==null).length||""}catch(e){b.disabled=false;b.textContent="Couldn't save, try again";log("couldn't save prediction","err")}};return b}
 const JOBNAME={launch:"Launch read",pricing:"Pricing & plans",message:"Message test",agent:"AI shoppers"};
 
 const FUNNEL_K=10;
@@ -2148,7 +2152,7 @@ function funnelRow(o){const ins=o.stages.map((s,i)=>h("input",{type:"number",min
   return h("div",{class:"track-row",style:"flex-direction:column;align-items:stretch"},h("div",null,h("b",null,o.label),h("span",{class:"range"},`funnel · ${new Date(o.at).toLocaleDateString()} · ${o.prov||""}`)),
     h("div",{class:"chart-wrap"},h("table",{class:"ptable"},h("thead",null,h("tr",null,h("th",null,"Stage"),h("th",{class:"n"},"Your count"),h("th",{class:"n"},"Predicted step"),h("th",{class:"n"},"Real step"))),
       h("tbody",null,...o.stages.map((s,i)=>h("tr",null,h("td",null,s.name),h("td",{class:"n"},ins[i]),h("td",{class:"n"},i?pct(s.rate):"–"),h("td",{class:"n"},i&&real(i)!=null?pct(real(i))+(s.rate>0?" (×"+(real(i)/s.rate).toFixed(2)+")":""):"–")))))),
-    h("div",{class:"in"},h("button",{class:"btn sm primary",type:"button",onclick:async()=>{o.counts=ins.map(x=>Math.max(0,Math.round(num(x.value,0))));o.updatedAt=Date.now();await outPut(o);log("funnel updated: "+o.label,"ok");renderTrack();if(!$("#t-insights").hidden)renderInsights()}},"Update counts"),h("button",{class:"btn sm ghost",type:"button",onclick:async()=>{await outDel(o);renderTrack()}},"Remove")))}
+    h("div",{class:"in"},h("button",{class:"btn sm primary",type:"button",onclick:async()=>{o.counts=ins.map(x=>Math.max(0,Math.round(num(x.value,0))));o.updatedAt=Date.now();await outPut(o);log("funnel updated: "+o.label,"ok");renderTrack();if(!$("#t-insights").hidden)renderInsights()}},"Update counts"),h("button",{class:"btn sm ghost",type:"button",onclick:async()=>{await outDel(o);renderTrack()}},"Remove"),caseButtons(o)))}
 function renderTrack(){
   const box=$("#t-track");if(!box)return;$("#c-track").textContent=OUT.filter(x=>x.kind!=="funnel"&&x.actual==null).length||"";
   const funnels=OUT.filter(o=>o.kind==="funnel");const open=OUT.filter(o=>o.kind!=="funnel"&&o.actual==null),done=OUT.filter(o=>o.kind!=="funnel"&&o.actual!=null);
@@ -2387,7 +2391,7 @@ const ON_WEB=!window.claude;
 function webSample(code){const call=async(body,signal)=>{let r;try{r=await fetch("/api/marketroom",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({...body,code}),signal})}catch(e){if(e?.name==="AbortError")throw{code:"cancelled"};throw{code:"x",message:"Couldn't reach the server. Check your connection and try again."}}
     const d=await r.json().catch(()=>({}));if(!r.ok)throw{code:r.status===401?"bad_code":r.status===429?"rate_limited":r.status===503?"live_off":r.status===422?"invalid_json":"x",message:d.error||"Server error "+r.status};meterWeb(body,d);return d};
   const f=async(messages,opts={})=>{const d=await call({mode:"text",messages,tier:opts.modelTier||"default"},opts.signal);opts.onText?.({text:d.text||""});return{text:d.text||""}};
-  f.json=async(prompt,opts={})=>{const d=await call({mode:"json",prompt,tier:opts.modelTier||"default"},opts.signal);return d.json};return f}
+  f.json=async(prompt,opts={})=>{const d=await call({mode:"json",prompt,tier:opts.modelTier||"default"},opts.signal);return d.json};f.shareCase=async c=>call({mode:"case",case:c});return f}
 function liveHint(){return ON_WEB?"needs a tester code":"open in Claude"}
 function codeUI(n){const inp=h("input",{type:"password",placeholder:"Tester access code",autocomplete:"off","aria-label":"Tester access code"});
   n.replaceChildren(h("b",null,"Live runs need a tester code. "),"Without one you can open the examples, scrub rounds, use the price probe and explore every result. With one, Claude casts and runs your own case on the site's account.",
@@ -2410,13 +2414,14 @@ function clearForRun(msg){Object.assign(S,{segments:[],personas:[],agents:[],edg
 // $ per 1M tokens [input, output], Anthropic API list prices (Nov 2026)
 const PRICE_MT={"claude-opus-5-5":[4,20],"claude-haiku-5-5":[0.1,0.5],"claude-opus-5":[5,25],"claude-opus-4-8":[5,25],"claude-sonnet-5-5":[2,10],"claude-sonnet-5":[2,10],"claude-fable-5-2":[8,40]};
 const COST={run:[],all:[],runAt:null,rate:(()=>{try{return +localStorage.getItem("marketroom-inr")||88}catch{return 88}})()};
-function costModel(m,tier){if(PRICE_MT[m])return m;const k=Object.keys(PRICE_MT).find(x=>m&&m.startsWith(x));return k||(tier==="quick"?"claude-haiku-5-5":"claude-opus-5-5")}
+function costModel(m,tier){if(PRICE_MT[m])return m;const k=Object.keys(PRICE_MT).find(x=>m&&m.startsWith(x));return k||(tier==="quick"?"claude-haiku-5-5":tier==="alt"?"claude-sonnet-5-5":"claude-opus-5-5")}
 function meterAdd(o){o.model=costModel(o.model,o.tier);const p=PRICE_MT[o.model];o.usd=(o.in*p[0]+o.out*p[1])/1e6;o.step=S.asking?"Questions (Ask tab)":S.busy?($("#status")?.textContent||"").replace(/…$/,"")||"Other":"Other";o.at=Date.now();COST.run.push(o);COST.all.push(o);
   const R=costSum(COST.run);const c=$("#c-cost");if(c)c.textContent=R.n?usd(R.usd):"";if(!$("#t-cost").hidden)renderCost()}
 const tok=x=>Math.ceil(String(x||"").length/4);
-function meterWeb(body,d){const u=d.usage;meterAdd({model:d.model||"",tier:body.tier,in:u?(u.input_tokens||0)+(u.cache_creation_input_tokens||0)+(u.cache_read_input_tokens||0):tok(JSON.stringify(body.messages||body.prompt)),out:u?u.output_tokens||0:tok(d.text??JSON.stringify(d.json)),est:!u})}
-function meterWrap(fn){if(!fn)return null;const f=async(m,o={})=>{const r=await fn(m,o);meterAdd({tier:o.modelTier,in:tok(JSON.stringify(m)),out:tok(r?.text),est:true});return r};
-  f.json=async(p,o={})=>{const r=await fn.json(p,o);meterAdd({tier:o.modelTier,in:tok(p),out:tok(JSON.stringify(r)),est:true});return r};return f}
+function meterWeb(body,d){if(body.mode==="case")return;const u=d.usage;meterAdd({model:d.model||"",tier:body.tier,in:u?(u.input_tokens||0)+(u.cache_creation_input_tokens||0)+(u.cache_read_input_tokens||0):tok(JSON.stringify(body.messages||body.prompt)),out:u?u.output_tokens||0:tok(d.text??JSON.stringify(d.json)),est:!u})}
+const altOpts=o=>o.modelTier==="alt"?{...o,model:"claude-sonnet-5-5",modelTier:"default"}:o;
+function meterWrap(fn){if(!fn)return null;const f=async(m,o={})=>{const r=await fn(m,altOpts(o));meterAdd({tier:o.modelTier,in:tok(JSON.stringify(m)),out:tok(r?.text),est:true});return r};
+  f.json=async(p,o={})=>{const r=await fn.json(p,altOpts(o));meterAdd({tier:o.modelTier,in:tok(p),out:tok(JSON.stringify(r)),est:true});return r};return f}
 function costSum(L){return L.reduce((a,c)=>({n:a.n+1,in:a.in+c.in,out:a.out+c.out,usd:a.usd+c.usd,est:a.est||c.est}),{n:0,in:0,out:0,usd:0,est:false})}
 function usd(x){return"$"+(x<0.1?x.toFixed(3):x.toFixed(2))}
 function inr(x){return"₹"+(x*COST.rate<10?(x*COST.rate).toFixed(1):Math.round(x*COST.rate).toLocaleString("en-IN"))}
@@ -2461,6 +2466,7 @@ function askContext(){const B=S.brief;const L=[];
   try{const pb=priceBand();if(pb)L.push(`Price where ${pb.kind} peaks across ${pb.n} casts: ${fmtP(pb.lo)} to ${fmtP(pb.hi)}, middle ${fmtP(pb.mid)}. Founder's price: ${fmtP(B.price)}.`)}catch{}
   if(S.plans?.proposal?.length)L.push("Plans the swarm proposed: "+S.plans.proposal.map(p=>`${p.tier} at ${fmtP(p.price)}${p.limit?" ("+p.limit+")":""}: ${p.features.join(", ")}`).join("; ")+(S.plans.summary?". "+S.plans.summary:""));
   if(S.critic?.summary)L.push("Cast check: "+S.critic.summary);
+  try{const X=replication(robust());if(X)L.push("Cross-model check (Opus vs Sonnet casts): "+X.rows.map(r=>`${r.l} ${r.ok?"agrees":"disagrees"} (${r.d})`).join("; ")+".")}catch{}
   if(WI.best?.length)L.push("What-if search (same casts re-scored, no new Claude calls), best combinations: "+WI.best.slice(0,3).map(x=>`${wiDiff(x.sc).map(c=>c[0]).join(" + ")||"the brief as is"} gives ${pct(x.r.med)} buying${x.r.p!=null?`, ${Math.round(x.r.p*100)}% chance of clearing the bar`:""}`).join("; ")+".");
   if(S.duel)try{L.push("Message duel result: "+(S.duel.summary||JSON.stringify(S.duel).slice(0,600)))}catch{}
   const per=S.personas.map(p=>`- ${p.name} (${p.target===false?"bystander":"target"}, ${p.role}; will pay up to ${fmtP(p.wtp)}; fit ${p.fit}; objections: ${(p.objections||[]).join("; ")||"none"}${p.uses?"; uses today: "+p.uses:""})`).slice(0,16).join("\n");
@@ -2710,6 +2716,31 @@ function staffCalc(ctx){const st={rows:SC_SETS.reviews.rows.map(r=>[...r]),wage:
   draw();return box}
 function scBriefInit(){const d=document.getElementById("sc-brief");if(!d)return;d.addEventListener("toggle",()=>{const b=document.getElementById("sc-brief-body");if(d.open&&!b.childNodes.length)b.append(staffCalc({cur:()=>$("#f-cur").value,bill:()=>$("#f-bill").value,price:()=>num($("#f-price").value,0),onUse:(t,sp)=>{$("#f-replaces").value=t;$("#f-spend").value=sp;$("#f-roi").checked=true;log("what it replaces: "+t,"ok")}}))})}
 scBriefInit();
+
+
+/* ---------------- replication across models ---------------- */
+function replication(R){if(!R||R.src!=="claude")return null;const G={opus:R.L.filter(x=>x.model!=="sonnet"),sonnet:R.L.filter(x=>x.model==="sonnet")};if(G.opus.length<2||G.sonnet.length<2)return null;
+  const med=a=>{const x=[...a].sort((m,n)=>m-n);return x[Math.floor((x.length-1)/2)]};const ratio=(a,b)=>Math.max(a,b)/Math.max(Math.min(a,b),1e-9);
+  const io=med(G.opus.map(x=>x.interest)),is=med(G.sonnet.map(x=>x.interest)),po=med(G.opus.map(x=>x.peak)),ps=med(G.sonnet.map(x=>x.peak));
+  const tops=g=>{const c={};g.forEach(x=>x.hold.forEach(t=>c[t]=(c[t]||0)+1));return Object.entries(c).filter(([,n])=>n>=Math.ceil(g.length/2)).map(([t])=>t)};
+  const to=tops(G.opus),ts=tops(G.sonnet),both=to.filter(t=>ts.includes(t)),onlyO=to.filter(t=>!ts.includes(t)),onlyS=ts.filter(t=>!to.includes(t));
+  const rows=[{l:"How many would buy",ok:ratio(io,is)<=1.5,d:`Opus casts ${pct(io)}, Sonnet casts ${pct(is)}`},{l:"Where revenue peaks",ok:ratio(po,ps)<=1.25,d:`Opus ${fmtP(po)}, Sonnet ${fmtP(ps)}`},{l:"Main blockers",ok:both.length>0&&!onlyO.length&&!onlyS.length,d:(both.length?"Both: "+both.join("; ").toLowerCase():"No blocker shared by both")+(onlyO.length?". Only Opus: "+onlyO.join("; ").toLowerCase():"")+(onlyS.length?". Only Sonnet: "+onlyS.join("; ").toLowerCase():"")}];
+  return{rows,all:rows.every(r=>r.ok),n:[G.opus.length,G.sonnet.length]}}
+function replicationBlock(R){const X=replication(R);if(!X)return R?.src==="claude"?h("p",{class:"sub",style:"font-size:12.5px"},"Cross-model check needs at least 2 casts from each model; recast to get it."):"";
+  return h("div",{class:"note",style:"border-color:"+(X.all?"var(--buy)":"var(--consider)")},h("b",null,X.all?"Replicated across two models. ":"The two models disagree on part of this. "),`${X.n[0]} Opus and ${X.n[1]} Sonnet casts. Findings that hold in both aren't one model's habit; where they split, treat it as unknown.`,
+    h("div",{class:"stack",style:"margin-top:6px;gap:4px"},...X.rows.map(r=>h("div",null,h("b",{style:"color:"+(r.ok?"var(--buy)":"var(--consider)")},(r.ok?"✓ ":"≠ ")+r.l+": "),r.d))))}
+
+/* ---------------- real results become calibration cases ---------------- */
+function caseBrief(B){const keep=["name","pitch","price","cur","bill","yearly","setup","aud","notfor","replaces","region","chan","buyer","bizsize","reach","channel","profile","proof","spend","roi","gates"];const o={};keep.forEach(k=>{if(B[k]!==undefined&&B[k]!==""&&B[k]!==null)o[k]=B[k]});return o}
+function caseFromFunnel(o){const C=o.counts||[0,0,0,0];const B=o.brief||(o.product===S.brief?.name?caseBrief(S.brief):null);if(!B)return null;
+  const st=[["reach_engaged",1,0],["engaged_tried",2,1],["tried_paid",3,2]];const metrics=st.filter(([,a,b])=>C[b]>0).map(([stage,a,b])=>({stage,k:C[a],n:C[b],primary:true,note:`${o.stages[a]?.name||"step"} of ${o.stages[b]?.name||"step"}`}));
+  if(C[0]>0)metrics.push({stage:"reach_paid",k:C[3],n:C[0],primary:false,note:"overall, info only"});if(!metrics.length)return null;
+  return{id:"user-"+o.id,label:`${B.name||o.product}: real funnel (${new Date(o.updatedAt||o.at).toLocaleDateString()})`,status:"scored",brief:B,actual:{window:"entered by the user in Track record",source:"user's own counts",metrics}}}
+function benchCasesLocal(){try{const d=JSON.parse(localStorage.getItem("marketroom-bench-cases")||"[]");return Array.isArray(d)?{wrap:null,cases:d}:{wrap:d,cases:d.cases||[]}}catch{return{wrap:null,cases:[]}}}
+function caseButtons(o){if(o.kind!=="funnel")return"";const c=caseFromFunnel(o);if(!c)return h("span",{class:"sub",style:"font-size:12px"},(o.counts||[]).some(x=>x>0)?"This older prediction didn't save its brief, so it can't become a calibration case.":"Enter your real counts to turn this into a calibration case.");
+  const add=h("button",{class:"btn sm",type:"button",title:"Adds this real result to the calibration bench in this browser (open #bench to run it)",onclick:()=>{const L=benchCasesLocal();const cases=L.cases.filter(x=>x.id!==c.id);cases.push(c);try{localStorage.setItem("marketroom-bench-cases",JSON.stringify(L.wrap?{...L.wrap,cases}:cases,null,1))}catch{}add.textContent="Added to the bench";log("calibration case added: "+c.label,"ok")}},"Use as a calibration case");
+  const share=ON_WEB&&sampleFn?.shareCase?h("button",{class:"btn sm ghost",type:"button",title:"Sends the brief (brand name hidden, personal data removed) and your counts to Marketroom to improve calibration. Nothing else is sent.",onclick:async()=>{if(!confirm("Share this real result with Marketroom to improve calibration? The product name is replaced with a code name, and phone numbers, emails and ID numbers are removed. Your counts and the brief are sent."))return;share.disabled=true;try{const b={...c.brief};const nm=b.name||"";delete b.name;const anon=JSON.parse(scrubPII(JSON.stringify(b)).split(nm||"\u0000").join(BLIND_ALIAS));await sampleFn.shareCase({...c,id:undefined,label:undefined,brief:anon,engine:ENGINE_V});share.textContent="Shared, thank you";log("shared a real result for calibration","ok")}catch(e){share.disabled=false;share.textContent="Couldn't share";log("couldn't share: "+errCopy(e),"err")}}},"Share anonymously"):"";
+  return h("span",{style:"display:inline-flex;gap:6px;flex-wrap:wrap"},add,share)}
 
 /* ---------------- boot ---------------- */
 markPro();planUI();$("#f-recast").addEventListener("change",e=>e.target.dataset.touched="1");

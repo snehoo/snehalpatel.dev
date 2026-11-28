@@ -21,6 +21,16 @@ export async function onRequest(context) {
   try { body = await request.json(); } catch { return reply({ error: 'Bad request' }, 400); }
   if (typeof body.code !== 'string' || body.code !== env.MARKETROOM_CODE) return reply({ error: "That tester code wasn't accepted." }, 401);
 
+  // Shared calibration case: write-only, never read back through this API
+  if (body.mode === 'case') {
+    if (!env.MR_KV) return reply({ error: "Sharing isn't switched on for this site." }, 503);
+    const txt = JSON.stringify(body.case || null);
+    if (!body.case || typeof body.case !== 'object' || txt.length > 20000) return reply({ error: 'That case is too large or empty.' }, 400);
+    const id = 'case:' + new Date().toISOString() + ':' + Math.random().toString(36).slice(2, 8);
+    await env.MR_KV.put(id, txt, { expirationTtl: 60 * 60 * 24 * 400 });
+    return reply({ ok: true });
+  }
+
   // Daily cap (only when a KV namespace is bound as MR_KV)
   if (env.MR_KV) {
     const key = 'calls:' + new Date().toISOString().slice(0, 10);
@@ -30,7 +40,7 @@ export async function onRequest(context) {
     context.waitUntil(env.MR_KV.put(key, String(used + 1), { expirationTtl: 172800 }));
   }
 
-  const model = body.tier === 'quick' ? (env.MR_QUICK_MODEL || 'claude-haiku-5-5') : (env.MR_MODEL || 'claude-opus-5-5');
+  const model = body.tier === 'quick' ? (env.MR_QUICK_MODEL || 'claude-haiku-5-5') : body.tier === 'alt' ? (env.MR_ALT_MODEL || 'claude-sonnet-5-5') : (env.MR_MODEL || 'claude-opus-5-5');
   let messages;
   if (body.mode === 'json') {
     if (typeof body.prompt !== 'string' || !body.prompt) return reply({ error: 'Missing prompt' }, 400);
